@@ -1,0 +1,486 @@
+# Realms, a libadwaita libvirt client.
+# Copyright (C) 2025
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+templates:
+  - name: Linux (Secure boot)
+    description: x86 Linux machine with secure boot and gl-accelerated graphics with support for remote graphics.
+    settings:
+      - name: Domain name
+        type: str
+        output:
+          value: name
+      - name: Description
+        type: str
+        output:
+          value: description
+      - name: vCPUs
+        type: int
+        params:
+          min: 1
+          max: 100
+        output:
+          value: vcpus
+      - name: Memory
+        type: data
+        output:
+          value: memory
+      - name: Installation ISO path
+        type: file
+        output:
+          value: iso
+      - name: Use local socket for graphics
+        type: list
+        output: 
+          value: local_graphics
+        params:
+          selection:
+            - "yes"
+            - "no"
+      - name: Create or pick a qcow2 disk image
+        type: volume
+        output:
+          pool: main_pool
+          volume: main_volume
+      - name: Virtual network
+        type: network
+        output:
+          network: vir_network
+    template: |
+      <domain type='kvm'>
+        <name>{{ name }}</name>
+        <title>{{ name }}</title>
+        <description>{{ description }}</description>
+        <memory unit='B'>{{ memory }}</memory>
+        <vcpu placement='static'>{{ vcpus }}</vcpu>
+        <os firmware='efi'>
+          <type arch='x86_64' machine='pc-q35-8.2'>hvm</type>
+          <firmware>
+            <feature enabled='yes' name='enrolled-keys'/>
+            <feature enabled='yes' name='secure-boot'/>
+          </firmware>
+          <loader readonly='yes' secure='yes' type='pflash'>/usr/share/edk2/ovmf/OVMF_CODE_4M.qcow2</loader>
+          <nvram template='/usr/share/OVMF/OVMF_VARS_4M.ms.fd'>/var/lib/libvirt/qemu/nvram/{{ name }}_VARS.fd</nvram>
+        </os>
+        <memoryBacking>
+          <source type="memfd"/>
+          <access mode="shared"/>
+        </memoryBacking>
+        <features>
+          <acpi/>
+          <apic/>
+          <vmport state='off'/>
+          <smm state='on'/>
+        </features>
+        <cpu mode='host-passthrough' check='none' migratable='on'>
+          <topology sockets='{{ vcpus }}' dies='1' cores='1' threads='1'/>
+        </cpu>
+        <clock offset='utc'>
+          <timer name='rtc' tickpolicy='catchup'/>
+          <timer name='pit' tickpolicy='delay'/>
+          <timer name='hpet' present='no'/>
+        </clock>
+        <pm>
+          <suspend-to-mem enabled='no'/>
+          <suspend-to-disk enabled='no'/>
+        </pm>
+        <devices>
+          <emulator>/usr/bin/qemu-system-x86_64</emulator>
+          <disk type='volume' device='disk' snapshot="internal">
+            <driver name='qemu' type='qcow2'/>
+            <source pool="{{ main_pool }}" volume="{{ main_volume }}"/>
+            <boot order='1'/>
+            <target dev='vda' bus='virtio'/>
+          </disk>
+          <disk type='file' device='cdrom' snapshot="no">
+            <driver name='qemu' type='raw'/>
+            <source file='{{ iso }}'/>
+            <readonly/>
+            <boot order='2'/>
+            <target dev='sda' bus='sata'/>
+          </disk>
+          <interface type='network'>
+            <source network='{{ vir_network }}'/>
+            <model type='virtio'/>
+          </interface>
+          <serial type='pty'>
+            <target type='isa-serial' port='0'>
+              <model name='isa-serial'/>
+            </target>
+          </serial>
+          <console type='pty'>
+            <target type='serial' port='0'/>
+          </console>
+          <channel type='unix'>
+            <target type='virtio' name='org.qemu.guest_agent.0'/>
+          </channel>
+          <channel type='spicevmc'>
+            <target type='virtio' name='com.redhat.spice.0'/>
+          </channel>
+          <input type='tablet' bus='usb'>
+            <address type='usb' bus='0' port='1'/>
+          </input>
+          <input type='mouse' bus='ps2'/>
+          <input type='keyboard' bus='ps2'/>
+          {% if local_graphics == "no" %}
+          <graphics type='spice' port='5900' autoport='no' listen='0.0.0.0'>
+            <listen type='address' address='0.0.0.0'/>
+            <image compression='auto_glz'/>
+            <jpeg compression='auto'/>
+            <zlib compression='auto'/>
+            <playback compression='on'/>
+            <streaming mode='filter'/>
+            <mouse mode='client'/>
+            <clipboard copypaste='yes'/>
+            <filetransfer enable='yes'/>
+          </graphics>
+          <graphics type='egl-headless'>
+            <gl/>
+          </graphics>
+          {% else %}
+          <graphics type='spice'>
+            <listen type='socket' socket='/tmp/{{ name | replace(' ', '') }}.sock'/>
+            <image compression='auto_glz'/>
+            <jpeg compression='auto'/>
+            <zlib compression='auto'/>
+            <playback compression='on'/>
+            <streaming mode='filter'/>
+            <mouse mode='client'/>
+            <clipboard copypaste='yes'/>
+            <filetransfer enable='yes'/>
+            <gl enable='yes'/>
+          </graphics>
+          {% endif %}
+          <sound model='ich9'>
+          </sound>
+          <audio id='1' type='spice'/>
+          <video>
+            <model type='virtio' heads='1' primary='yes'>
+              <acceleration accel3d='yes'/>
+              <resolution x='2560' y='1440'/>
+            </model>
+          </video>
+          <memballoon model='virtio'>
+          </memballoon>
+          <rng model='virtio'>
+            <backend model='random'>/dev/urandom</backend>
+          </rng>
+        </devices>
+      </domain>
+
+  - name: Linux
+    description: x86 Linux machine with gl-accelerated graphics with support for remote graphics.
+    settings:
+      - name: Domain name
+        type: str
+        output:
+          value: name
+      - name: Description
+        type: str
+        output:
+          value: description
+      - name: vCPUs
+        type: int
+        params:
+          min: 1
+          max: 100
+        output:
+          value: vcpus
+      - name: Memory
+        type: data
+        output:
+          value: memory
+      - name: Installation ISO path
+        type: file
+        output:
+          value: iso
+      - name: Use local socket for graphics
+        type: list
+        output: 
+          value: local_graphics
+        params:
+          selection:
+            - "yes"
+            - "no"
+      - name: Create or pick a qcow2 disk image
+        type: volume
+        output:
+          pool: main_pool
+          volume: main_volume
+      - name: Virtual network
+        type: network
+        output:
+          network: vir_network
+    template: |
+      <domain type='kvm'>
+        <name>{{ name }}</name>
+        <title>{{ name }}</title>
+        <description>{{ description }}</description>
+        <memory unit='B'>{{ memory }}</memory>
+        <vcpu placement='static'>{{ vcpus }}</vcpu>
+        <os>
+          <type arch='x86_64'>hvm</type>
+        </os>
+        <memoryBacking>
+          <source type="memfd"/>
+          <access mode="shared"/>
+        </memoryBacking>
+        <features>
+          <acpi/>
+          <apic/>
+          <vmport state='off'/>
+          <smm state='on'/>
+        </features>
+        <cpu mode='host-passthrough' check='none' migratable='on'>
+          <topology sockets='{{ vcpus }}' dies='1' cores='1' threads='1'/>
+        </cpu>
+        <clock offset='utc'>
+          <timer name='rtc' tickpolicy='catchup'/>
+          <timer name='pit' tickpolicy='delay'/>
+          <timer name='hpet' present='no'/>
+        </clock>
+        <pm>
+          <suspend-to-mem enabled='no'/>
+          <suspend-to-disk enabled='no'/>
+        </pm>
+        <devices>
+          <emulator>/usr/bin/qemu-system-x86_64</emulator>
+          <disk type='volume' device='disk'>
+            <driver name='qemu' type='qcow2'/>
+            <source pool="{{ main_pool }}" volume="{{ main_volume }}"/>
+            <boot order='1'/>
+            <target dev='vda' bus='virtio'/>
+          </disk>
+          <disk type='file' device='cdrom'>
+            <driver name='qemu' type='raw'/>
+            <source file='{{ iso }}'/>
+            <readonly/>
+            <boot order='2'/>
+            <target dev='sda' bus='sata'/>
+          </disk>
+          <interface type='network'>
+            <source network='{{ vir_network }}'/>
+            <model type='virtio'/>
+          </interface>
+          <serial type='pty'>
+            <target type='isa-serial' port='0'>
+              <model name='isa-serial'/>
+            </target>
+          </serial>
+          <console type='pty'>
+            <target type='serial' port='0'/>
+          </console>
+          <channel type='unix'>
+            <target type='virtio' name='org.qemu.guest_agent.0'/>
+          </channel>
+          <channel type='spicevmc'>
+            <target type='virtio' name='com.redhat.spice.0'/>
+          </channel>
+          <input type='tablet' bus='usb'>
+            <address type='usb' bus='0' port='1'/>
+          </input>
+          <input type='mouse' bus='ps2'/>
+          <input type='keyboard' bus='ps2'/>
+          {% if local_graphics == "no" %}
+          <graphics type='spice' port='5900' autoport='no' listen='0.0.0.0'>
+            <listen type='address' address='0.0.0.0'/>
+            <image compression='auto_glz'/>
+            <jpeg compression='auto'/>
+            <zlib compression='auto'/>
+            <playback compression='on'/>
+            <streaming mode='filter'/>
+            <mouse mode='client'/>
+            <clipboard copypaste='yes'/>
+            <filetransfer enable='yes'/>
+          </graphics>
+          <graphics type='egl-headless'>
+            <gl/>
+          </graphics>
+          {% else %}
+          <graphics type='spice'>
+            <listen type='socket' socket='/tmp/{{ name | replace(' ', '') }}.sock'/>
+            <image compression='auto_glz'/>
+            <jpeg compression='auto'/>
+            <zlib compression='auto'/>
+            <playback compression='on'/>
+            <streaming mode='filter'/>
+            <mouse mode='client'/>
+            <clipboard copypaste='yes'/>
+            <filetransfer enable='yes'/>
+            <gl enable='yes'/>
+          </graphics>
+          {% endif %}
+          <sound model='ich9'>
+          </sound>
+          <audio id='1' type='spice'/>
+          <video>
+            <model type='virtio' heads='1' primary='yes'>
+              <acceleration accel3d='yes'/>
+              <resolution x='2560' y='1440'/>
+            </model>
+          </video>
+          <memballoon model='virtio'>
+          </memballoon>
+          <rng model='virtio'>
+            <backend model='random'>/dev/urandom</backend>
+          </rng>
+        </devices>
+      </domain>
+
+  - name: Linux (existing)
+    description: x86 Linux machine from existing disk.
+    settings:
+      - name: Domain name
+        type: str
+        output:
+          value: name
+      - name: Description
+        type: str
+        output:
+          value: description
+      - name: vCPUs
+        type: int
+        params:
+          min: 1
+          max: 100
+        output:
+          value: vcpus
+      - name: Memory
+        type: data
+        output:
+          value: memory
+      - name: Use local socket for graphics
+        type: list
+        output: 
+          value: local_graphics
+        params:
+          selection:
+            - "yes"
+            - "no"            
+      - name: Disk path
+        type: file
+        output:
+          value: disk
+      - name: Virtual network
+        type: network
+        output:
+          network: vir_network
+    template: |
+      <domain type='kvm'>
+        <name>{{ name }}</name>
+        <title>{{ name }}</title>
+        <description>{{ description }}</description>
+        <memory unit='B'>{{ memory }}</memory>
+        <vcpu placement='static'>{{ vcpus }}</vcpu>
+        <os>
+          <type arch='x86_64'>hvm</type>
+        </os>
+        <memoryBacking>
+          <source type="memfd"/>
+          <access mode="shared"/>
+        </memoryBacking>
+        <features>
+          <acpi/>
+          <apic/>
+          <vmport state='off'/>
+          <smm state='on'/>
+        </features>
+        <cpu mode='host-passthrough' check='none' migratable='on'>
+          <topology sockets='{{ vcpus }}' dies='1' cores='1' threads='1'/>
+        </cpu>
+        <clock offset='utc'>
+          <timer name='rtc' tickpolicy='catchup'/>
+          <timer name='pit' tickpolicy='delay'/>
+          <timer name='hpet' present='no'/>
+        </clock>
+        <pm>
+          <suspend-to-mem enabled='no'/>
+          <suspend-to-disk enabled='no'/>
+        </pm>
+        <devices>
+          <emulator>/usr/bin/qemu-system-x86_64</emulator>
+          <disk type='file' device='disk'>
+            <driver name='qemu' type='qcow2'/>
+            <source file='{{ disk }}'/>
+            <boot order='1'/>
+            <target dev='sda' bus='sata'/>
+          </disk>
+          <interface type='network'>
+            <source network='{{ vir_network }}'/>
+            <model type='virtio'/>
+          </interface>
+          <serial type='pty'>
+            <target type='isa-serial' port='0'>
+              <model name='isa-serial'/>
+            </target>
+          </serial>
+          <console type='pty'>
+            <target type='serial' port='0'/>
+          </console>
+          <channel type='unix'>
+            <target type='virtio' name='org.qemu.guest_agent.0'/>
+          </channel>
+          <channel type='spicevmc'>
+            <target type='virtio' name='com.redhat.spice.0'/>
+          </channel>
+          <input type='tablet' bus='usb'>
+            <address type='usb' bus='0' port='1'/>
+          </input>
+          <input type='mouse' bus='ps2'/>
+          <input type='keyboard' bus='ps2'/>
+          {% if local_graphics == "no" %}
+          <graphics type='spice' port='5900' autoport='no' listen='0.0.0.0'>
+            <listen type='address' address='0.0.0.0'/>
+            <image compression='auto_glz'/>
+            <jpeg compression='auto'/>
+            <zlib compression='auto'/>
+            <playback compression='on'/>
+            <streaming mode='filter'/>
+            <mouse mode='client'/>
+            <clipboard copypaste='yes'/>
+            <filetransfer enable='yes'/>
+          </graphics>
+          <graphics type='egl-headless'>
+            <gl/>
+          </graphics>
+          {% else %}
+          <graphics type='spice'>
+            <listen type='socket' socket='/tmp/{{ name | replace(' ', '') }}.sock'/>
+            <image compression='auto_glz'/>
+            <jpeg compression='auto'/>
+            <zlib compression='auto'/>
+            <playback compression='on'/>
+            <streaming mode='filter'/>
+            <mouse mode='client'/>
+            <clipboard copypaste='yes'/>
+            <filetransfer enable='yes'/>
+            <gl enable='yes'/>
+          </graphics>
+          {% endif %}
+          <sound model='ich9'>
+          </sound>
+          <audio id='1' type='spice'/>
+          <video>
+            <model type='virtio' heads='1' primary='yes'>
+              <acceleration accel3d='yes'/>
+              <resolution x='2560' y='1440'/>
+            </model>
+          </video>
+          <memballoon model='virtio'>
+          </memballoon>
+          <rng model='virtio'>
+            <backend model='random'>/dev/urandom</backend>
+          </rng>
+        </devices>
+      </domain>

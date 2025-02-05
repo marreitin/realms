@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 0.94.1 -->
+<interface>
+  <requires lib="gtk" version="4.12"/>
+  <requires lib="libadwaita" version="1.6"/>
+  <object class="AdwDialog" id="main-dialog">
+    <property name="height-request">800</property>
+    <property name="title">DHCP host entries</property>
+    <property name="width-request">700</property>
+    <child>
+      <object class="AdwToolbarView">
+        <property name="content">
+          <object class="AdwPreferencesPage">
+            <child>
+              <object class="AdwPreferencesGroup" id="main-group">
+                <property name="header-suffix">
+                  <object class="GtkButton" id="add-host">
+                    <property name="css-classes">flat</property>
+                    <property name="icon-name">list-add-symbolic</property>
+                  </object>
+                </property>
+                <property name="title">DHCP hosts</property>
+              </object>
+            </child>
+          </object>
+        </property>
+        <child type="top">
+          <object class="AdwHeaderBar">
+            <property name="show-start-title-buttons">False</property>
+            <property name="valign">start</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

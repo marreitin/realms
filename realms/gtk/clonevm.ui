@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 0.90.4 -->
+<interface>
+  <!-- interface-name clonevm.ui -->
+  <requires lib="gtk" version="4.12"/>
+  <requires lib="libadwaita" version="1.4"/>
+  <object class="AdwApplicationWindow" id="main-window">
+    <property name="content">
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar">
+            <property name="show-back-button">False</property>
+            <property name="valign">start</property>
+            <child type="start">
+              <object class="GtkButton" id="btn-clone">
+                <property name="child">
+                  <object class="AdwButtonContent">
+                    <property name="icon-name">edit-copy-symbolic</property>
+                    <property name="label">Clone</property>
+                  </object>
+                </property>
+                <property name="css-classes">suggested-action</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="AdwPreferencesPage">
+            <property name="hexpand">True</property>
+            <child>
+              <object class="AdwPreferencesGroup">
+                <property name="hexpand">True</property>
+                <property name="width-request">400</property>
+                <child>
+                  <object class="AdwEntryRow" id="vlone-vm-name">
+                    <property name="text">my vm (clone)</property>
+                    <property name="title">Clone name</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwSwitchRow" id="clone-direct-boot">
+                    <property name="active">True</property>
+                    <property name="icon-name">drive-multidisk-symbolic</property>
+                    <property name="subtitle">Clone all disks</property>
+                    <property name="title">Clone disks</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwSwitchRow" id="clone-disks">
+                    <property name="active">True</property>
+                    <property name="icon-name">system-shutdown-symbolic</property>
+                    <property name="subtitle">Boot the VM immediately</property>
+                    <property name="title">Boot when done</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </property>
+    <property name="height-request">600</property>
+    <property name="title">Clone VM</property>
+    <property name="width-request">800</property>
+  </object>
+</interface>

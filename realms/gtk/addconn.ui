@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 0.94.1 -->
+<interface>
+  <!-- interface-name addconn.ui -->
+  <requires lib="gtk" version="4.12"/>
+  <requires lib="libadwaita" version="1.5"/>
+  <object class="AdwDialog" id="main-dialog">
+    <property name="height-request">700</property>
+    <property name="title">Add libvirt connection</property>
+    <property name="width-request">700</property>
+    <child>
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar">
+            <property name="show-back-button">False</property>
+            <property name="show-start-title-buttons">False</property>
+            <property name="valign">start</property>
+            <child type="end">
+              <object class="GtkButton" id="btn-finish">
+                <property name="css-classes">suggested-action</property>
+                <property name="label">Add</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child type="top">
+          <object class="GtkBox">
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkBox" id="prefs-box">
+                <child>
+                  <object class="AdwPreferencesPage">
+                    <property name="hexpand">True</property>
+                    <child>
+                      <object class="AdwPreferencesGroup">
+                        <property name="hexpand">True</property>
+                        <property name="title">Add libvirt connection</property>
+                        <property name="width-request">400</property>
+                        <child>
+                          <object class="AdwEntryRow" id="name">
+                            <property name="activates-default">True</property>
+                            <property name="input-purpose">name</property>
+                            <property name="title">Name</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="AdwEntryRow" id="description">
+                            <property name="activates-default">True</property>
+                            <property name="input-purpose">name</property>
+                            <property name="title">Description</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="AdwComboRow" id="type">
+                            <property name="model">
+                              <object class="GtkStringList">
+                                <property name="strings">qemu/kvm
+xen
+libvirt-lxc
+Custom URL</property>
+                              </object>
+                            </property>
+                            <property name="title">Connection type</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="AdwExpanderRow" id="remote">
+                            <property name="expanded">True</property>
+                            <property name="show-enable-switch">True</property>
+                            <property name="title">Connect to remote hypervisor</property>
+                            <child>
+                              <object class="AdwEntryRow" id="ruser">
+                                <property name="input-purpose">name</property>
+                                <property name="title">User</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="AdwEntryRow" id="rhost">
+                                <property name="input-purpose">url</property>
+                                <property name="title">Host</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="AdwActionRow" id="url">
+                            <property name="css-classes">property</property>
+                            <property name="subtitle">fancy://uri@host:/system</property>
+                            <property name="title">Generated URL</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="AdwEntryRow" id="custom-url">
+                            <property name="input-purpose">url</property>
+                            <property name="title">Custom URL</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="AdwSwitchRow" id="autoconnect">
+                            <property name="active">True</property>
+                            <property name="subtitle">Connect when opening app</property>
+                            <property name="title">Autoconnect</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

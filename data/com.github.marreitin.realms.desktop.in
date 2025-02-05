@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Realms
+Exec=realms
+Icon=com.github.marreitin.realms
+Terminal=false
+Type=Application
+Categories=Utility;
+Keywords=GTK;
+StartupNotify=true
+DBusActivatable=false

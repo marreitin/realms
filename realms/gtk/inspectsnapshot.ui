@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 0.94.1 -->
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="libadwaita" version="1.5"/>
+  <object class="AdwDialog" id="main-dialog">
+    <property name="height-request">800</property>
+    <property name="title">Snapshot XML</property>
+    <property name="width-request">700</property>
+    <child>
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar">
+            <property name="show-start-title-buttons">False</property>
+            <property name="valign">start</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow">
+            <property name="child">
+              <object class="GtkBox" id="xml-box"/>
+            </property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

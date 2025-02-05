@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 0.94.1 -->
+<interface>
+  <requires lib="gtk" version="4.12"/>
+  <requires lib="libadwaita" version="1.5"/>
+  <object class="AdwDialog" id="main-dialog">
+    <property name="height-request">800</property>
+    <property name="title">Clone domain</property>
+    <property name="width-request">700</property>
+    <child>
+      <object class="AdwViewStack" id="main-stack">
+        <property name="visible-child-name">spinner-page</property>
+        <child>
+          <object class="AdwViewStackPage" id="main-page">
+            <property name="child">
+              <object class="AdwToolbarView">
+                <child type="top">
+                  <object class="AdwHeaderBar" id="header">
+                    <property name="show-start-title-buttons">False</property>
+                    <property name="valign">start</property>
+                    <child type="end">
+                      <object class="GtkButton" id="btn-finish">
+                        <property name="css-classes">suggested-action</property>
+                        <property name="label">Clone</property>
+                        <property name="valign">baseline-center</property>
+                      </object>
+                    </child>
+                    <child type="end">
+                      <object class="GtkButton" id="btn-next">
+                        <property name="child">
+                          <object class="AdwButtonContent">
+                            <property name="icon-name">go-next-symbolic</property>
+                            <property name="label">Next</property>
+                          </object>
+                        </property>
+                        <property name="css-classes">suggested-action</property>
+                        <property name="label">Next</property>
+                        <property name="valign">baseline-center</property>
+                      </object>
+                    </child>
+                    <child type="start">
+                      <object class="GtkButton" id="btn-back">
+                        <property name="child">
+                          <object class="AdwButtonContent">
+                            <property name="icon-name">go-previous-symbolic</property>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child type="bottom">
+                  <object class="AdwViewSwitcherBar">
+                    <property name="hexpand">True</property>
+                    <property name="reveal">True</property>
+                    <property name="valign">baseline-center</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwNavigationView" id="nav-view">
+                    <child>
+                      <object class="AdwNavigationPage" id="template-nav-page">
+                        <property name="child">
+                          <object class="AdwStatusPage" id="status-page">
+                            <property name="hexpand">True</property>
+                            <property name="icon-name">computer</property>
+                            <property name="vexpand">True</property>
+                            <child>
+                              <object class="AdwPreferencesGroup">
+                                <child>
+                                  <object class="AdwEntryRow" id="new_name">
+                                    <property name="title">New Name</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </property>
+                        <property name="tag">select</property>
+                        <property name="title">select</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </property>
+            <property name="name">main-page</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwViewStackPage" id="spinner-page">
+            <property name="child">
+              <object class="AdwStatusPage" id="cloning-status">
+                <property name="title">Cloning...</property>
+                <!-- Custom object fragments -->
+              </object>
+            </property>
+            <property name="name">spinner-page</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/com/github/marreitin/realms">
+    <file preprocess="xml-stripblanks">gtk/addconn.ui</file>
+    <file preprocess="xml-stripblanks">gtk/adddev.ui</file>
+    <file preprocess="xml-stripblanks">gtk/adddom.ui</file>
+    <file preprocess="xml-stripblanks">gtk/addnet.ui</file>
+    <file preprocess="xml-stripblanks">gtk/addpool.ui</file>
+    <file preprocess="xml-stripblanks">gtk/addsecret.ui</file>
+    <file preprocess="xml-stripblanks">gtk/addvol.ui</file>
+    <file preprocess="xml-stripblanks">gtk/clonedom.ui</file>
+    <file preprocess="xml-stripblanks">gtk/clonevm.ui</file>
+    <file preprocess="xml-stripblanks">gtk/dhcphosts.ui</file>
+    <file preprocess="xml-stripblanks">gtk/downloadvol.ui</file>
+    <file preprocess="xml-stripblanks">gtk/inspectsnapshot.ui</file>
+    <file preprocess="xml-stripblanks">gtk/takesnapshot.ui</file>
+  </gresource>
+</gresources>

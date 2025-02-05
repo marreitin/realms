@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 0.94.1 -->
+<interface>
+  <requires lib="gtk" version="4.12"/>
+  <requires lib="libadwaita" version="1.5"/>
+  <object class="AdwDialog" id="main-dialog">
+    <property name="height-request">800</property>
+    <property name="title">Download volume</property>
+    <property name="width-request">700</property>
+    <child>
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar">
+            <property name="show-back-button">False</property>
+            <property name="show-end-title-buttons">False</property>
+            <property name="show-start-title-buttons">False</property>
+            <property name="valign">start</property>
+            <child type="start">
+              <object class="GtkButton" id="btn-cancel">
+                <property name="css-classes">destructive-action</property>
+                <property name="label">Cancel</property>
+                <property name="valign">baseline-center</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="AdwStatusPage">
+            <property name="child">
+              <object class="GtkProgressBar" id="download-progress">
+                <property name="show-text">True</property>
+              </object>
+            </property>
+            <property name="icon-name">folder-download-symbolic</property>
+            <property name="title">Downloading...</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
