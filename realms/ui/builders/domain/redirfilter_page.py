@@ -79,11 +79,13 @@ class RedirfilterPage(BaseDevicePage):
     def build(self):
         self.group = Adw.PreferencesGroup()
         self.prefs_page.add(self.group)
+        self.filter_group = Adw.PreferencesGroup()
+        self.prefs_page.add(self.filter_group)
 
         add_btn = iconButton(
             "Add rule", "list-add-symbolic", self.onAddClicked, css_classes=["flat"]
         )
-        self.group.set_header_suffix(add_btn)
+        self.filter_group.set_header_suffix(add_btn)
 
         if not self.use_for_adding:
             delete_row = Adw.ActionRow()
@@ -99,7 +101,7 @@ class RedirfilterPage(BaseDevicePage):
         self.group.set_title(self.getTitle())
 
         for row in self.rows:
-            self.group.remove(row)
+            self.filter_group.remove(row)
         self.rows.clear()
 
         for usbdev in self.xml_tree.findall("usbdev"):
@@ -107,7 +109,7 @@ class RedirfilterPage(BaseDevicePage):
 
     def addRow(self, xml_tree):
         row = FilterRow(xml_tree, self, len(self.rows))
-        self.group.add(row)
+        self.filter_group.add(row)
         self.rows.append(row)
 
     def onAddClicked(self, btn):
@@ -115,7 +117,7 @@ class RedirfilterPage(BaseDevicePage):
         self.showApply()
 
     def onRemoveClicked(self, row: FilterRow):
-        self.group.remove(row)
+        self.filter_group.remove(row)
         self.rows.remove(row)
         self.showApply()
 

@@ -92,7 +92,8 @@ def main(*_):
     prepareSettings()
 
     app = MainApp(
-        application_id="com.github.marreitin.realms", flags=Gio.ApplicationFlags.NON_UNIQUE
+        application_id="com.github.marreitin.realms",
+        flags=Gio.ApplicationFlags.NON_UNIQUE,
     )
     app.run()
 
