@@ -621,11 +621,16 @@ class DomainDetailsTab(BaseDetailsTab):
                 "Try to detach device from running domain",
                 [
                     ActionOption(
+                        "No",
+                        detachNormal,
+                    ),
+                    ActionOption(
                         "Detach",
                         detachActive,
                         appearance=Adw.ResponseAppearance.SUGGESTED,
-                    )
+                    ),
                 ],
+                show_cancel=False,
             )
             dialog.present(self.window_ref.window)
         else:
