@@ -38,6 +38,7 @@ def prepareSettings():
 
 
 def getSettings(key):
+    global __settings_data
     with open(settings_path, "r") as f:
         __settings_data = json.load(f)
     if key in __settings_data:
