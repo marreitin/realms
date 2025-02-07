@@ -206,7 +206,8 @@ class ConnectionDetailsPage(Gtk.Box):
 
     def setStatus(self):
         """Update the status (icons and some buttons)."""
-        if self.parent.connection.isConnected():
+        state = self.parent.connection.getState()
+        if state == CONNECTION_STATE_CONNECTED:
             self.connect_btn.set_visible(False)
             self.disconnect_btn.set_visible(True)
 
@@ -215,8 +216,19 @@ class ConnectionDetailsPage(Gtk.Box):
 
             self.apply_row.setShowWarning(True)
             self.apply_row.setShowApply(False)
+        elif state == CONNECTION_STATE_CONNECTING:
+            self.connect_btn.set_visible(True)
+            self.connect_btn.set_sensitive(False)
+            self.disconnect_btn.set_visible(False)
+
+            self.secure_icon.set_visible(False)
+            self.encrypted_icon.set_visible(False)
+
+            self.apply_row.setShowWarning(False)
+            self.apply_row.setShowApply(True)
         else:
             self.connect_btn.set_visible(True)
+            self.connect_btn.set_sensitive(True)
             self.disconnect_btn.set_visible(False)
 
             self.secure_icon.set_visible(False)

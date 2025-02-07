@@ -85,6 +85,7 @@ class ConnectionRow(Gtk.ListBoxRow):
         self.window = None
 
         self.status_icon = None
+        self.loading_spinner = None
         self.name_label = None
         self.url_label = None
         self.quick_action_box = None
@@ -143,6 +144,9 @@ class ConnectionRow(Gtk.ListBoxRow):
 
         self.status_icon = Gtk.Image.new_from_icon_name("network-wired-symbolic")
         label_box.append(self.status_icon)
+
+        self.loading_spinner = Gtk.Spinner(visible=False)
+        label_box.append(self.loading_spinner)
 
         # Some quick actions
         self.quick_action_box = Gtk.Box(hexpand=True, css_classes=["linked"])
@@ -312,14 +316,14 @@ class ConnectionRow(Gtk.ListBoxRow):
 
     def setStatus(self) -> None:
         """Update what should be visible and what hidden."""
-        connected = self.connection.isConnected()
+        state = self.connection.getState()
 
         self.window.updateConnectionURL(self.url_label.get_label(), self.connection.url)
         self.url_label.set_label(self.connection.getURLCurr())
         self.url_label.set_tooltip_text(self.connection.getURLCurr())
         self.name_label.set_label(self.connection.name)
 
-        if connected:
+        if state == CONNECTION_STATE_CONNECTED:
             self.quick_actions["add-dom"].set_visible(True)
             self.quick_actions["add-net"].set_visible(True)
             self.quick_actions["add-pool"].set_visible(True)
@@ -328,10 +332,29 @@ class ConnectionRow(Gtk.ListBoxRow):
             self.quick_actions["connect"].set_sensitive(True)
 
             self.status_icon.set_from_icon_name("network-transmit-receive-symbolic")
+            self.status_icon.set_visible(True)
+            self.loading_spinner.set_visible(False)
+            self.loading_spinner.stop()
 
             self.storage_expander.set_visible(True)
             self.network_expander.set_visible(True)
             self.domain_expander.set_visible(True)
+        elif state == CONNECTION_STATE_CONNECTING:
+            self.quick_actions["add-dom"].set_visible(False)
+            self.quick_actions["add-net"].set_visible(False)
+            self.quick_actions["add-pool"].set_visible(False)
+            self.quick_actions["edit-conn"].set_visible(False)
+            self.quick_actions["connect"].set_visible(False)
+            self.quick_actions["connect"].set_sensitive(False)
+
+            self.status_icon.set_from_icon_name("network-offline-symbolic")
+            self.status_icon.set_visible(False)
+            self.loading_spinner.set_visible(True)
+            self.loading_spinner.start()
+
+            self.storage_expander.set_visible(False)
+            self.network_expander.set_visible(False)
+            self.domain_expander.set_visible(False)
         else:
             self.quick_actions["add-dom"].set_visible(False)
             self.quick_actions["add-net"].set_visible(False)
@@ -341,6 +364,9 @@ class ConnectionRow(Gtk.ListBoxRow):
             self.quick_actions["connect"].set_sensitive(True)
 
             self.status_icon.set_from_icon_name("network-offline-symbolic")
+            self.status_icon.set_visible(True)
+            self.loading_spinner.set_visible(False)
+            self.loading_spinner.stop()
 
             self.storage_expander.set_visible(False)
             self.network_expander.set_visible(False)

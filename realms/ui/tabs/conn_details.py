@@ -87,10 +87,13 @@ class ConnectionDetailsTab(BaseDetailsTab):
         self.setStatus()
 
     def setStatus(self):
-        if self.connection.isConnected():
+        state = self.connection.getState()
+        if state == CONNECTION_STATE_CONNECTED:
             self.stack_switcher.set_reveal(True)
 
             self.perf_page.start()
+        elif state == CONNECTION_STATE_CONNECTING:
+            self.stack_switcher.set_reveal(False)
         else:
             self.stack_switcher.set_reveal(False)
             # Important to not be stuck on secrets page upon disconnection

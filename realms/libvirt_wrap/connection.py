@@ -45,7 +45,7 @@ class Connection(EventManager):
         self.autoconnect = False
         self.name = None
         self.description = None
-        self.__is_alive__ = False
+        self.__state__ = CONNECTION_STATE_DISCONNECTED
 
         self.connection: libvirt.virConnect = None
 
@@ -92,11 +92,11 @@ class Connection(EventManager):
             Exception: Raise if not alive
         """
         # This variable is mostly to prevent weird recursions
-        if self.__is_alive__ == False:
+        if self.__state__ != CONNECTION_STATE_CONNECTED:
             raise Exception("Connection is still not alive")
 
         if self.connection is None or not self.connection.isAlive():
-            self.__is_alive__ = False
+            self.__state__ = CONNECTION_STATE_DISCONNECTED
             self.sendEvent(
                 self.connection,
                 None,
@@ -116,6 +116,7 @@ class Connection(EventManager):
         if self.connection:
             return
 
+        self.__state__ = CONNECTION_STATE_CONNECTING
         self.sendEvent(
             self.connection,
             None,
@@ -129,10 +130,9 @@ class Connection(EventManager):
                 self.connection = libvirt.open(self.url)
                 if not self.connection:
                     raise Exception
-                self.__is_alive__ = True
 
                 self.connection.registerCloseCallback(
-                    lambda *x: self.disconnect(from_disconnect=True),
+                    lambda *_: self.disconnect(from_disconnect=True),
                     None,
                 )
 
@@ -168,7 +168,7 @@ class Connection(EventManager):
                     )
                     self.supports_secrets = True
                 except:
-                    pass
+                    self.supports_secrets = False
 
                 self.loadCapabilities()
 
@@ -182,6 +182,7 @@ class Connection(EventManager):
 
         def finish(connected):
             if connected:
+                self.__state__ = CONNECTION_STATE_CONNECTED
                 self.sendEvent(
                     self.connection,
                     None,
@@ -190,6 +191,7 @@ class Connection(EventManager):
                     0,
                 )
             else:
+                self.__state__ = CONNECTION_STATE_DISCONNECTED
                 self.sendEvent(
                     self.connection,
                     None,
@@ -213,7 +215,7 @@ class Connection(EventManager):
 
         if self.isConnected() or from_disconnect:
             self.connection = None
-            self.__is_alive__ = False
+            self.__state__ = CONNECTION_STATE_DISCONNECTED
             self.sendEvent(
                 self.connection,
                 None,
@@ -380,7 +382,9 @@ class Connection(EventManager):
             self.domain_capabilities = DomainCapabilities(None)
 
     def isConnected(self) -> bool:
-        return self.__is_alive__ and self.connection is not None
+        return (
+            self.__state__ == CONNECTION_STATE_CONNECTED and self.connection is not None
+        )
 
     def isSecure(self) -> bool:
         self.isAlive()
@@ -450,6 +454,9 @@ class Connection(EventManager):
             CONNECTION_EVENT_SETTINGS_CHANGED,
             0,
         )
+
+    def getState(self) -> int:
+        return self.__state__
 
     ############################################
     # Methods for host management
