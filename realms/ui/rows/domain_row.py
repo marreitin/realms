@@ -14,13 +14,37 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import libvirt
-from gi.repository import Adw, Gtk
+from gi.repository import Adw, Gdk, Gio, Gtk
 
+from realms.helpers.async_jobs import failableAsyncJob
+from realms.helpers.show_domain_video import show
 from realms.libvirt_wrap import Domain
 from realms.libvirt_wrap.constants import *
 from realms.ui.tabs import DomainDetailsTab
 
 from .base_row import BaseRow
+
+
+def __onContextStartClicked__(domainRow: any, *_):
+    failableAsyncJob(
+        domainRow.domain.start,
+        [],
+        lambda e: domainRow.window.pushToastText(str(e)),
+        lambda r: r,
+    )
+
+
+def __onContextStopClicked__(domainRow: any, *_):
+    failableAsyncJob(
+        domainRow.domain.shutdown,
+        [],
+        lambda e: domainRow.window.pushToastText(str(e)),
+        lambda r: r,
+    )
+
+
+def __onContextOpenClicked__(domainRow: any, *_):
+    show(domainRow.domain, domainRow.window)
 
 
 class DomainRow(BaseRow):
@@ -33,11 +57,13 @@ class DomainRow(BaseRow):
         self.subtitle = None
         self.status_icon = None
 
-        self.build()
+        self.popover = None
 
-        self.domain.register_callback_any(self.onConnectionEvent, None)
+        self.__build__()
 
-    def build(self):
+        self.domain.register_callback_any(self.__onConnectionEvent__, None)
+
+    def __build__(self):
         hbox = Gtk.Box(spacing=6)
         self.set_child(hbox)
 
@@ -45,24 +71,52 @@ class DomainRow(BaseRow):
         hbox.append(vbox)
 
         self.title = Gtk.Label(
-            label=self.domain.getDisplayName(), halign=Gtk.Align.START, vexpand=True
+            label=self.domain.getDisplayName(),
+            halign=Gtk.Align.START,
+            vexpand=True,
+            css_classes=["caption-heading"],
         )
-        self.title.set_css_classes(["caption-heading"])
         vbox.append(self.title)
 
-        self.subtitle = Gtk.Label(label="unknown state", halign=Gtk.Align.START)
-        self.subtitle.set_css_classes(["caption", "dim-label"])
+        self.subtitle = Gtk.Label(
+            label="unknown state",
+            halign=Gtk.Align.START,
+            css_classes=["caption", "dim-label"],
+        )
         vbox.append(self.subtitle)
 
         self.status_icon = Gtk.Image.new_from_icon_name("computer-symbolic")
         self.status_icon.set_size_request(32, -1)
         hbox.append(self.status_icon)
 
-        self.setStatus()
+        self.__buildContextMenu__()
 
-    def setStatus(self):
-        self.status_icon.set_css_classes([])
+        self.__setStatus__()
 
+    def __buildContextMenu__(self):
+        def openPopover(*_):
+            menu = Gio.Menu()
+            if self.domain.isActive():
+                menu.append("Open", "domain.open")
+                menu.append("Stop", "domain.stop")
+            else:
+                menu.append("Start", "domain.start")
+
+            self.popover.set_menu_model(menu)
+            self.popover.popup()
+
+        self.install_action("domain.start", None, __onContextStartClicked__)
+        self.install_action("domain.open", None, __onContextOpenClicked__)
+        self.install_action("domain.stop", None, __onContextStopClicked__)
+
+        self.popover = Gtk.PopoverMenu(has_arrow=False)
+        self.popover.set_parent(self)
+
+        gesture = Gtk.GestureClick(button=3)
+        gesture.connect("pressed", openPopover)
+        self.add_controller(gesture)
+
+    def __setStatus__(self):
         self.title.set_label(self.domain.getDisplayName())
         self.subtitle.set_label(self.domain.getStateText())
         state = self.domain.getStateID()
@@ -91,17 +145,17 @@ class DomainRow(BaseRow):
                 tab_page_content, self.domain.getDisplayName(), "computer-symbolic"
             )
 
-    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id, opaque):
+    def __onConnectionEvent__(self, conn, obj, type_id, event_id, detail_id, opaque):
         if type_id == CALLBACK_TYPE_CONNECTION_GENERIC:
             if event_id in [CONNECTION_EVENT_DISCONNECTED, CONNECTION_EVENT_DELETED]:
-                self.domain.unregister_callback(self.onConnectionEvent)
+                self.domain.unregister_callback(self.__onConnectionEvent__)
                 return
         elif type_id == CALLBACK_TYPE_DOMAIN_GENERIC:
             if event_id == DOMAIN_EVENT_DELETED:
-                self.domain.unregister_callback(self.onConnectionEvent)
+                self.domain.unregister_callback(self.__onConnectionEvent__)
                 return
 
-        self.setStatus()
+        self.__setStatus__()
 
     def getSortingTitle(self):
         return self.domain.getDisplayName()
