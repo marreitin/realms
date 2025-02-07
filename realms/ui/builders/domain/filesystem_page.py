@@ -62,14 +62,15 @@ class FilesystemPage(BaseDevicePage):
         self.source_row = BindableEntryRow(title="Source")
         group.add(self.source_row)
 
-        browse_btn = iconButton(
-            "",
-            "inode-directory-symbolic",
-            self.onBrowseClicked,
-            css_classes=["flat"],
-            tooltip_text="Browse local paths",
-        )
-        self.source_row.add_suffix(browse_btn)
+        if self.parent.domain.connection.is_local:
+            browse_btn = iconButton(
+                "",
+                "inode-directory-symbolic",
+                self.onBrowseClicked,
+                css_classes=["flat"],
+                tooltip_text="Browse local paths",
+            )
+            self.source_row.add_suffix(browse_btn)
 
         self.target_row = BindableEntryRow(title="Target")
         group.add(self.target_row)

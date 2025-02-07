@@ -135,17 +135,19 @@ class FileRow(SettingsField):
 
         self.row = Adw.EntryRow(title=self.settings_dict["name"])
 
-        self.open_dialog = Gtk.FileDialog.new()
-        self.open_dialog.set_title("Select a File")
+        self.open_dialog = None
+        if parent.connection.is_local:
+            self.open_dialog = Gtk.FileDialog.new()
+            self.open_dialog.set_title("Select a File")
 
-        browse_btn = iconButton(
-            "",
-            "inode-directory-symbolic",
-            self.onBrowseClicked,
-            css_classes=["flat"],
-            tooltip_text="Browse local paths",
-        )
-        self.row.add_suffix(browse_btn)
+            browse_btn = iconButton(
+                "",
+                "inode-directory-symbolic",
+                self.onBrowseClicked,
+                css_classes=["flat"],
+                tooltip_text="Browse local paths",
+            )
+            self.row.add_suffix(browse_btn)
 
     def onBrowseClicked(self, btn):
         self.open_dialog.open(None, None, self.onFileDialogCB)

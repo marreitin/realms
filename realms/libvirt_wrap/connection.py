@@ -46,6 +46,7 @@ class Connection(EventManager):
         self.name = None
         self.description = None
         self.__state__ = CONNECTION_STATE_DISCONNECTED
+        self.is_local = False
 
         self.connection: libvirt.virConnect = None
 
@@ -225,10 +226,23 @@ class Connection(EventManager):
             )
 
     def loadSettings(self):
+        """Load the given settings of this connection."""
         self.url = self.settings["url"]
         self.autoconnect = self.settings["autoconnect"]
         self.name = self.settings["name"]
         self.description = self.settings["desc"]
+
+        self.findIsLocal()
+
+    def findIsLocal(self):
+        """Find out wheter the URL is to a local hypervisor
+        or not."""
+        self.is_local = True
+
+        if ":" not in self.url:
+            return
+        if "+" in self.url.split(":")[0]:
+            self.is_local = False
 
     def listDomains(self, ready_cb) -> None:
         self.isAlive()
