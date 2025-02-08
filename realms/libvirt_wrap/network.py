@@ -77,9 +77,7 @@ class Network(EventManager):
     def updateDefinition(self, xml: str):
         self.connection.isAlive()
 
-        new_network = self.connection.connection.networkDefineXMLFlags(
-            xml, libvirt.VIR_NETWORK_UPDATE_AFFECT_CONFIG
-        )
+        new_network = self.connection.connection.networkDefineXML(xml)
         self.network = new_network
 
     def start(self):
