@@ -116,7 +116,7 @@ class AddVolumeDialog:
             capacity,
             self.__checkValidity__,
             lambda t: str(stringToBytes(t)),
-            lambda t: bytesToString(t),
+            bytesToString,
         )
 
         allocation = self.tree.find("allocation")
@@ -126,7 +126,7 @@ class AddVolumeDialog:
             allocation,
             self.__checkValidity__,
             lambda t: str(stringToBytes(t)),
-            lambda t: bytesToString(t),
+            bytesToString,
         )
 
         target = self.tree.find("target")

@@ -17,41 +17,59 @@ import json
 import os
 import traceback
 
-home_dir = os.path.expanduser("~")
-config_dir = os.path.join(home_dir, ".config")
-realms_config_dir = os.path.join(config_dir, "realms")
-settings_path = os.path.join(realms_config_dir, "settings.json")
 
-__settings_data = None
+class Settings:
+    """Settings singleton object."""
 
+    __home_dir__ = os.path.expanduser("~")
+    __config_dir__ = os.path.join(__home_dir__, ".config")
+    __realms_config_dir__ = os.path.join(__config_dir__, "realms")
+    __settings_path__ = os.path.join(__realms_config_dir__, "settings.json")
 
-def prepareSettings():
-    global __settings_data
-    try:
-        print(realms_config_dir)
-        print(settings_path)
-        if not os.path.exists(realms_config_dir):
-            os.mkdir(realms_config_dir)
-    except Exception:
-        traceback.print_exc()
-        __settings_data = {}
+    __settings_data__ = {}
 
+    @classmethod
+    def prepare(cls):
+        """Create settings directory if necessary."""
+        try:
+            if not os.path.exists(cls.__realms_config_dir__):
+                os.mkdir(cls.__realms_config_dir__)
+        except Exception:
+            traceback.print_exc()
 
-def getSettings(key):
-    global __settings_data
-    with open(settings_path, "r") as f:
-        __settings_data = json.load(f)
-    if key in __settings_data:
-        return __settings_data[key]
-    else:
-        return None
+        cls.__settings_data__ = {}
 
+    @classmethod
+    def get(cls, key: str) -> any:
+        """Get a key from the settings. Always reloads
+        them from disk.
 
-def putSettings(key, data):
-    __settings_data[key] = data
-    saveSettings()
+        Args:
+            key (str): Key
 
+        Returns:
+            any: Value or None
+        """
+        with open(cls.__settings_path__, "r") as f:
+            cls.__settings_data__ = json.load(f)
+        if key in cls.__settings_data__:
+            return cls.__settings_data__[key]
+        else:
+            return None
 
-def saveSettings():
-    with open(settings_path, "w") as f:
-        json.dump(__settings_data, f)
+    @classmethod
+    def put(cls, key: str, data: any) -> None:
+        """Put or update key in settings.
+
+        Args:
+            key (str): Key
+            data (any): Value
+        """
+        cls.__settings_data__[key] = data
+        cls.__save__()
+
+    @classmethod
+    def __save__(cls):
+        """Save settings dict."""
+        with open(cls.__settings_path__, "w") as f:
+            json.dump(cls.__settings_data__, f)

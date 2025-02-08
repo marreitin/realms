@@ -29,7 +29,7 @@ from gi.repository import Adw, Gio, LibvirtGLib
 
 from realms.ui.main_window import MainWindow
 
-from .helpers.settings import getSettings, prepareSettings
+from .helpers.settings import Settings
 
 
 class MainApp(Adw.Application):
@@ -79,7 +79,7 @@ class MainApp(Adw.Application):
         return True
 
     def loadConnections(self):
-        conns = getSettings("connections")
+        conns = Settings.get("connections")
         if conns is not None:
             for conn in conns:
                 self.app_windows[0].addConnection(conn)
@@ -89,7 +89,7 @@ class MainApp(Adw.Application):
 
 def main(*_):
     """Main function for realms."""
-    prepareSettings()
+    Settings.prepare()
 
     app = MainApp(
         application_id="com.github.marreitin.realms",

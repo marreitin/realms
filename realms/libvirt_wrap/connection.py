@@ -20,7 +20,7 @@ import xml.etree.ElementTree as ET
 import libvirt
 from gi.repository import GLib
 
-from realms.helpers import asyncJob, getSettings, putSettings
+from realms.helpers import Settings, asyncJob
 
 from .constants import *
 from .domain_capabilities import DomainCapabilities
@@ -366,9 +366,9 @@ class Connection(EventManager):
             raise Exception("Something didn't unregister properly")
 
         # Delete self from settings
-        conn_settings = getSettings("connections")
+        conn_settings = Settings.get("connections")
         conn_settings.remove(self.settings)
-        putSettings("connections", conn_settings)
+        Settings.put("connections", conn_settings)
 
         # Now this connection can be safely deleted
 
@@ -455,9 +455,9 @@ class Connection(EventManager):
         return f"{major}.{minor}.{release}"
 
     def setSettings(self, new_settings: dict) -> None:
-        conn_settings = getSettings("connections")
+        conn_settings = Settings.get("connections")
         conn_settings[conn_settings.index(self.settings)] = new_settings
-        putSettings("connections", conn_settings)
+        Settings.put("connections", conn_settings)
         self.settings = new_settings
         self.loadSettings()
         # Emit an event that the settings changed

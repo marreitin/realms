@@ -15,7 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from gi.repository import Adw, Gtk
 
-from realms.helpers import getSettings, putSettings
+from realms.helpers import Settings
 
 
 class AddConnDialog:
@@ -184,7 +184,7 @@ class AddConnDialog:
 
         # All good
         desc = self.obj("description").get_text()
-        conns = getSettings("connections")
+        conns = Settings.get("connections")
         if conns is None:
             conns = []
         item = {
@@ -194,7 +194,7 @@ class AddConnDialog:
             "autoconnect": self.obj("autoconnect").get_active(),
         }
         conns.append(item)
-        putSettings("connections", conns)
+        Settings.put("connections", conns)
 
         self.window.addConnection(item)
 
