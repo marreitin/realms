@@ -21,7 +21,6 @@ from realms.ui.builders import iconButton, propertyRow
 from realms.ui.builders.bindable_entries import (
     BindableComboRow,
     BindableDropDown,
-    BindableEntry,
     BindableEntryRow,
     BindablePasswordRow,
     BindableSpinRow,
@@ -31,68 +30,65 @@ from realms.ui.builders.bindable_entries import (
 from .base_device_page import BaseDevicePage
 
 
-class GLRow(Adw.ActionRow):
+class GLRow(Adw.ExpanderRow):
     def __init__(self):
-        super().__init__(title="OpenGL support")
+        super().__init__(title="OpenGL Support", show_enable_switch=True)
 
         self.xml_tree = None
-        self.show_apply_cb = None
+        self.show_apply_cb = lambda: None
 
-        self.rendernode = BindableEntry(
-            hexpand=True,
-            vexpand=False,
-            valign=Gtk.Align.CENTER,
-            tooltip_text="GL rendernode",
-            placeholder_text="GL rendernode",
+        self.rendernode_row = BindableEntryRow(
+            tooltip_text="GL Rendernode",
+            title="GL Rendernode",
         )
-        self.add_suffix(self.rendernode)
+        self.add_row(self.rendernode_row)
 
-        self.enable_switch = Gtk.Switch(
-            vexpand=False, valign=Gtk.Align.CENTER, tooltip_text="Enable GL support"
-        )
-        self.add_suffix(self.enable_switch)
-
-        self.enable_switch.connect("notify::active", self.onEnableChanged)
+        self.connect("notify::enable-expansion", self.__onEnableChanged__)
 
     def bind(self, xml_tree: ET.Element, show_apply_cb: callable):
         self.xml_tree = None
 
         gl = xml_tree.find("gl")
         if gl is not None:
-            self.enable_switch.set_active(gl.get("enable", "yes") == "yes")
+            self.set_enable_expansion(gl.get("enable", "yes") == "yes")
         else:
-            self.enable_switch.set_active(False)
+            self.set_enable_expansion(False)
 
         self.xml_tree = xml_tree
         self.show_apply_cb = show_apply_cb
 
-        self.updateBind()
+        self.__updateBind__()
 
-    def updateBind(self):
+    def __updateBind__(self):
         gl = self.xml_tree.find("gl")
         if gl is not None:
             enabled = gl.get("enable", "yes") == "yes"
             if enabled:
-                self.rendernode.set_visible(True)
-                self.rendernode.bindAttr(gl, "rendernode", self.show_apply_cb)
+                self.rendernode_row.bindAttr(gl, "rendernode", self.show_apply_cb)
             else:
-                self.rendernode.set_visible(False)
-                self.rendernode.unbind()
+                self.rendernode_row.unbind()
 
-    def onEnableChanged(self, switch, *args):
+    def __onEnableChanged__(self, switch, *_):
         if self.xml_tree is None:
             return
         gl = self.xml_tree.find("gl")
         if gl is None:
             gl = ET.SubElement(self.xml_tree, "gl", attrib={"enable": "yes"})
-        gl.set("enable", "yes" if self.enable_switch.get_active() else "no")
-        self.updateBind()
+
+        if self.get_enable_expansion():
+            gl.set("enable", "yes")
+
+        else:
+            gl.set("enable", "no")
+            if "rendernode" in gl.attrib:
+                del gl.attrib["rendernode"]
+        self.__updateBind__()
         self.show_apply_cb()
 
 
 class ListenRow(Adw.ExpanderRow):
     def __init__(self, window: Adw.ApplicationWindow):
-        super().__init__(title="Listen type")
+        super().__init__(title="Listen Type")
 
         self.xml_tree = None
         self.show_apply_cb = None
@@ -113,30 +109,53 @@ class ListenRow(Adw.ExpanderRow):
         self.address_prop_row = propertyRow("Address", window)
         self.add_row(self.address_prop_row)
 
-        self.socket_row = BindableEntryRow(title="Socket address")
+        self.socket_row = BindableEntryRow(title="Socket Path")
         self.add_row(self.socket_row)
+
+        self.autoport_row = BindableSwitchRow(
+            "yes", "no", title="Automatically Choose Port"
+        )
+        self.add_row(self.autoport_row.getWidget())
+
+        self.tcp_row = BindableSpinRow(
+            lambda x: str(int(x)),
+            title="TCP Port",
+            unset_val=-1,
+            adjustment=Gtk.Adjustment(lower=-1, step_increment=1, upper=65535),
+        )
+        self.add_row(self.tcp_row.getWidget())
+
+        self.tls_row = BindableSpinRow(
+            lambda x: str(int(x)),
+            title="TLS Port",
+            unset_val=-1,
+            adjustment=Gtk.Adjustment(lower=-1, step_increment=1, upper=65535),
+        )
+        self.add_row(self.tls_row.getWidget())
 
     def bind(self, xml_tree: ET.Element, show_apply_cb: callable):
         self.xml_tree = xml_tree
 
-        if xml_tree.get("type") in ["spice", "vnc"]:
+        if self.xml_tree.get("type") in ["spice", "vnc"]:
             self.type_combo.setSelection(["none", "address", "network", "socket"])
         else:
             self.type_combo.setSelection(["none", "address", "network"])
 
-        listen = xml_tree.find("listen")
+        listen = self.xml_tree.find("listen")
         if listen is None:
             listen = ET.SubElement(self.xml_tree, "listen")
-        self.type_combo.bindAttr(listen, "type", self.onTypeChanged)
+        self.type_combo.bindAttr(listen, "type", self.__onTypeChanged__)
 
-        self.xml_tree = xml_tree
         self.show_apply_cb = show_apply_cb
 
         self.updateData()
 
     def updateData(self):
+        """Update the rows given the current graphics device
+        tree."""
         self.set_expanded(True)
-        t = self.type_combo.getSelectedString()
+        self.set_enable_expansion(True)
+        listen_type = self.type_combo.getSelectedString()
 
         self.address_row.set_visible(False)
         self.address_row.unbind()
@@ -145,27 +164,81 @@ class ListenRow(Adw.ExpanderRow):
         self.address_prop_row.set_visible(False)
         self.socket_row.set_visible(False)
         self.socket_row.unbind()
+        self.autoport_row.unbind()
 
         listen = self.xml_tree.find("listen")
 
-        if t == "address":
+        if listen_type == "address":
             self.address_row.set_visible(True)
             self.address_row.bindAttr(listen, "address", self.show_apply_cb)
-        elif t == "network":
+            self.autoport_row.bindAttr(
+                self.xml_tree, "autoport", self.__onAutoportChanged__
+            )
+        elif listen_type == "network":
             self.network_row.set_visible(True)
             self.network_row.bindAttr(listen, "network", self.show_apply_cb)
             self.address_prop_row.set_visible(True)
             self.address_prop_row.set_subtitle(listen.get("address", ""))
-        elif t == "socket":
+        elif listen_type == "socket":
             self.socket_row.set_visible(True)
             self.socket_row.bindAttr(listen, "socket", self.show_apply_cb)
-        elif t == "none":
-            pass
+        elif listen_type == "none":
+            self.set_enable_expansion(False)
+            self.set_expanded(False)
 
-    def onTypeChanged(self):
+        self.__setPortVisibility__()
+
+    def __setPortVisibility__(self):
+        """Set visibility of autoport, port and tlsPort rows."""
+        listen_type = self.type_combo.getSelectedString()
+        graphics_type = self.xml_tree.get("type")
+
+        if listen_type == "address":
+            self.autoport_row.set_visible(True)
+            autoport = self.autoport_row.getWidget().get_active()
+
+            self.tls_row.set_visible(graphics_type == "spice" and not autoport)
+            self.tcp_row.set_visible(not autoport)
+
+            if autoport:
+                self.tcp_row.unbind()
+                self.tls_row.unbind()
+                if "port" in self.xml_tree.attrib:
+                    del self.xml_tree.attrib["port"]
+                if "tlsPort" in self.xml_tree.attrib:
+                    del self.xml_tree.attrib["tlsPort"]
+            else:
+                self.tcp_row.bindAttr(self.xml_tree, "port", self.show_apply_cb)
+                self.tls_row.bindAttr(self.xml_tree, "tlsPort", self.show_apply_cb)
+        else:
+            self.autoport_row.set_visible(False)
+            self.tls_row.set_visible(False)
+            self.tcp_row.set_visible(False)
+            self.tcp_row.unbind()
+            self.tls_row.unbind()
+            if "autoport" in self.xml_tree.attrib:
+                del self.xml_tree.attrib["autoport"]
+            if "port" in self.xml_tree.attrib:
+                del self.xml_tree.attrib["port"]
+            if "tlsPort" in self.xml_tree.attrib:
+                del self.xml_tree.attrib["tlsPort"]
+
+    def __onTypeChanged__(self):
         if self.xml_tree is None:
             return
+
+        listen = self.xml_tree.find("listen")
+        listen.clear()
+        listen.set("type", self.type_combo.getSelectedString())
+
         self.updateData()
+        self.show_apply_cb()
+
+    def __onAutoportChanged__(self):
+        if self.xml_tree is None:
+            return
+
+        self.__setPortVisibility__()
         self.show_apply_cb()
 
 
@@ -173,8 +246,6 @@ class GraphicsPage(BaseDevicePage):
     rows_per_type = {
         "sdl": [],  # Unsupported
         "vnc": [
-            "autoport",
-            "port",
             "passwd",
             "keymap",
             "sharePolicy",
@@ -182,9 +253,6 @@ class GraphicsPage(BaseDevicePage):
             "listen",
         ],
         "spice": [
-            "autoport",
-            "port",
-            "tlsPort",
             "passwd",
             "keymap",
             "clipboard",
@@ -193,7 +261,7 @@ class GraphicsPage(BaseDevicePage):
             "gl",
             "listen",
         ],
-        "rdp": ["autoport", "port", "multiUser", "replaceUser", "listen"],
+        "rdp": ["multiUser", "replaceUser", "listen"],
         "desktop": ["display", "fullscreen"],
         "egl-headless": ["gl"],
         "dbus": ["p2p", "address", "gl", "audio"],
@@ -230,45 +298,24 @@ class GraphicsPage(BaseDevicePage):
         self.rows["gl"] = GLRow()
         self.group.add(self.rows["gl"])
 
-        self.rows["autoport"] = BindableSwitchRow(
-            "yes", "no", title="Automatically choose port"
-        )
-        self.group.add(self.rows["autoport"].switch_row)
-
-        self.rows["port"] = BindableSpinRow(
-            lambda x: str(int(x)),
-            title="TCP port",
-            unset_val=-1,
-            adjustment=Gtk.Adjustment(lower=-1, step_increment=1, upper=65535),
-        )
-        self.group.add(self.rows["port"].getWidget())
-
-        self.rows["tlsPort"] = BindableSpinRow(
-            lambda x: str(int(x)),
-            title="TLS port",
-            unset_val=-1,
-            adjustment=Gtk.Adjustment(lower=-1, step_increment=1, upper=65535),
-        )
-        self.group.add(self.rows["tlsPort"].getWidget())
-
         if hasattr(self.parent, "window_ref"):
             self.rows["listen"] = ListenRow(self.parent.window_ref.window)
         else:
             self.rows["listen"] = ListenRow(self.parent.window)
         self.group.add(self.rows["listen"])
 
-        self.rows["passwd"] = BindablePasswordRow(title="Connection password")
+        self.rows["passwd"] = BindablePasswordRow(title="Connection Password")
         self.group.add(self.rows["passwd"].widget)
 
         self.rows["keymap"] = BindableEntryRow(title="Keymap")
         self.group.add(self.rows["keymap"])
 
         self.rows["sharePolicy"] = BindableComboRow(
-            ["allow-exclusive", "force-shared", "ignore"], title="Share policy"
+            ["allow-exclusive", "force-shared", "ignore"], title="Share Policy"
         )
         self.group.add(self.rows["sharePolicy"])
 
-        self.rows["audio"] = BindableEntryRow(title="Audio device ID mapping")
+        self.rows["audio"] = BindableEntryRow(title="Audio Device ID Mapping")
         self.group.add(self.rows["audio"])
 
         self.rows["clipboard"] = BindableSwitchRow(
@@ -276,7 +323,7 @@ class GraphicsPage(BaseDevicePage):
         )
         self.group.add(self.rows["clipboard"].switch_row)
 
-        self.rows["mouse"] = BindableComboRow(["client", "server"], title="Mouse mode")
+        self.rows["mouse"] = BindableComboRow(["client", "server"], title="Mouse Mode")
         self.group.add(self.rows["mouse"])
 
         self.rows["filetransfer"] = BindableSwitchRow(
@@ -292,7 +339,7 @@ class GraphicsPage(BaseDevicePage):
         self.rows["replaceUser"] = BindableSwitchRow(
             "yes",
             "no",
-            title="Replace user",
+            title="Replace User",
             subtitle="Drop connection when new user connects",
         )
         self.group.add(self.rows["replaceUser"].switch_row)
@@ -302,7 +349,7 @@ class GraphicsPage(BaseDevicePage):
         )
         self.group.add(self.rows["p2p"].switch_row)
 
-        self.rows["address"] = BindableEntryRow(title="DBus address")
+        self.rows["address"] = BindableEntryRow(title="DBus Address")
         self.group.add(self.rows["address"])
 
         if not self.use_for_adding:
@@ -320,7 +367,7 @@ class GraphicsPage(BaseDevicePage):
             row.set_visible(False)
 
         self.group.set_title(self.getTitle())
-        self.type_row.bindAttr(self.xml_tree, "type", self.onTypeChanged)
+        self.type_row.bindAttr(self.xml_tree, "type", self.__onTypeChanged__)
 
         t = self.type_row.getSelectedString()
 
@@ -330,12 +377,9 @@ class GraphicsPage(BaseDevicePage):
             if row_name in [
                 "display",
                 "fullscreen",
-                "port",
-                "autoport",
                 "passwd",
                 "keymap",
                 "sharePolicy",
-                "tlsPort",
                 "multiUser",
                 "replaceUser",
                 "p2p",
@@ -356,17 +400,17 @@ class GraphicsPage(BaseDevicePage):
                 audio = self.xml_tree.find("audio")
                 if audio is None:
                     audio = ET.Element("audio")
-                row.bindAttr(audio, "id", self.onAudioChanged)
+                row.bindAttr(audio, "id", self.__onAudioChanged__)
             elif row_name in ["gl", "listen"]:
                 row.bind(self.xml_tree, self.showApply)
 
-    def onTypeChanged(self):
+    def __onTypeChanged__(self):
         self.xml_tree.clear()
         self.xml_tree.set("type", self.type_row.getSelectedString())
         self.updateData()
         self.showApply()
 
-    def onAudioChanged(self):
+    def __onAudioChanged__(self):
         row = self.rows["audio"]
         if row.get_text() == "":
             self.xml_tree.remove(row.elem)

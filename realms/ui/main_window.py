@@ -377,7 +377,7 @@ class MainWindow(Adw.ApplicationWindow):
             button_label="Copy",
             action_name="win.copy-toast",
             action_target=GLib.Variant.new_string(text),
-            use_markup=False
+            use_markup=False,
         )
         self.toast_overlay.add_toast(toast)
 
