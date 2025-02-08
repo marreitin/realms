@@ -239,7 +239,7 @@ class DiskPage(BaseDevicePage):
         if t == "cdrom":
             return "CD-Rom"
         if t == "floppy":
-            return "Floppy disk"
+            return "Floppy Disk"
         return t.capitalize()
 
     def getDescription(self) -> str:

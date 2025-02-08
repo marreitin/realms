@@ -149,7 +149,7 @@ class FilesystemPage(BaseDevicePage):
     def getTitle(self) -> str:
         if self.use_for_adding:
             return ""
-        return f"{ self.xml_tree.get('type', '').capitalize() } filesystem"
+        return f"{ self.xml_tree.get('type', '').capitalize() } Filesystem"
 
     def getDescription(self) -> str:
         return "Filesystem exported into the domain"

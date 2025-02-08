@@ -124,7 +124,7 @@ class SoundPage(BaseDevicePage):
     def getTitle(self) -> str:
         if self.use_for_adding:
             return ""
-        return "Sound " + self.xml_tree.get("model", "")
+        return self.xml_tree.get("model", "") + " Sound Card"
 
     def getDescription(self) -> str:
         return "Sound card"

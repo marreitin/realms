@@ -421,10 +421,10 @@ class GraphicsPage(BaseDevicePage):
     def getTitle(self) -> str:
         if self.use_for_adding:
             return ""
-        return self.xml_tree.get("type", "").upper() + " graphics "
+        return self.xml_tree.get("type", "").upper() + " Graphics "
 
     def getDescription(self) -> str:
-        return "Graphical framebuffer"
+        return "Graphical Framebuffer"
 
     def getIconName(self) -> str:
         return "waves-and-screen-symbolic"

@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import libvirt
-from gi.repository import Adw, Gdk, Gio, Gtk
+from gi.repository import Adw, Gio, Gtk, Pango
 
 from realms.helpers.async_jobs import failableAsyncJob
 from realms.helpers.show_domain_video import show
@@ -75,6 +75,7 @@ class DomainRow(BaseRow):
             halign=Gtk.Align.START,
             vexpand=True,
             css_classes=["caption-heading"],
+            ellipsize=Pango.EllipsizeMode.END,
         )
         vbox.append(self.title)
 

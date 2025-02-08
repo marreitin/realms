@@ -61,7 +61,7 @@ class WatchdogPage(BaseDevicePage):
     def getTitle(self) -> str:
         if self.use_for_adding:
             return ""
-        return "Hardware watchdog"
+        return "Hardware Watchdog"
 
     def getDescription(self) -> str:
         return ""

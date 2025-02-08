@@ -74,7 +74,7 @@ class LeasePage(BaseDevicePage):
     def getTitle(self) -> str:
         if self.use_for_adding:
             return ""
-        return "Device lease"
+        return "Device Lease"
 
     def getDescription(self) -> str:
         return "Lock manager lease"

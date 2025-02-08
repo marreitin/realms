@@ -86,10 +86,10 @@ class IOMMUPage(BaseDevicePage):
     def getTitle(self) -> str:
         if self.use_for_adding:
             return ""
-        return self.xml_tree.tag.capitalize()
+        return "IOMMU"
 
     def getDescription(self) -> str:
-        return "IOMMU"
+        return "IO Memory Management Unit"
 
     def getIconName(self) -> str:
         return "memory-symbolic"

@@ -221,7 +221,7 @@ class AudioPage(BaseDevicePage):
     def getTitle(self) -> str:
         if self.use_for_adding:
             return ""
-        return "Audio backend"
+        return "Audio Backend"
 
     def getDescription(self) -> str:
         return "Host side audio backend"

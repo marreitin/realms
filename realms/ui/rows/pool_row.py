@@ -13,7 +13,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from gi.repository import Adw, Gtk
+from gi.repository import Adw, Gtk, Pango
 
 from realms.helpers import RepeatJob
 from realms.libvirt_wrap import Pool
@@ -46,8 +46,13 @@ class PoolRow(BaseRow):
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, hexpand=True)
         hbox.append(vbox)
 
-        self.title = Gtk.Label(label=self.pool.getDisplayName(), halign=Gtk.Align.START)
-        self.title.set_css_classes(["caption-heading"])
+        self.title = Gtk.Label(
+            label=self.pool.getDisplayName(),
+            halign=Gtk.Align.START,
+            vexpand=True,
+            css_classes=["caption-heading"],
+            ellipsize=Pango.EllipsizeMode.END,
+        )
         vbox.append(self.title)
 
         self.subtitle = Gtk.Label(label="unknown state", halign=Gtk.Align.START)

@@ -62,7 +62,7 @@ class RNGPage(BaseDevicePage):
     def getTitle(self) -> str:
         if self.use_for_adding:
             return ""
-        return "rng"
+        return "Random Number Generator"
 
     def getDescription(self) -> str:
         return "Random number generator"

@@ -134,7 +134,7 @@ class TPMPage(BaseDevicePage):
         return "TPM"
 
     def getDescription(self) -> str:
-        return "Trusted platform module"
+        return "Trusted Platform Module"
 
     def getIconName(self) -> str:
         return "key-login-symbolic"

@@ -124,7 +124,7 @@ class RedirfilterPage(BaseDevicePage):
     def getTitle(self) -> str:
         if self.use_for_adding:
             return ""
-        return "Redirected device filter"
+        return "Redirected Device Filter"
 
     def getDescription(self) -> str:
         return "Redirected USB device filter"

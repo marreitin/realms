@@ -108,7 +108,7 @@ class SmartcardPage(BaseDevicePage):
     def getTitle(self) -> str:
         if self.use_for_adding:
             return ""
-        return "smartcard"
+        return "Smartcard"
 
     def getDescription(self) -> str:
         return "Smartcard reader"

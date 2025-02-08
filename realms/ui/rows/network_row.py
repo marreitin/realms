@@ -13,7 +13,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from gi.repository import Adw, Gtk
+from gi.repository import Adw, Gtk, Pango
 
 from realms.libvirt_wrap import Network
 from realms.libvirt_wrap.constants import *
@@ -45,10 +45,14 @@ class NetworkRow(BaseRow):
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         outer_box.append(box)
 
-        self.title = Gtk.Label(label=self.network.getDisplayName())
+        self.title = Gtk.Label(
+            label=self.network.getDisplayName(),
+            halign=Gtk.Align.START,
+            vexpand=True,
+            css_classes=["caption-heading"],
+            ellipsize=Pango.EllipsizeMode.END,
+        )
         box.append(self.title)
-        self.title.set_halign(Gtk.Align.START)
-        self.title.set_css_classes(["caption-heading"])
 
         self.subtitle = Gtk.Label(label="eth0")
         box.append(self.subtitle)

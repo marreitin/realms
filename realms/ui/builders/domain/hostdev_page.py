@@ -103,7 +103,7 @@ class HostdevPage(BaseDevicePage):
     def getTitle(self) -> str:
         if self.use_for_adding:
             return ""
-        return "Host device"
+        return "Host Device"
 
     def getDescription(self) -> str:
         return "Forwarded host device"

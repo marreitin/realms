@@ -426,10 +426,10 @@ class InterfacePage(BaseDevicePage):
     def getTitle(self) -> str:
         if self.use_for_adding:
             return ""
-        return "Network interface"
+        return "Network Interface"
 
     def getDescription(self) -> str:
-        return "Virtual network interface"
+        return "Virtual network adapter"
 
     def getIconName(self) -> str:
         return "network-server-symbolic"

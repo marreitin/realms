@@ -71,7 +71,7 @@ class PanicPage(BaseDevicePage):
     def getTitle(self) -> str:
         if self.use_for_adding:
             return ""
-        return "Panic device"
+        return "Panic Device"
 
     def getDescription(self) -> str:
         return "Receive panic notifications"

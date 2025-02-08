@@ -176,10 +176,10 @@ class VideoPage(BaseDevicePage):
     def getTitle(self) -> str:
         if self.use_for_adding:
             return ""
-        return "Video " + self.xml_tree.find("model").get("type")
+        return self.xml_tree.find("model").get("type") + " Video"
 
     def getDescription(self) -> str:
-        return "Virtual display"
+        return "Virtual display adapter"
 
     def getIconName(self) -> str:
         return "brush-monitor-symbolic"

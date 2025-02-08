@@ -99,7 +99,7 @@ class SHMemPage(BaseDevicePage):
     def getTitle(self) -> str:
         if self.use_for_adding:
             return ""
-        return "shared memory"
+        return "Shared Memory"
 
     def getDescription(self) -> str:
         return "Shared memory"

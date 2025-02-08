@@ -165,10 +165,10 @@ class ControllerPage(BaseDevicePage):
     def getTitle(self) -> str:
         if self.use_for_adding:
             return ""
-        return self.xml_tree.get("type", "").upper() + " controller"
+        return self.xml_tree.get("type", "").upper() + " Controller"
 
     def getDescription(self) -> str:
-        return "Bus controller"
+        return "Bus Controller"
 
     def getIconName(self) -> str:
         return "pci-card-symbolic"
