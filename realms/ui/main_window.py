@@ -377,11 +377,9 @@ class MainWindow(Adw.ApplicationWindow):
             button_label="Copy",
             action_name="win.copy-toast",
             action_target=GLib.Variant.new_string(text),
+            use_markup=False
         )
         self.pushToast(toast)
-
-    def pushToast(self, toast: Adw.Toast) -> None:
-        """Show to generated toast in this window"""
         self.toast_overlay.add_toast(toast)
 
     def onToastCopied(self, _: Gio.SimpleAction, variant: GLib.Variant):
