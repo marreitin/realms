@@ -379,7 +379,6 @@ class MainWindow(Adw.ApplicationWindow):
             action_target=GLib.Variant.new_string(text),
             use_markup=False
         )
-        self.pushToast(toast)
         self.toast_overlay.add_toast(toast)
 
     def onToastCopied(self, _: Gio.SimpleAction, variant: GLib.Variant):
