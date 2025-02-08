@@ -415,7 +415,7 @@ class BindableComboRow(Adw.ComboRow):
         else:
             self.selection.append(elem.text)
             self.setSelection(self.selection)
-            self.set_selected(len(self.selection) - 1)
+            self.set_selected(self.selection.index(elem.text))
         self.elem = elem
         self.attr = None
         self.changed_cb = changed_cb
@@ -443,7 +443,7 @@ class BindableComboRow(Adw.ComboRow):
         else:
             self.selection.append(elem.get(attr))
             self.setSelection(self.selection)
-            self.set_selected(len(self.selection) - 1)
+            self.set_selected(self.selection.index(elem.get(attr)))
         self.elem = elem
         self.attr = attr
         self.changed_cb = changed_cb
