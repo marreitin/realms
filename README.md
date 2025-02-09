@@ -11,6 +11,7 @@
 
 >Flatpak doesn't work yet.
 
-1. Use `meson build` to create the build directory
-2. Use `ninja install` to install
+1. Use `meson setup build --prefix=$HOME/.local` to create the build directory
+2. Use `meson install -C build` to install
 3. Run as `realms`
+4. Use `ninja uninstall` from the build dir to uninstall
