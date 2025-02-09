@@ -33,7 +33,10 @@ class Settings:
         """Create settings directory if necessary."""
         try:
             if not os.path.exists(cls.__realms_config_dir__):
-                os.mkdir(cls.__realms_config_dir__)
+                os.makedirs(cls.__realms_config_dir__)
+            if not os.path.exists(cls.__settings_path__):
+                with open(cls.__settings_path__, "w") as f:
+                    json.dump({}, f)
         except Exception:
             traceback.print_exc()
 
