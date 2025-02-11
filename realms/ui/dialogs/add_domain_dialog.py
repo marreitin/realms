@@ -24,7 +24,7 @@ from gi.repository import Adw, Gio, Gtk
 from jinja2 import Environment
 
 from realms.helpers import stringToBytes
-from realms.libvirt_wrap import Connection, Pool
+from realms.libvirt_wrap import Connection
 from realms.libvirt_wrap.constants import *
 from realms.ui.builders import (
     GenericPreferencesRow,
@@ -35,8 +35,7 @@ from realms.ui.builders import (
     xmlSourceView,
 )
 from realms.ui.builders.common import simpleErrorDialog
-
-from .add_volume_dialog import AddVolumeDialog
+from realms.ui.builders.volume_chooser import VolumeChooser
 
 
 class SettingsField:
@@ -175,10 +174,6 @@ class CreateVolRow(SettingsField):
         self.parent = parent
         self.settings_dict = settings_dict
 
-        self.pools = None
-        self.volumes = None
-        self.pool = None
-
         self.row = GenericPreferencesRow()
 
         box = Gtk.Box(spacing=6)
@@ -186,74 +181,18 @@ class CreateVolRow(SettingsField):
         box.append(hspacer())
         self.row.addChild(box)
 
-        box = Gtk.Box(spacing=0, hexpand=True, css_classes=["linked"])
-        self.row.addChild(box)
-
-        self.pool_combo = Gtk.DropDown(tooltip_text="Pool", hexpand=True)
-        self.pool_combo.connect("notify::selected", self.onPoolSelected)
-        box.append(self.pool_combo)
-
-        self.volume_combo = Gtk.DropDown(tooltip_text="Volume", hexpand=True)
-        box.append(self.volume_combo)
-
-        self.create_btn = iconButton(
-            "",
-            "list-add-symbolic",
-            self.onCreateVolClicked,
-            sensitive=False,
-            tooltip_text="Create",
+        self.chooser = VolumeChooser(
+            self.parent.window, self.parent.connection, lambda: None
         )
-        box.append(self.create_btn)
-
-        self.parent.connection.listStoragePools(self.setPools)
-
-    def setPools(self, vir_pools: list[libvirt.virStoragePool]):
-        self.pools = vir_pools
-        self.pools.sort(key=lambda k: k.name())
-        pool_names = [p.name() for p in self.pools]
-        self.pool_combo.set_model(Gtk.StringList(strings=pool_names))
-
-    def onPoolSelected(self, *args):
-        self.volume_combo.set_model(Gtk.StringList(strings=[]))
-
-        def listVolumes(vir_vols: list[libvirt.virStorageVol]):
-            self.volumes = [v.name() for v in vir_vols]
-            self.volumes.sort()
-            self.volume_combo.set_model(Gtk.StringList(strings=self.volumes))
-
-        self.pool = Pool(
-            self.parent.connection, self.pools[self.pool_combo.get_selected()]
-        )
-        self.pool.listVolumes(listVolumes)
-
-        self.create_btn.set_sensitive(True)
-
-    def onCreateVolClicked(self, btn):
-        def onVolCreated(vir_vol: libvirt.virStorageVol):
-            self.onPoolSelected()
-            if vir_vol.name() not in self.volumes:
-                self.volumes.append(vir_vol.name())
-                self.volumes.sort()
-                self.volume_combo.set_model(Gtk.StringList(strings=self.volumes))
-
-            # BUG: Why does the dropdown show a different string to the
-            # one CORRECTLY selected???
-            self.volume_combo.set_selected(self.volumes.index(vir_vol.name()))
-
-        AddVolumeDialog(self.parent.window, self.pool, onVolCreated)
+        self.row.addChild(self.chooser)
 
     def getWidget(self):
         return self.row
 
     def submit(self) -> dict:
-        pool_names = [p.name() for p in self.pools]
         data = {
-            self.settings_dict["output"]["pool"]: pool_names[
-                self.pool_combo.get_selected()
-            ],
-            self.settings_dict["output"]["volume"]: self.volumes[
-                self.volume_combo.get_selected()
-            ],
+            self.settings_dict["output"]["pool"]: self.chooser.getPool().name(),
+            self.settings_dict["output"]["volume"]: self.chooser.getVolume().name(),
         }
 
         return data

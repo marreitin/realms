@@ -16,7 +16,7 @@
 import traceback
 import xml.etree.ElementTree as ET
 
-from gi.repository import Adw, Gtk
+from gi.repository import Adw, GLib, Gtk
 
 from realms.helpers import (
     ResultWrapper,
@@ -162,7 +162,7 @@ class AddVolumeDialog:
             vir_volume = res.data
             self.dialog.close()
             if self.create_cb is not None:
-                self.create_cb(vir_volume)
+                GLib.idle_add(self.create_cb, vir_volume)
 
         try:
             # Clean tree from unused permissions
