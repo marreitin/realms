@@ -17,7 +17,6 @@ import traceback
 from os import listdir
 from os.path import join
 
-import libvirt
 import yaml
 from config import *
 from gi.repository import Adw, Gio, Gtk
@@ -35,6 +34,7 @@ from realms.ui.builders import (
     xmlSourceView,
 )
 from realms.ui.builders.common import simpleErrorDialog
+from realms.ui.builders.network_chooser import NetworkChooserRow
 from realms.ui.builders.volume_chooser import VolumeChooser
 
 
@@ -206,18 +206,9 @@ class NetworkRow(SettingsField):
         self.parent = parent
         self.settings_dict = settings_dict
 
-        self.row = Adw.ComboRow(title=self.settings_dict["name"], sensitive=False)
-
-        self.network_names = []
-        self.row.set_model(Gtk.StringList(strings=[]))
-
-        self.parent.connection.listNetworks(self.setNetworks)
-
-    def setNetworks(self, vir_nets: list[libvirt.virNetwork]):
-        self.network_names = [n.name() for n in vir_nets]
-        self.network_names.sort()
-        self.row.set_model(Gtk.StringList(strings=self.network_names))
-        self.row.set_sensitive(True)
+        self.row = NetworkChooserRow(
+            self.parent.connection, lambda: None, title=self.settings_dict["name"]
+        )
 
     def getWidget(self):
         """Return the widget for this setting."""
@@ -225,11 +216,7 @@ class NetworkRow(SettingsField):
 
     def submit(self) -> dict:
         """Returns dictionary with variables set to values."""
-        return {
-            self.settings_dict["output"]["network"]: self.network_names[
-                self.row.get_selected()
-            ]
-        }
+        return {self.settings_dict["output"]["network"]: self.row.getNetwork().name()}
 
 
 class SettingsPage(Adw.NavigationPage):
