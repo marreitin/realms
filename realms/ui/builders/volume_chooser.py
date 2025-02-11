@@ -82,8 +82,8 @@ class VolumeChooser(Gtk.Box):
 
         def listVolumes(vir_vols: list[libvirt.virStorageVol]):
             self.__volumes__ = None
+            vir_vols.sort(key=lambda e: e.name())
             volume_names = [v.name() for v in vir_vols]
-            volume_names.sort()
             self.__volume_combo__.set_model(Gtk.StringList(strings=volume_names))
             self.__volumes__ = vir_vols
 
@@ -107,8 +107,8 @@ class VolumeChooser(Gtk.Box):
             if vir_vol not in self.__volumes__:
                 self.__volumes__.append(vir_vol)
 
+            self.__volumes__.sort(key=lambda e: e.name())
             volume_names = [v.name() for v in self.__volumes__]
-            volume_names.sort()
             self.__volume_combo__.set_model(Gtk.StringList(strings=volume_names))
             self.__volume_combo__.set_selected(volume_names.index(vir_vol.name()))
 
