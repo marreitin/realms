@@ -15,6 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from gi.repository import Gtk, Pango
 
+
 # FIXME: Where was this supposed to be used again?
 def getStringFactory() -> Gtk.ListItemFactory:
     """Returns a GtkListItemFactory for Dropdowns, where the labels
