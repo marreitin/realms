@@ -31,6 +31,7 @@ from realms.ui.builders import (
     selectDialog,
 )
 from realms.ui.builders.domain import PerformanceBox, SnapshotBox
+from realms.ui.builders.domain.domain_page_host import DomainPageHost
 from realms.ui.builders.domain.pages import (
     BaseDevicePage,
     ClockPage,
@@ -98,7 +99,7 @@ class DeviceRow:
         return self.device_page.getTitle() + " " + str(self.index)
 
 
-class DomainDetailsTab(BaseDetailsTab):
+class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
     """The tab showing domain details."""
 
     def __init__(self, domain: Domain, window: Adw.ApplicationWindow):
@@ -663,3 +664,13 @@ class DomainDetailsTab(BaseDetailsTab):
 
     def getUniqueIdentifier(self) -> str:
         return self.domain.getUUID()
+
+    # Implement DomainPageHost
+    def getWindow(self):
+        return self.window_ref.window
+
+    def getWindowRef(self):
+        return self.window_ref
+
+    def getConnection(self):
+        return self.domain.connection

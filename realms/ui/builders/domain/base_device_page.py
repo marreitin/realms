@@ -18,11 +18,16 @@ import xml.etree.ElementTree as ET
 from gi.repository import Adw
 
 from realms.ui.builders.apply_row import UpdateRow
+from realms.ui.builders.domain.domain_page_host import DomainPageHost
 
 
 class BaseDevicePage:
     def __init__(
-        self, parent, xml_tree: ET.Element, use_for_adding=False, can_update=False
+        self,
+        parent: DomainPageHost,
+        xml_tree: ET.Element,
+        use_for_adding=False,
+        can_update=False,
     ):
         """Create a device page
 

@@ -23,10 +23,12 @@ from realms.libvirt_wrap import Domain
 from realms.libvirt_wrap.constants import *
 from realms.ui.builders import sourceViewGetText, sourceViewSetText, xmlSourceView
 from realms.ui.builders.common import simpleErrorDialog
+from realms.ui.builders.domain.domain_page_host import DomainPageHost
 from realms.ui.builders.domain.tag_to_page import tagToPage
+from realms.ui.window_reference import WindowReference
 
 
-class AddDeviceDialog:
+class AddDeviceDialog(DomainPageHost):
     # List of device names
     device_names = [
         "",
@@ -191,3 +193,13 @@ class AddDeviceDialog:
 
     def onDialogClosed(self, *args):
         self.domain.unregister_callback(self.onConnectionEvent)
+
+    # Implement DomainPageHost
+    def getWindow(self):
+        return self.window
+
+    def getWindowRef(self):
+        return WindowReference(self.window)
+
+    def getConnection(self):
+        return self.domain.connection

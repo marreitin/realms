@@ -298,10 +298,7 @@ class GraphicsPage(BaseDevicePage):
         self.rows["gl"] = GLRow()
         self.group.add(self.rows["gl"])
 
-        if hasattr(self.parent, "window_ref"):
-            self.rows["listen"] = ListenRow(self.parent.window_ref.window)
-        else:
-            self.rows["listen"] = ListenRow(self.parent.window)
+        self.rows["listen"] = ListenRow(self.parent.getWindow())
         self.group.add(self.rows["listen"])
 
         self.rows["passwd"] = BindablePasswordRow(title="Connection Password")
