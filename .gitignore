@@ -3,3 +3,5 @@ venv/
 **settings.json
 test/
 realms/templates/minimal.yml
+.flatpak-builder
+repo
