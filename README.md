@@ -15,3 +15,9 @@
 2. Use `meson install -C build` to install
 3. Run as `realms`
 4. Use `ninja uninstall` from the build dir to uninstall
+
+## Flatpak
+
+```sh
+flatpak-builder --force-clean --install-deps-from=flathub --user --repo=repo --install builddir com.github.marreitin.realms.yaml
+```
