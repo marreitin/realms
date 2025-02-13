@@ -134,7 +134,7 @@ templates:
           <input type='mouse' bus='ps2'/>
           <input type='keyboard' bus='ps2'/>
           {% if local_graphics == "no" %}
-          <graphics type='spice' port='5900' autoport='no' listen='0.0.0.0'>
+          <graphics type='spice' autoport='yes' listen='0.0.0.0'>
             <listen type='address' address='0.0.0.0'/>
             <image compression='auto_glz'/>
             <jpeg compression='auto'/>
@@ -150,7 +150,7 @@ templates:
           </graphics>
           {% else %}
           <graphics type='spice'>
-            <listen type='socket' socket='/tmp/{{ name | replace(' ', '') }}.sock'/>
+            <listen type='socket'/>
             <image compression='auto_glz'/>
             <jpeg compression='auto'/>
             <zlib compression='auto'/>
@@ -293,7 +293,7 @@ templates:
           <input type='mouse' bus='ps2'/>
           <input type='keyboard' bus='ps2'/>
           {% if local_graphics == "no" %}
-          <graphics type='spice' port='5900' autoport='no' listen='0.0.0.0'>
+          <graphics type='spice' autoport='yes' listen='0.0.0.0'>
             <listen type='address' address='0.0.0.0'/>
             <image compression='auto_glz'/>
             <jpeg compression='auto'/>
@@ -309,7 +309,7 @@ templates:
           </graphics>
           {% else %}
           <graphics type='spice'>
-            <listen type='socket' socket='/tmp/{{ name | replace(' ', '') }}.sock'/>
+            <listen type='socket'/>
             <image compression='auto_glz'/>
             <jpeg compression='auto'/>
             <zlib compression='auto'/>
@@ -440,7 +440,7 @@ templates:
           <input type='mouse' bus='ps2'/>
           <input type='keyboard' bus='ps2'/>
           {% if local_graphics == "no" %}
-          <graphics type='spice' port='5900' autoport='no' listen='0.0.0.0'>
+          <graphics type='spice' autoport='yes' listen='0.0.0.0'>
             <listen type='address' address='0.0.0.0'/>
             <image compression='auto_glz'/>
             <jpeg compression='auto'/>
@@ -456,7 +456,7 @@ templates:
           </graphics>
           {% else %}
           <graphics type='spice'>
-            <listen type='socket' socket='/tmp/{{ name | replace(' ', '') }}.sock'/>
+            <listen type='socket'/>
             <image compression='auto_glz'/>
             <jpeg compression='auto'/>
             <zlib compression='auto'/>
