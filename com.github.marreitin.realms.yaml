@@ -194,3 +194,89 @@ modules:
           - type: file
             url: https://files.pythonhosted.org/packages/bd/0f/2ba5fbcd631e3e88689309dbe978c5769e883e4b84ebfe7da30b43275c5a/jinja2-3.1.5-py3-none-any.whl
             sha256: aba0f4dc9ed8013c424088f68a5c226f7d6097ed89b246d7749c2ec4175c6adb
+
+      - name: lz4
+        build-options:
+          env:
+            PREFIX: /app
+        buildsystem: simple
+        build-commands:
+          - make -j $FLATPAK_BUILDER_N_JOBS
+          - make install
+        cleanup:
+          - /bin
+        sources:
+          - type: archive
+            url: https://github.com/lz4/lz4/archive/refs/tags/v1.10.0.tar.gz
+            sha256: 537512904744b35e232912055ccf8ec66d768639ff3abe5788d90d792ec5f48b
+
+      - name: gtk-vnc
+        buildsystem: meson
+        cleanup:
+          - /bin
+        sources:
+          - type: archive
+            url: https://download.gnome.org/sources/gtk-vnc/1.3/gtk-vnc-1.3.1.tar.xz
+            sha256: 512763ac4e0559d0158b6682ca5dd1a3bd633f082f5e4349d7158e6b5f80f1ce
+
+      - name: spice-gtk
+        buildsystem: meson
+        build-options:
+          env:
+            PYTHONPATH: /app
+        config-opts:
+          - "-Dvapi=enabled"
+          - "-Dwebdav=enabled"
+          - "-Dgtk_doc=disabled"
+          - "-Dusbredir=disabled"
+          - "-Dpolkit=disabled"
+        sources:
+          - type: archive
+            url: >-
+              https://gitlab.freedesktop.org/spice/spice-gtk/uploads/e41347144c5d2f9947e215c894969f0e/spice-gtk-0.42.tar.xz
+            sha256: 9380117f1811ad1faa1812cb6602479b6290d4a0d8cc442d44427f7f6c0e7a58
+        modules:
+
+          - name: spice-protocol
+            buildsystem: meson
+            sources:
+              - type: archive
+                url: >-
+                  https://www.spice-space.org/download/releases/spice-protocol-0.14.4.tar.xz
+                sha256: 04ffba610d9fd441cfc47dfaa135d70096e60b1046d2119d8db2f8ea0d17d912
+                
+          - name: phodav
+            buildsystem: meson
+            config-opts:
+              - -Dsystemdsystemunitdir=lib/systemd/system
+              - -Dudevrulesdir=lib/udev/rules.d
+            sources:
+              - type: archive
+                url: https://download.gnome.org/sources/phodav/3.0/phodav-3.0.tar.xz
+                sha256: 392ec2d06d50300dcff1ef269a2a985304e29bce3520002fca29f2edc1d138d1
+                
+          - name: libcacard
+            sources:
+              - type: archive
+                url: >-
+                  https://www.spice-space.org/download/libcacard/libcacard-2.8.1.tar.xz
+                sha256: fbbf4de8cb7db5bdff5ecb672ff0dbe6939fb9f344b900d51ba6295329a332e7
+                
+          - name: python-pyparsing
+            buildsystem: simple
+            build-commands:
+              - pip3 install --prefix=/app pyparsing-3.1.4-py3-none-any.whl
+            sources:
+              - type: file
+                url: >-
+                  https://files.pythonhosted.org/packages/e5/0c/0e3c05b1c87bb6a1c76d281b0f35e78d2d80ac91b5f8f524cebf77f51049/pyparsing-3.1.4-py3-none-any.whl
+                sha256: a6a7ee4235a3f944aa1fa2249307708f893fe5717dc603503c6c7969c070fb7c
+                
+      - name: virt-viewer
+        buildsystem: meson
+        post-install:
+          - mv "${FLATPAK_DEST}/share/mime/packages/virt-viewer-mime.xml" "${FLATPAK_DEST}/share/mime/packages/${FLATPAK_ID}.xml"
+        sources:
+          - type: git
+            url: https://gitlab.com/virt-viewer/virt-viewer
+            commit: 82dbca46b605685ab354bf8cea7f2a2615132b39
