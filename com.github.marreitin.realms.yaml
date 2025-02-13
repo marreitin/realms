@@ -9,13 +9,14 @@ tags:
   - nightly
 finish-args:
   - --share=ipc
+  - --share=network
   - --socket=fallback-x11
   - --socket=x11
   - --socket=wayland
   - --socket=pulseaudio
-  - --share=network
+  - --socket=pcsc
   - --device=all
-  - --system-talk-name=org.freedesktop.timedate1
+  - --device=dri
   - --filesystem=home
   - --filesystem=/run/libvirt
 modules:
@@ -62,6 +63,7 @@ modules:
             cleanup:
               - /etc
               - /share/man
+
           - name: libtirpc
             config-opts:
               - --disable-gssapi
@@ -69,6 +71,7 @@ modules:
               - type: archive
                 url: https://downloads.sourceforge.net/sourceforge/libtirpc/libtirpc-1.3.6.tar.bz2
                 sha256: bbd26a8f0df5690a62a47f6aa30f797f3ef8d02560d1bc449a83066b5a1d3508
+
           - name: python-docutils
             buildsystem: simple
             build-commands:
@@ -78,23 +81,14 @@ modules:
               - type: archive
                 url: http://downloads.sourceforge.net/docutils/docutils-0.18.1.tar.gz
                 sha256: 679987caf361a7539d76e584cbeddc311e3aee937877c87346f31debc63e9d06
-                x-checker-data:
-                  type: anitya
-                  project-id: 3849
-                  stable-only: true
-                  url-template: http://downloads.sourceforge.net/docutils/docutils-$version.tar.gz
             cleanup:
               - "*"
+
           - name: rpcsvc-proto
             sources:
               - type: archive
                 url: https://github.com/thkukuk/rpcsvc-proto/archive/v1.4.3/rpcsvc-proto-1.4.3.tar.gz
                 sha256: 6906e0f81bb016bd0216460fc879d3d9f2f6d743be7dfb0d8b32d140226d5ef8
-                x-checker-data:
-                  type: anitya
-                  project-id: 155452
-                  stable-only: true
-                  url-template: https://github.com/thkukuk/rpcsvc-proto/archive/v$version/rpcsvc-proto-$version.tar.gz
               - type: shell
                 commands:
                   - autoreconf -ifv
@@ -113,11 +107,6 @@ modules:
           - type: archive
             url: https://libvirt.org/sources/glib/libvirt-glib-5.0.0.tar.xz
             sha256: 9bfec346382416a3575d87299bc641b2a464aa519fd9b1287e318aa43a2f3b8b
-            x-checker-data:
-              type: anitya
-              project-id: 11560
-              stable-only: true
-              url-template: https://libvirt.org/sources/glib/libvirt-glib-$version.tar.xz
         cleanup:
           - /share/gtk-doc
         modules:
@@ -128,11 +117,6 @@ modules:
               - type: archive
                 url: https://github.com/stevegrubb/libcap-ng/archive/v0.8.3.tar.gz
                 sha256: e542e9139961f0915ab5878427890cdc7762949fbe216bd0cb4ceedb309bb854
-                x-checker-data:
-                  type: anitya
-                  project-id: 1570
-                  stable-only: true
-                  url-template: https://github.com/stevegrubb/libcap-ng/archive/v$version.tar.gz
             cleanup:
               - /bin
               - /share/aclocal
@@ -195,83 +179,6 @@ modules:
             url: https://files.pythonhosted.org/packages/bd/0f/2ba5fbcd631e3e88689309dbe978c5769e883e4b84ebfe7da30b43275c5a/jinja2-3.1.5-py3-none-any.whl
             sha256: aba0f4dc9ed8013c424088f68a5c226f7d6097ed89b246d7749c2ec4175c6adb
 
-      - name: lz4
-        build-options:
-          env:
-            PREFIX: /app
-        buildsystem: simple
-        build-commands:
-          - make -j $FLATPAK_BUILDER_N_JOBS
-          - make install
-        cleanup:
-          - /bin
-        sources:
-          - type: archive
-            url: https://github.com/lz4/lz4/archive/refs/tags/v1.10.0.tar.gz
-            sha256: 537512904744b35e232912055ccf8ec66d768639ff3abe5788d90d792ec5f48b
-
-      - name: gtk-vnc
-        buildsystem: meson
-        cleanup:
-          - /bin
-        sources:
-          - type: archive
-            url: https://download.gnome.org/sources/gtk-vnc/1.3/gtk-vnc-1.3.1.tar.xz
-            sha256: 512763ac4e0559d0158b6682ca5dd1a3bd633f082f5e4349d7158e6b5f80f1ce
-
-      - name: spice-gtk
-        buildsystem: meson
-        build-options:
-          env:
-            PYTHONPATH: /app
-        config-opts:
-          - "-Dvapi=enabled"
-          - "-Dwebdav=enabled"
-          - "-Dgtk_doc=disabled"
-          - "-Dusbredir=disabled"
-          - "-Dpolkit=disabled"
-        sources:
-          - type: archive
-            url: >-
-              https://gitlab.freedesktop.org/spice/spice-gtk/uploads/e41347144c5d2f9947e215c894969f0e/spice-gtk-0.42.tar.xz
-            sha256: 9380117f1811ad1faa1812cb6602479b6290d4a0d8cc442d44427f7f6c0e7a58
-        modules:
-
-          - name: spice-protocol
-            buildsystem: meson
-            sources:
-              - type: archive
-                url: >-
-                  https://www.spice-space.org/download/releases/spice-protocol-0.14.4.tar.xz
-                sha256: 04ffba610d9fd441cfc47dfaa135d70096e60b1046d2119d8db2f8ea0d17d912
-                
-          - name: phodav
-            buildsystem: meson
-            config-opts:
-              - -Dsystemdsystemunitdir=lib/systemd/system
-              - -Dudevrulesdir=lib/udev/rules.d
-            sources:
-              - type: archive
-                url: https://download.gnome.org/sources/phodav/3.0/phodav-3.0.tar.xz
-                sha256: 392ec2d06d50300dcff1ef269a2a985304e29bce3520002fca29f2edc1d138d1
-                
-          - name: libcacard
-            sources:
-              - type: archive
-                url: >-
-                  https://www.spice-space.org/download/libcacard/libcacard-2.8.1.tar.xz
-                sha256: fbbf4de8cb7db5bdff5ecb672ff0dbe6939fb9f344b900d51ba6295329a332e7
-                
-          - name: python-pyparsing
-            buildsystem: simple
-            build-commands:
-              - pip3 install --prefix=/app pyparsing-3.1.4-py3-none-any.whl
-            sources:
-              - type: file
-                url: >-
-                  https://files.pythonhosted.org/packages/e5/0c/0e3c05b1c87bb6a1c76d281b0f35e78d2d80ac91b5f8f524cebf77f51049/pyparsing-3.1.4-py3-none-any.whl
-                sha256: a6a7ee4235a3f944aa1fa2249307708f893fe5717dc603503c6c7969c070fb7c
-                
       - name: virt-viewer
         buildsystem: meson
         post-install:
@@ -279,4 +186,123 @@ modules:
         sources:
           - type: git
             url: https://gitlab.com/virt-viewer/virt-viewer
-            commit: 82dbca46b605685ab354bf8cea7f2a2615132b39
+            commit: b6436a552a434bd6c5962af3302846058a1e57c3
+        modules:
+          - name: lz4
+            build-options:
+              env:
+                PREFIX: /app
+            buildsystem: simple
+            build-commands:
+              - make -j $FLATPAK_BUILDER_N_JOBS
+              - make install
+            cleanup:
+              - /bin
+            sources:
+              - type: archive
+                url: https://github.com/lz4/lz4/archive/refs/tags/v1.10.0.tar.gz
+                sha256: 537512904744b35e232912055ccf8ec66d768639ff3abe5788d90d792ec5f48b
+
+          - name: gtk-vnc
+            buildsystem: meson
+            cleanup:
+              - /bin
+            sources:
+              - type: archive
+                url: https://download.gnome.org/sources/gtk-vnc/1.3/gtk-vnc-1.3.1.tar.xz
+                sha256: 512763ac4e0559d0158b6682ca5dd1a3bd633f082f5e4349d7158e6b5f80f1ce
+
+          - name: spice-gtk
+            buildsystem: meson
+            build-options:
+              env:
+                PYTHONPATH: /app
+            config-opts:
+              - "-Dvapi=enabled"
+              - "-Dwebdav=enabled"
+              - "-Dgtk_doc=disabled"
+              - "-Dusbredir=enabled"
+              - "-Dlibcap-ng=enabled"
+              - "-Dpolkit=disabled"
+              - "-Degl=enabled"
+            sources:
+              - type: archive
+                url: >-
+                  https://gitlab.freedesktop.org/spice/spice-gtk/uploads/e41347144c5d2f9947e215c894969f0e/spice-gtk-0.42.tar.xz
+                sha256: 9380117f1811ad1faa1812cb6602479b6290d4a0d8cc442d44427f7f6c0e7a58
+            modules:
+              - name: phodav
+                buildsystem: meson
+                config-opts:
+                  - -Dsystemdsystemunitdir=lib/systemd/system
+                  - -Dudevrulesdir=usr/lib/udev/rules.d
+                sources:
+                  - type: archive
+                    url: https://download.gnome.org/sources/phodav/3.0/phodav-3.0.tar.xz
+                    sha256: 392ec2d06d50300dcff1ef269a2a985304e29bce3520002fca29f2edc1d138d1
+
+              - name: libcacard
+                sources:
+                  - type: archive
+                    url: >-
+                      https://www.spice-space.org/download/libcacard/libcacard-2.8.1.tar.xz
+                    sha256: fbbf4de8cb7db5bdff5ecb672ff0dbe6939fb9f344b900d51ba6295329a332e7
+
+              - name: python-pyparsing
+                buildsystem: simple
+                build-commands:
+                  - pip3 install --prefix=/app pyparsing-3.1.4-py3-none-any.whl
+                sources:
+                  - type: file
+                    url: >-
+                      https://files.pythonhosted.org/packages/e5/0c/0e3c05b1c87bb6a1c76d281b0f35e78d2d80ac91b5f8f524cebf77f51049/pyparsing-3.1.4-py3-none-any.whl
+                    sha256: a6a7ee4235a3f944aa1fa2249307708f893fe5717dc603503c6c7969c070fb7c
+
+              - name: libusb
+                config-opts:
+                  - --disable-static
+                  - --disable-udev
+                cleanup:
+                  - /lib/*.la
+                  - /lib/pkgconfig
+                  - /include
+                sources:
+                  - type: archive
+                    url: https://github.com/libusb/libusb/releases/download/v1.0.27/libusb-1.0.27.tar.bz2
+                    sha256: ffaa41d741a8a3bee244ac8e54a72ea05bf2879663c098c82fc5757853441575
+                post-install:
+                  - install -Dm644 COPYING ${FLATPAK_DEST}/share/licenses/libusb/COPYING
+
+              - name: usbredir
+                buildsystem: meson
+                config-opts:
+                  - -Dtools=disabled
+                sources:
+                  - type: archive
+                    url: https://spice-space.org/download/usbredir/usbredir-0.15.0.tar.xz
+                    sha256: 6dc2a380277688a068191245dac2ab7063a552999d8ac3ad8e841c10ff050961
+
+              - name: usbutils
+                buildsystem: meson
+                sources:
+                  - type: archive
+                    url: https://www.kernel.org/pub/linux/utils/usb/usbutils/usbutils-018.tar.xz
+                    sha256: 83f68b59b58547589c00266e82671864627593ab4362d8c807f50eea923cad93
+                modules:
+                  - name: hwids
+                    buildsystem: simple
+                    build-commands:
+                      - for ids in pci.ids usb.ids; do install -Dm644 "$ids" /app/share/hwdata/${ids};
+                        done
+                    sources:
+                      - type: archive
+                        url: https://github.com/gentoo/hwids/archive/hwids-20210613.tar.gz
+                        sha256: e28f1787290e9ea17426aa4090bbf6aca9bbc9e6cd14da232778bfaef4938bc1
+
+              - name: spice-protocol
+                buildsystem: meson
+                sources:
+                  - type: archive
+                    url: >-
+                      https://www.spice-space.org/download/releases/spice-protocol-0.14.4.tar.xz
+                    sha256: 04ffba610d9fd441cfc47dfaa135d70096e60b1046d2119d8db2f8ea0d17d912
