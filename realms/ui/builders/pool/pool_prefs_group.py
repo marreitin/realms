@@ -66,10 +66,10 @@ class PoolPreferencesGroup(Adw.PreferencesGroup):
 
     def build(self):
         if not self.allow_name_edit:
-            self.name_row = propertyRow("Name", self.window_ref.window)
+            self.name_row = propertyRow("Name")
             self.add(self.name_row)
 
-            self.uuid_row = propertyRow("UUID", self.window_ref.window)
+            self.uuid_row = propertyRow("UUID")
             self.add(self.uuid_row)
         else:
             self.name_row = BindableEntryRow(title="Name")
@@ -82,7 +82,7 @@ class PoolPreferencesGroup(Adw.PreferencesGroup):
         self.add(self.autostart_row)
 
         pool_types = self.pool_capabilities.pool_types
-        self.type_row = BindableComboRow(pool_types, "", title="Storage pool type")
+        self.type_row = BindableComboRow(pool_types, "", title="Storage Pool Type")
         self.add(self.type_row)
 
         self.source_row = PoolSourceRow(self.pool_capabilities, self.show_apply_cb)
@@ -95,7 +95,7 @@ class PoolPreferencesGroup(Adw.PreferencesGroup):
             delete_row = Adw.ActionRow()
             self.add(delete_row)
             self.delete_btn = iconButton(
-                "Delete",
+                "",
                 "user-trash-symbolic",
                 self.delete_cb,
                 css_classes=["destructive-action"],

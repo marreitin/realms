@@ -62,14 +62,14 @@ class PoolVolumeRow(Adw.ExpanderRow):
         self.capacity_row.connect("apply", self.applyCapacityChanged)
         self.add_row(self.capacity_row)
 
-        type_row = propertyRow("Type", self.window_ref.window)
+        type_row = propertyRow("Type")
         type_row.set_subtitle(self.volume.getType())
         self.add_row(type_row)
 
         target = self.volume_tree.find("target")
         f = target.find("format")
         if f is not None:
-            format_row = propertyRow("Format", self.window_ref.window)
+            format_row = propertyRow("Format")
             format_row.set_subtitle(f.get("type"))
             self.add_row(format_row)
 

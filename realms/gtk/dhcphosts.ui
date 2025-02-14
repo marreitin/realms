@@ -5,7 +5,7 @@
   <requires lib="libadwaita" version="1.6"/>
   <object class="AdwDialog" id="main-dialog">
     <property name="height-request">800</property>
-    <property name="title">DHCP host entries</property>
+    <property name="title">DHCP Hosts</property>
     <property name="width-request">700</property>
     <child>
       <object class="AdwToolbarView">
@@ -19,7 +19,7 @@
                     <property name="icon-name">list-add-symbolic</property>
                   </object>
                 </property>
-                <property name="title">DHCP hosts</property>
+                <property name="title">Predefined DHCP Host Entries</property>
               </object>
             </child>
           </object>

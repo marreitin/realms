@@ -6,7 +6,7 @@
   <requires lib="libadwaita" version="1.5"/>
   <object class="AdwDialog" id="main-dialog">
     <property name="height-request">700</property>
-    <property name="title">Add libvirt connection</property>
+    <property name="title">New Connection</property>
     <property name="width-request">700</property>
     <child>
       <object class="AdwToolbarView">
@@ -34,7 +34,6 @@
                     <child>
                       <object class="AdwPreferencesGroup">
                         <property name="hexpand">True</property>
-                        <property name="title">Add libvirt connection</property>
                         <property name="width-request">400</property>
                         <child>
                           <object class="AdwEntryRow" id="name">
@@ -60,14 +59,14 @@ libvirt-lxc
 Custom URL</property>
                               </object>
                             </property>
-                            <property name="title">Connection type</property>
+                            <property name="title">Type</property>
                           </object>
                         </child>
                         <child>
                           <object class="AdwExpanderRow" id="remote">
                             <property name="expanded">True</property>
                             <property name="show-enable-switch">True</property>
-                            <property name="title">Connect to remote hypervisor</property>
+                            <property name="title">Remote Hypervisor</property>
                             <child>
                               <object class="AdwEntryRow" id="ruser">
                                 <property name="input-purpose">name</property>
@@ -86,6 +85,7 @@ Custom URL</property>
                           <object class="AdwActionRow" id="url">
                             <property name="css-classes">property</property>
                             <property name="subtitle">fancy://uri@host:/system</property>
+                            <property name="subtitle-selectable">True</property>
                             <property name="title">Generated URL</property>
                           </object>
                         </child>

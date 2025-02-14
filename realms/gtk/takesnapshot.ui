@@ -2,10 +2,10 @@
 <!-- Created with Cambalache 0.94.1 -->
 <interface>
   <requires lib="gtk" version="4.12"/>
-  <requires lib="libadwaita" version="1.6"/>
+  <requires lib="libadwaita" version="1.5"/>
   <object class="AdwDialog" id="main-dialog">
     <property name="height-request">600</property>
-    <property name="title">Take snapshot</property>
+    <property name="title">Domain Snapshot</property>
     <property name="width-request">600</property>
     <child>
       <object class="AdwToolbarView">
@@ -22,7 +22,6 @@
                             <property name="hexpand">True</property>
                             <child>
                               <object class="AdwPreferencesGroup" id="group">
-                                <property name="title">Snapshot settings</property>
                                 <child>
                                   <object class="AdwEntryRow" id="name-row">
                                     <property name="title">Name</property>

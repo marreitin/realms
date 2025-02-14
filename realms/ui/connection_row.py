@@ -155,7 +155,7 @@ class ConnectionRow(Gtk.ListBoxRow):
         self.quick_actions = {
             "edit-conn": buildQuickAction(
                 "document-edit-symbolic",
-                "Edit connection details",
+                "Edit connection",
                 self.onEditConnClicked,
             ),
             "add-net": buildQuickAction(
@@ -169,7 +169,7 @@ class ConnectionRow(Gtk.ListBoxRow):
             ),
             "connect": buildQuickAction(
                 "update-symbolic",
-                "Try to connect again",
+                "Connect",
                 self.onTryConnectClicked,
             ),
         }
@@ -177,7 +177,7 @@ class ConnectionRow(Gtk.ListBoxRow):
         for widget in self.quick_actions.values():
             self.quick_action_box.append(widget)
 
-        self.storage_expander = buildSubExpander("Storage pools", False)
+        self.storage_expander = buildSubExpander("Storage Pools", False)
         self.storage_listbox = buildSubListbox()
         self.storage_expander.set_child(self.storage_listbox)
         box.append(self.storage_expander)
@@ -187,7 +187,7 @@ class ConnectionRow(Gtk.ListBoxRow):
         self.network_expander.set_child(self.network_listbox)
         box.append(self.network_expander)
 
-        self.domain_expander = buildSubExpander("Virtual machines", True)
+        self.domain_expander = buildSubExpander("Domains", True)
         self.domain_listbox = buildSubListbox()
         self.domain_expander.set_child(self.domain_listbox)
         self.domain_expander.set_expanded(True)

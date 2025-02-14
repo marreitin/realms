@@ -82,7 +82,7 @@ class SecretDialog:
         if self.mode == MODE_ADDING:
             self.uuid_row = BindableEntryRow(title="UUID")
         else:
-            self.uuid_row = propertyRow("UUID", self.window)
+            self.uuid_row = propertyRow("UUID")
         self.group.add(self.uuid_row)
 
         self.desc_row = BindableEntryRow(title="Description")

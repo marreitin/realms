@@ -71,10 +71,10 @@ class NetGeneralGroup(Adw.PreferencesGroup):
 
     def build(self):
         if not self.allow_name_edit:
-            self.name_row = propertyRow("Name", self.window)
+            self.name_row = propertyRow("Name")
             self.add(self.name_row)
 
-            self.uuid_row = propertyRow("UUID", self.window)
+            self.uuid_row = propertyRow("UUID")
             self.add(self.uuid_row)
         else:
             self.name_row = BindableEntryRow(title="Name")
@@ -114,7 +114,7 @@ class NetGeneralGroup(Adw.PreferencesGroup):
             delete_row = Adw.ActionRow()
             self.add(delete_row)
             self.delete_btn = iconButton(
-                "Delete",
+                "",
                 "user-trash-symbolic",
                 cb=self.delete_cb,
                 css_classes=["destructive-action"],

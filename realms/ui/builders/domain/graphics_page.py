@@ -106,7 +106,7 @@ class ListenRow(Adw.ExpanderRow):
         self.network_row = BindableEntryRow(title="Network")
         self.add_row(self.network_row)
 
-        self.address_prop_row = propertyRow("Address", window)
+        self.address_prop_row = propertyRow("Address")
         self.add_row(self.address_prop_row)
 
         self.socket_row = BindableEntryRow(title="Socket Path")

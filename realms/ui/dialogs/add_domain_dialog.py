@@ -308,7 +308,7 @@ class AddDomainDialog:
         self.template_row.connect("notify::selected", self.onTemplateSelected)
         group.add(self.template_row)
 
-        self.template_desc_row = propertyRow("Template description", None)
+        self.template_desc_row = propertyRow("Template description")
         self.template_desc_row.add_prefix(
             Gtk.Image.new_from_gicon(
                 Gio.ThemedIcon.new_from_names(["info-outline-symbolic"])

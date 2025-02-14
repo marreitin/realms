@@ -79,7 +79,7 @@ def splitIconButton(label: str, icon_name: str, **kwargs) -> Gtk.Button:
     return button
 
 
-def propertyRow(title: str, window: Adw.ApplicationWindow, **kwargs) -> Adw.ActionRow:
+def propertyRow(title: str, **kwargs) -> Adw.ActionRow:
     """Generate a property row
 
     Args:
@@ -88,20 +88,9 @@ def propertyRow(title: str, window: Adw.ApplicationWindow, **kwargs) -> Adw.Acti
     Returns:
         Adw.ActionRow: Generated action row
     """
-    row = Adw.ActionRow(**kwargs)
-    row.set_title(title)
-    row.set_css_classes(["property"])
-
-    def copy(*_):
-        clipboard = row.get_clipboard()
-        clipboard.set(row.get_subtitle())
-        window.pushToastText("Value copied!", 2, Adw.ToastPriority.HIGH)
-
-    if window is not None:
-        copy_button = iconButton(
-            "", "edit-copy-symbolic", copy, css_classes=["flat"], tooltip_text="Copy"
-        )
-        row.add_suffix(copy_button)
+    row = Adw.ActionRow(
+        title=title, css_classes=["property"], subtitle_selectable=True, **kwargs
+    )
 
     return row
 

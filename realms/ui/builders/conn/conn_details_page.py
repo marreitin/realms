@@ -107,13 +107,13 @@ class ConnectionDetailsPage(Gtk.Box):
         # Security status icons
         actions_box.append(hspacer())
         self.secure_icon = Gtk.Image.new_from_icon_name("security-high")
-        self.secure_icon.set_tooltip_text("Connection is secure")
+        self.secure_icon.set_tooltip_text("Secure")
         actions_box.append(self.secure_icon)
 
         self.encrypted_icon = Gtk.Image.new_from_icon_name(
             "network-wireless-encrypted-symbolic"
         )
-        self.encrypted_icon.set_tooltip_text("Connection is encrypted")
+        self.encrypted_icon.set_tooltip_text("Encrypted")
         actions_box.append(self.encrypted_icon)
 
         # Main preferences
@@ -121,18 +121,18 @@ class ConnectionDetailsPage(Gtk.Box):
         toolbar_view.set_content(self.prefs_page)
 
         self.prefs_group = Adw.PreferencesGroup(
-            title="Connection details",
+            title="Connection Details",
         )
         self.prefs_page.add(self.prefs_group)
 
-        self.name_row = Adw.EntryRow(title="Connection name")
+        self.name_row = Adw.EntryRow(title="Name")
         self.prefs_group.add(self.name_row)
-        self.desc_row = Adw.EntryRow(title="Connection description")
+        self.desc_row = Adw.EntryRow(title="Description")
         self.prefs_group.add(self.desc_row)
-        self.url_row = Adw.EntryRow(title="Connection URL")
+        self.url_row = Adw.EntryRow(title="URL")
         self.prefs_group.add(self.url_row)
         self.autoconnect_row = Adw.SwitchRow(
-            title="Autoconnect", subtitle="Connect on open"
+            title="Autoconnect", subtitle="Connect when opening app"
         )
         self.prefs_group.add(self.autoconnect_row)
 
@@ -144,7 +144,7 @@ class ConnectionDetailsPage(Gtk.Box):
         action_row = Adw.ActionRow()
         self.prefs_group.add(action_row)
         self.forget_btn = iconButton(
-            "Forget",
+            "",
             "user-trash-symbolic",
             self.onForgetClicked,
             css_classes=["destructive-action"],
@@ -169,39 +169,31 @@ class ConnectionDetailsPage(Gtk.Box):
         refresh_btn.connect("clicked", self.refreshInfo)
         self.info_group.set_header_suffix(refresh_btn)
 
-        self.hostname_row = propertyRow("Hostname", self.parent.window_ref.window)
+        self.hostname_row = propertyRow("Hostname")
         self.info_group.add(self.hostname_row)
 
-        self.max_vcpus_row = propertyRow("Max vCPUs", self.parent.window_ref.window)
+        self.max_vcpus_row = propertyRow("Available vCPUs")
         self.info_group.add(self.max_vcpus_row)
 
-        self.max_mem_row = propertyRow("Max memory", self.parent.window_ref.window)
+        self.max_mem_row = propertyRow("Available Memory")
         self.info_group.add(self.max_mem_row)
 
-        self.emulator_path_row = propertyRow(
-            "Emulator path", self.parent.window_ref.window
-        )
+        self.emulator_path_row = propertyRow("Emulator Path")
         self.info_group.add(self.emulator_path_row)
 
-        self.domain_type_row = propertyRow(
-            "Hypervisor type", self.parent.window_ref.window
-        )
+        self.domain_type_row = propertyRow("Hypervisor Type")
         self.info_group.add(self.domain_type_row)
 
-        self.machine_row = propertyRow("Machine type", self.parent.window_ref.window)
+        self.machine_row = propertyRow("Machine Type")
         self.info_group.add(self.machine_row)
 
-        self.arch_row = propertyRow("Architecture", self.parent.window_ref.window)
+        self.arch_row = propertyRow("Architecture")
         self.info_group.add(self.arch_row)
 
-        self.libvirt_ver_row = propertyRow(
-            "Libvirt version", self.parent.window_ref.window
-        )
+        self.libvirt_ver_row = propertyRow("Libvirt Version")
         self.info_group.add(self.libvirt_ver_row)
 
-        self.conn_ver_row = propertyRow(
-            "Hypervisor version", self.parent.window_ref.window
-        )
+        self.conn_ver_row = propertyRow("Hypervisor Version")
         self.info_group.add(self.conn_ver_row)
 
     def setStatus(self):

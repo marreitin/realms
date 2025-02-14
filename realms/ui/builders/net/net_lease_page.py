@@ -29,14 +29,12 @@ class LeaseRow(Adw.ExpanderRow):
         super().__init__(title=title)
 
         if "hostname" in lease and lease["hostname"] is not None:
-            self.add_row(propertyRow("Hostname", window, subtitle=lease["hostname"]))
-        self.add_row(propertyRow("Interface", window, subtitle=lease["iface"]))
-        self.add_row(propertyRow("MAC-address", window, subtitle=lease["mac"]))
+            self.add_row(propertyRow("Hostname", subtitle=lease["hostname"]))
+        self.add_row(propertyRow("Interface", subtitle=lease["iface"]))
+        self.add_row(propertyRow("MAC-address", subtitle=lease["mac"]))
         if "clientid" in lease and lease["clientid"] is not None:
-            self.add_row(propertyRow("Client ID", window, subtitle=lease["clientid"]))
-        self.add_row(
-            propertyRow("Expires", window, subtitle=prettyTime(lease["expirytime"]))
-        )
+            self.add_row(propertyRow("Client ID", subtitle=lease["clientid"]))
+        self.add_row(propertyRow("Expires", subtitle=prettyTime(lease["expirytime"])))
 
 
 class NetLeasePage(BaseNetSettingsPage):

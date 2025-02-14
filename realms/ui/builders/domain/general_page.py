@@ -39,14 +39,10 @@ class GeneralPage(BaseDevicePage):
         self.prefs_page.add(self.general_group)
 
         name = self.xml_tree.find("name")
-        self.general_group.add(
-            propertyRow("Name", self.parent.window_ref.window, subtitle=getETText(name))
-        )
+        self.general_group.add(propertyRow("Name", subtitle=getETText(name)))
 
         uuid = self.xml_tree.find("uuid")
-        self.general_group.add(
-            propertyRow("UUID", self.parent.window_ref.window, subtitle=getETText(uuid))
-        )
+        self.general_group.add(propertyRow("UUID", subtitle=getETText(uuid)))
         self.title_row = BindableEntryRow(title="Title")
         self.general_group.add(self.title_row)
 
@@ -62,7 +58,7 @@ class GeneralPage(BaseDevicePage):
         action_row = Adw.ActionRow()
         self.general_group.add(action_row)
         self.delete_btn = iconButton(
-            "Delete",
+            "",
             "user-trash-symbolic",
             self.parent.onDeleteClicked,
             css_classes=["destructive-action"],
@@ -112,7 +108,7 @@ class GeneralPage(BaseDevicePage):
         hypervisor_group.add(self.machine_row)
 
         emulator = self.xml_tree.find("devices").find("emulator")
-        self.emulator_row = propertyRow("Emulator", self.parent.window_ref.window)
+        self.emulator_row = propertyRow("Emulator")
         self.emulator_row.set_subtitle(getETText(emulator))
         hypervisor_group.add(self.emulator_row)
 

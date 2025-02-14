@@ -5,7 +5,7 @@
   <requires lib="libadwaita" version="1.5"/>
   <object class="AdwDialog" id="main-dialog">
     <property name="height-request">800</property>
-    <property name="title">Add storage pool</property>
+    <property name="title">New Storage Pool</property>
     <property name="width-request">700</property>
     <child>
       <object class="AdwToolbarView">
