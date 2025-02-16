@@ -76,8 +76,8 @@ class SecretDialog:
             ET.Element("secret") if self.mode == MODE_ADDING else self.secret.getETree()
         )
 
-        self.group = Adw.PreferencesGroup()
-        self.obj("prefs-page").add(self.group)
+        self.group = Adw.PreferencesGroup(hexpand=True)
+        self.obj("prefs-box").append(self.group)
 
         if self.mode == MODE_ADDING:
             self.uuid_row = BindableEntryRow(title="UUID")

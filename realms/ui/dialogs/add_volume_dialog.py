@@ -69,8 +69,8 @@ class AddVolumeDialog:
         )
 
         # Build preferences
-        prefs_group = Adw.PreferencesGroup(title="Volume settings")
-        self.__obj__("prefs-page").add(prefs_group)
+        prefs_group = Adw.PreferencesGroup(hexpand=True)
+        self.__obj__("prefs-box").append(prefs_group)
 
         self.name_row = BindableEntryRow(title="Name")
         prefs_group.add(self.name_row)

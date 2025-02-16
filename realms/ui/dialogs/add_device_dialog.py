@@ -114,7 +114,7 @@ class AddDeviceDialog(DomainPageHost):
         self.dialog.present(self.window)
 
         group = Adw.PreferencesGroup()
-        self.obj("prefs-page").add(group)
+        self.obj("edit-box").append(group)
         self.type_row = Adw.ComboRow(
             title="Device type",
             model=Gtk.StringList(strings=self.descriptive_titles),

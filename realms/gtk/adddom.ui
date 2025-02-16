@@ -15,6 +15,10 @@
               <object class="AdwViewStackPage">
                 <property name="child">
                   <object class="AdwNavigationView" id="nav-view">
+                    <property name="margin-bottom">24</property>
+                    <property name="margin-end">24</property>
+                    <property name="margin-start">24</property>
+                    <property name="margin-top">24</property>
                     <child>
                       <object class="AdwNavigationPage" id="template-nav-page">
                         <property name="child">

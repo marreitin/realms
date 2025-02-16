@@ -228,7 +228,7 @@ class SettingsPage(Adw.NavigationPage):
         self.template_data = template_data
         self.rows = []
 
-        page = RealmsPreferencesPage()
+        page = RealmsPreferencesPage(clamp=False)
         self.set_child(page)
 
         self.group = Adw.PreferencesGroup(title="Template settings")

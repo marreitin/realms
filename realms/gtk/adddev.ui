@@ -17,10 +17,12 @@
                   <object class="GtkScrolledWindow">
                     <property name="child">
                       <object class="GtkBox" id="edit-box">
+                        <property name="margin-bottom">24</property>
+                        <property name="margin-end">24</property>
+                        <property name="margin-start">24</property>
+                        <property name="margin-top">24</property>
                         <property name="orientation">vertical</property>
-                        <child>
-                          <object class="AdwPreferencesPage" id="prefs-page"/>
-                        </child>
+                        <property name="spacing">12</property>
                       </object>
                     </property>
                   </object>

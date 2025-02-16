@@ -48,11 +48,12 @@ class AddPoolDialog:
             lambda *x: [],
             None,
             title="Storage pool settings",
+            hexpand=True,
         )
         self.tree = ET.Element("pool")
         self.prefs.updateBindings(self.tree, True)
 
-        self.__obj__("prefs-page").add(self.prefs)
+        self.__obj__("prefs-box").append(self.prefs)
 
         self.__obj__("btn-finish").connect("clicked", self.__onApplyClicked__)
 

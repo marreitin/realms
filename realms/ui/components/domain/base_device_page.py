@@ -65,7 +65,7 @@ class BaseDevicePage:
         attribute will actually be a Adw.NavigationPage. This is important
         to make the UI more responsive.
         """
-        self.prefs_page = RealmsPreferencesPage()
+        self.prefs_page = RealmsPreferencesPage(clamp=not self.use_for_adding)
 
         if not self.use_for_adding:
             self.nav_page = Adw.NavigationPage(title="asd")

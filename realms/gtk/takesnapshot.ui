@@ -15,25 +15,22 @@
               <object class="AdwViewStackPage">
                 <property name="child">
                   <object class="GtkBox">
+                    <property name="margin-bottom">24</property>
+                    <property name="margin-end">24</property>
+                    <property name="margin-start">24</property>
+                    <property name="margin-top">24</property>
+                    <property name="spacing">12</property>
                     <child>
-                      <object class="GtkBox" id="prefs-box">
+                      <object class="AdwPreferencesGroup" id="group">
+                        <property name="hexpand">True</property>
                         <child>
-                          <object class="AdwPreferencesPage" id="prefs-page">
-                            <property name="hexpand">True</property>
-                            <child>
-                              <object class="AdwPreferencesGroup" id="group">
-                                <child>
-                                  <object class="AdwEntryRow" id="name-row">
-                                    <property name="title">Name</property>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="AdwEntryRow" id="desc-row">
-                                    <property name="title">Description</property>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
+                          <object class="AdwEntryRow" id="name-row">
+                            <property name="title">Name</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="AdwEntryRow" id="desc-row">
+                            <property name="title">Description</property>
                           </object>
                         </child>
                       </object>
