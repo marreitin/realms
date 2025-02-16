@@ -13,27 +13,26 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-import xml.etree.ElementTree as ET
 
 from gi.repository import Adw, Gtk
 
-from realms.ui.builders.preference_widgets import RealmsPreferencesPage
+
+def RealmsClamp() -> Adw.Clamp:
+    return Adw.Clamp(tightening_threshold=400, maximum_size=750)
 
 
-class BaseNetSettingsPage(Adw.NavigationPage):
-    def __init__(self, parent):
-        super().__init__(title="settings")
+class RealmsPreferencesPage(Gtk.ScrolledWindow):
+    def __init__(self):
+        super().__init__(hexpand=True, vexpand=True)
 
-        self.parent = parent
+        self.__clamp__ = RealmsClamp()
+        self.set_child(self.__clamp__)
 
-        self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self.set_child(self.box)
-
-        self.prefs_page = RealmsPreferencesPage()
-        self.box.append(self.prefs_page)
-
-    def build(self):
-        raise NotImplementedError
-
-    def updateData(self, xml_tree: ET.Element):
-        raise NotImplementedError
+        self.__box__ = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL,
+            spacing=18,
+            margin_start=12,
+            margin_end=12,
+        )
+        self.__clamp__.set_child(self.__box__)
+        self.add = self.__box__.append

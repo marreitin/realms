@@ -19,6 +19,7 @@ from gi.repository import Adw
 
 from realms.ui.builders.apply_row import UpdateRow
 from realms.ui.builders.domain.domain_page_host import DomainPageHost
+from realms.ui.builders.preference_widgets import RealmsPreferencesPage
 
 
 class BaseDevicePage:
@@ -64,7 +65,7 @@ class BaseDevicePage:
         attribute will actually be a Adw.NavigationPage. This is important
         to make the UI more responsive.
         """
-        self.prefs_page = Adw.PreferencesPage()
+        self.prefs_page = RealmsPreferencesPage()
 
         if not self.use_for_adding:
             self.nav_page = Adw.NavigationPage(title="asd")

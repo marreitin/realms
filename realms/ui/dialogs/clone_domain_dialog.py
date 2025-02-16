@@ -23,6 +23,7 @@ from realms.libvirt_wrap import Domain, Volume
 from realms.libvirt_wrap.constants import *
 from realms.ui.builders import GenericPreferencesRow, hspacer
 from realms.ui.builders.common import simpleErrorDialog
+from realms.ui.builders.preference_widgets import RealmsPreferencesPage
 
 
 class CloneVolumeBox(GenericPreferencesRow):
@@ -76,7 +77,7 @@ class CloneVolumesPage(Adw.NavigationPage):
         self.build()
 
     def build(self):
-        self.prefs_page = Adw.PreferencesPage()
+        self.prefs_page = RealmsPreferencesPage()
         self.set_child(self.prefs_page)
 
         self.prefs_group = Adw.PreferencesGroup(

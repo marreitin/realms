@@ -35,6 +35,7 @@ from realms.ui.builders import (
 )
 from realms.ui.builders.common import simpleErrorDialog
 from realms.ui.builders.network_chooser import NetworkChooserRow
+from realms.ui.builders.preference_widgets import RealmsPreferencesPage
 from realms.ui.builders.volume_chooser import VolumeChooser
 
 
@@ -227,7 +228,7 @@ class SettingsPage(Adw.NavigationPage):
         self.template_data = template_data
         self.rows = []
 
-        page = Adw.PreferencesPage()
+        page = RealmsPreferencesPage()
         self.set_child(page)
 
         self.group = Adw.PreferencesGroup(title="Template settings")

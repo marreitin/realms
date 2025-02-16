@@ -22,6 +22,7 @@ from realms.libvirt_wrap.constants import *
 from realms.ui.builders import sourceViewGetText, sourceViewSetText, xmlSourceView
 from realms.ui.builders.common import simpleErrorDialog
 from realms.ui.builders.net import NetGeneralGroup, NetIPGroup
+from realms.ui.builders.preference_widgets import RealmsPreferencesPage
 
 
 class AddNetDialog:
@@ -41,7 +42,7 @@ class AddNetDialog:
         self.dialog.connect("closed", self.onDialogClosed)
         self.dialog.present(self.window)
 
-        prefs_page = Adw.PreferencesPage(hexpand=True)
+        prefs_page = RealmsPreferencesPage()
         self.obj("prefs-box").append(prefs_page)
 
         self.prefs_group = NetGeneralGroup(True, self.window, lambda *x: [], None)

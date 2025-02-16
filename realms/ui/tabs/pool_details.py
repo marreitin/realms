@@ -22,6 +22,7 @@ from realms.ui.builders import ActionOption, ApplyRow, XMLView, selectDialog
 from realms.ui.builders.common import hspacer, iconButton
 from realms.ui.builders.pool.pool_prefs_group import PoolPreferencesGroup
 from realms.ui.builders.pool.pool_volumes_group import VolumesGroup
+from realms.ui.builders.preference_widgets import RealmsClamp, RealmsPreferencesPage
 
 from .base_details import BaseDetailsTab
 
@@ -87,11 +88,11 @@ class PoolDetailsTab(BaseDetailsTab):
             prefs_box, "settings", "Settings", "settings-symbolic"
         )
 
-        self.prefs_page = Adw.PreferencesPage()
+        self.prefs_page = RealmsPreferencesPage()
         prefs_box.append(self.prefs_page)
 
         # Top group with buttons
-        clamp = Adw.Clamp()
+        clamp = RealmsClamp()
         toolbar_view.add_top_bar(clamp)
         actions_box = Gtk.Box(
             spacing=6,
@@ -135,7 +136,7 @@ class PoolDetailsTab(BaseDetailsTab):
         self.prefs_page.add(self.pool_prefs_group)
 
         # Volume group
-        volume_page = Adw.PreferencesPage()
+        volume_page = RealmsPreferencesPage()
         self.stack.add_titled_with_icon(
             volume_page, "volumes", "Volumes", "drive-multidisk-symbolic"
         )

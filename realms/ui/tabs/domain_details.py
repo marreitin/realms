@@ -41,6 +41,7 @@ from realms.ui.builders.domain.pages import (
     GeneralPage,
     tagToPage,
 )
+from realms.ui.builders.preference_widgets import RealmsClamp, RealmsPreferencesPage
 from realms.ui.dialogs.add_device_dialog import AddDeviceDialog
 from realms.ui.dialogs.clone_domain_dialog import CloneDomainDialog
 from realms.ui.dialogs.take_snapshot_dialog import TakeSnapshotDialog
@@ -185,7 +186,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         self.main_nav_page.set_child(box)
 
         # Containers for devices
-        devices_page = Adw.PreferencesPage()
+        devices_page = RealmsPreferencesPage()
         box.append(devices_page)
 
         # General rows
@@ -231,7 +232,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         self.setStatus()
 
     def buildControlRow(self):
-        clamp = Adw.Clamp()
+        clamp = RealmsClamp()
         self.toolbar_view.add_top_bar(clamp)
         self.actions_box = Gtk.Box(
             spacing=6,

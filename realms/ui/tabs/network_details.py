@@ -37,6 +37,7 @@ from realms.ui.builders.net import (
     NetQOSPage,
     NetRoutePage,
 )
+from realms.ui.builders.preference_widgets import RealmsClamp, RealmsPreferencesPage
 
 from .base_details import BaseDetailsTab
 
@@ -136,7 +137,7 @@ class NetworkDetailsTab(BaseDetailsTab):
         )
 
         # Top group with buttons
-        clamp = Adw.Clamp()
+        clamp = RealmsClamp()
         toolbar_view.add_top_bar(clamp)
         actions_box = Gtk.Box(
             spacing=6,
@@ -186,7 +187,7 @@ class NetworkDetailsTab(BaseDetailsTab):
         self.navigation_view.push(self.main_nav_page)
 
         # Group with general network settings
-        self.prefs_page = Adw.PreferencesPage()
+        self.prefs_page = RealmsPreferencesPage()
         prefs_box.append(self.prefs_page)
 
         self.general_prefs_group = NetGeneralGroup(

@@ -22,6 +22,7 @@ from realms.helpers import ResultWrapper, failableAsyncJob, getETText, prettyTim
 from realms.libvirt_wrap import Domain
 from realms.libvirt_wrap.constants import *
 from realms.ui.builders import ActionOption, iconButton, selectDialog
+from realms.ui.builders.preference_widgets import RealmsPreferencesPage
 from realms.ui.dialogs.inspect_snapshot_dialog import InspectSnapshotDialog
 from realms.ui.dialogs.take_snapshot_dialog import TakeSnapshotDialog
 from realms.ui.window_reference import WindowReference
@@ -169,7 +170,7 @@ class SnapshotBox(Gtk.Box):
         )
         self.snapshot_overlay.add_overlay(self.no_snapshots_status)
 
-        self.prefs_page = Adw.PreferencesPage()
+        self.prefs_page = RealmsPreferencesPage()
         self.snapshot_overlay.set_child(self.prefs_page)
 
         self.group = Adw.PreferencesGroup(title="Snapshots")

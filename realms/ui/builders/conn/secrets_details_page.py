@@ -20,6 +20,7 @@ from realms.helpers import getETText
 from realms.libvirt_wrap import Connection, Secret
 from realms.libvirt_wrap.constants import *
 from realms.ui.builders import iconButton
+from realms.ui.builders.preference_widgets import RealmsPreferencesPage
 from realms.ui.dialogs.secret_dialog import SecretDialog
 
 
@@ -79,7 +80,7 @@ class SecretsPage(Gtk.Box):
 
     def build(self):
         """Build self."""
-        self.prefs_page = Adw.PreferencesPage(hexpand=True, vexpand=True)
+        self.prefs_page = RealmsPreferencesPage()
         self.append(self.prefs_page)
 
         self.secrets_group = Adw.PreferencesGroup(

@@ -18,6 +18,7 @@
 from gi.repository import Adw, Gtk
 
 from realms.ui.builders.common import iconButton, warningLabelRow
+from realms.ui.builders.preference_widgets import RealmsClamp
 
 
 class ApplyRow(Gtk.Box):
@@ -41,7 +42,7 @@ class ApplyRow(Gtk.Box):
             hexpand=True,
         )
 
-        clamp = Adw.Clamp(tightening_threshold=400, maximum_size=800)
+        clamp = RealmsClamp()
         self.append(clamp)
         box = Gtk.Box(spacing=6)
         clamp.set_child(box)
@@ -107,7 +108,7 @@ class UpdateRow(Gtk.Box):
             hexpand=True,
         )
 
-        clamp = Adw.Clamp(tightening_threshold=400, maximum_size=800)
+        clamp = RealmsClamp()
         self.append(clamp)
         box = Gtk.Box(spacing=6)
         clamp.set_child(box)

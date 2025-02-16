@@ -25,6 +25,7 @@ from realms.ui.builders import (
     propertyRow,
     selectDialog,
 )
+from realms.ui.builders.preference_widgets import RealmsClamp, RealmsPreferencesPage
 
 
 class ConnectionDetailsPage(Gtk.Box):
@@ -81,7 +82,7 @@ class ConnectionDetailsPage(Gtk.Box):
         self.apply_row.set_visible(False)
 
         # Top button row
-        clamp = Adw.Clamp()
+        clamp = RealmsClamp()
         toolbar_view.add_top_bar(clamp)
         actions_box = Gtk.Box(
             spacing=6,
@@ -117,7 +118,7 @@ class ConnectionDetailsPage(Gtk.Box):
         actions_box.append(self.encrypted_icon)
 
         # Main preferences
-        self.prefs_page = Adw.PreferencesPage(hexpand=True)
+        self.prefs_page = RealmsPreferencesPage()
         toolbar_view.set_content(self.prefs_page)
 
         self.prefs_group = Adw.PreferencesGroup(
