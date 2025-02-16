@@ -13,6 +13,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""DataSeries provide a way of storing a set number of data-points, and
+updating them regularly."""
 from gi.repository import GLib
 
 from realms.helpers import asyncJob

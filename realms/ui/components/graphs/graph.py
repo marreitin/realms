@@ -13,6 +13,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""Implementation of a graph that will automatically plot
+with a given DataSeries."""
 from gi.repository import Adw, Gsk, Gtk
 
 from .data_series import DataPoint, DataSeries
@@ -22,11 +24,19 @@ class InnerGraph(Gtk.Frame):
     """A Gtk Frame that draws the actual graph."""
 
     def __init__(self, data_series: DataSeries):
+        """Initialize InnerGraph with a data series
+
+        Args:
+            data_series (DataSeries): DataSeries to plot
+        """
         super().__init__(height_request=200)
 
         self.__vpadding__ = 1
         self.__data_series__ = data_series
         self.__data_series__.registerRedrawCallback(self.__onRedraw__)
+
+        style_manager = Adw.StyleManager.get_default()
+        self.__line_color__ = style_manager.get_accent_color_rgba()
 
     def __onRedraw__(self):
         # Only redraw if the widget is visible
@@ -51,8 +61,6 @@ class InnerGraph(Gtk.Frame):
         Args:
             snapshot (Gtk.Snapshot): Snapshot object to draw to
         """
-        style_manager = Adw.StyleManager.get_default()
-        line_color = style_manager.get_accent_color_rgba()
 
         # Build path
         if len(self.__data_series__) < 2:
@@ -75,7 +83,7 @@ class InnerGraph(Gtk.Frame):
 
         path = builder.to_path()
 
-        snapshot.append_stroke(path, Gsk.Stroke(3), line_color)
+        snapshot.append_stroke(path, Gsk.Stroke(3), self.__line_color__)
 
         builder.add_path(path)
         builder.line_to(self.get_width(), self.get_height())
@@ -83,7 +91,9 @@ class InnerGraph(Gtk.Frame):
         builder.line_to(start_x, self.__fitValue__(self.__data_series__.getFirst()))
 
         snapshot.push_opacity(0.2)
-        snapshot.append_fill(builder.to_path(), Gsk.FillRule.WINDING, line_color)
+        snapshot.append_fill(
+            builder.to_path(), Gsk.FillRule.WINDING, self.__line_color__
+        )
         snapshot.pop()
 
 

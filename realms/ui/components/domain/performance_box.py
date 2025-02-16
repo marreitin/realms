@@ -22,6 +22,8 @@ from realms.ui.components.preference_widgets import RealmsPreferencesPage
 
 
 class PerformanceBox(Gtk.Box):
+    """Box containing the performance graphs of a domain."""
+
     def __init__(self, domain: Domain):
         REFRESH_SECONDS = 1
         super().__init__(orientation=Gtk.Orientation.VERTICAL)
@@ -36,43 +38,46 @@ class PerformanceBox(Gtk.Box):
         row = GenericPreferencesRow()
         group.add(row)
 
-        self.cpu_data_series = DataSeries(
+        self.__cpu_data_series__ = DataSeries(
             [RelativeDataPoint(0, domain.getCPUTime())], 1, 120
         )
 
         def getCPUData():
             cpu_time_reading = domain.getCPUTime()
             display_val = 0
-            if len(self.cpu_data_series) > 1:
+            if len(self.__cpu_data_series__) > 1:
                 display_val = abs(
-                    self.cpu_data_series.values[-2].last_reading - cpu_time_reading
+                    self.__cpu_data_series__.values[-2].last_reading - cpu_time_reading
                 )
                 display_val /= 2
             else:
                 display_val = abs(
-                    self.cpu_data_series.getLast().last_reading - cpu_time_reading
+                    self.__cpu_data_series__.getLast().last_reading - cpu_time_reading
                 )
             display_val /= domain.getVCPUs()
             display_val /= 1000000000 * REFRESH_SECONDS
             return RelativeDataPoint(display_val, cpu_time_reading)
 
-        self.cpu_data_series.setWatchCallback(1000 * REFRESH_SECONDS, getCPUData)
-        self.cpu_graph = Graph(self.cpu_data_series, "CPU")
-        row.addChild(self.cpu_graph)
+        self.__cpu_data_series__.setWatchCallback(1000 * REFRESH_SECONDS, getCPUData)
+        self.__cpu_graph__ = Graph(self.__cpu_data_series__, "CPU")
+        row.addChild(self.__cpu_graph__)
 
         # Memory graph
         row = GenericPreferencesRow()
         group.add(row)
 
-        self.mem_data_series = DataSeries([DataPoint(0)], domain.getMaxMemory(), 120)
+        self.__mem_data_series__ = DataSeries(
+            [DataPoint(0)], domain.getMaxMemory(), 120
+        )
 
         def getMemData():
             return DataPoint(domain.getMemoryUsage())
 
-        self.mem_data_series.setWatchCallback(1000 * REFRESH_SECONDS, getMemData)
-        self.mem_graph = Graph(self.mem_data_series, "Memory")
-        row.addChild(self.mem_graph)
+        self.__mem_data_series__.setWatchCallback(1000 * REFRESH_SECONDS, getMemData)
+        self.__mem_graph__ = Graph(self.__mem_data_series__, "Memory")
+        row.addChild(self.__mem_graph__)
 
     def end(self):
-        self.cpu_data_series.stopWatchCallback()
-        self.mem_data_series.stopWatchCallback()
+        """Stop collecting data and updating the graph."""
+        self.__cpu_data_series__.stopWatchCallback()
+        self.__mem_data_series__.stopWatchCallback()

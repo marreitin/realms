@@ -29,7 +29,7 @@ class ConnectionPerformancePage(Gtk.Box):
         super().__init__(orientation=Gtk.Orientation.VERTICAL)
 
         self.parent = parent
-        self.is_started = False
+        self.__is_started__ = False
 
         page = RealmsPreferencesPage()
         self.append(page)
@@ -41,88 +41,93 @@ class ConnectionPerformancePage(Gtk.Box):
         row = GenericPreferencesRow()
         group.add(row)
 
-        self.cpu_data_series = DataSeries([], 1, 120)
-        self.cpu_graph = Graph(self.cpu_data_series, "CPU")
-        row.addChild(self.cpu_graph)
+        self.__cpu_data_series__ = DataSeries([], 1, 120)
+        self.__cpu_graph__ = Graph(self.__cpu_data_series__, "CPU")
+        row.addChild(self.__cpu_graph__)
 
         # Memory graph
         row = GenericPreferencesRow()
         group.add(row)
 
-        self.mem_data_series = DataSeries([], 1, 120)
-        self.mem_graph = Graph(self.mem_data_series, "Memory")
-        row.addChild(self.mem_graph)
+        self.__mem_data_series__ = DataSeries([], 1, 120)
+        self.__mem_graph__ = Graph(self.__mem_data_series__, "Memory")
+        row.addChild(self.__mem_graph__)
 
         # IOWait graph
         row = GenericPreferencesRow()
         group.add(row)
 
-        self.iowait_data_series = DataSeries([], 1, 120)
-        self.iowait_graph = Graph(self.iowait_data_series, "IO-Wait")
-        row.addChild(self.iowait_graph)
+        self.__iowait_data_series__ = DataSeries([], 1, 120)
+        self.__iowait_graph__ = Graph(self.__iowait_data_series__, "IO-Wait")
+        row.addChild(self.__iowait_graph__)
 
     def start(self):
         """Start collecting information."""
-        if self.is_started:
+        if self.__is_started__:
             return
 
-        self.is_started = True
+        self.__is_started__ = True
 
-        self.cpu_data_series.setValues(
+        self.__cpu_data_series__.setValues(
             [RelativeDataPoint(0, self.parent.connection.getHostCPUTime())]
         )
 
         def getCPUData():
             cpu_time_reading = self.parent.connection.getHostCPUTime()
             display_val = 0
-            if len(self.cpu_data_series) > 1:
+            if len(self.__cpu_data_series__) > 1:
                 display_val = abs(
-                    self.cpu_data_series.values[-2].last_reading - cpu_time_reading
+                    self.__cpu_data_series__.values[-2].last_reading - cpu_time_reading
                 )
                 display_val /= 2
             else:
                 display_val = abs(
-                    self.cpu_data_series.getLast().last_reading - cpu_time_reading
+                    self.__cpu_data_series__.getLast().last_reading - cpu_time_reading
                 )
             display_val /= 1000000000 * self.REFRESH_SECONDS
             return RelativeDataPoint(display_val, cpu_time_reading)
 
-        self.cpu_data_series.setWatchCallback(1000 * self.REFRESH_SECONDS, getCPUData)
+        self.__cpu_data_series__.setWatchCallback(
+            1000 * self.REFRESH_SECONDS, getCPUData
+        )
 
-        self.iowait_data_series.setValues(
+        self.__iowait_data_series__.setValues(
             [RelativeDataPoint(0, self.parent.connection.getHostIOWait())]
         )
 
         def getIOwaitData():
             iowait_time_reading = self.parent.connection.getHostIOWait()
             display_val = 0
-            if len(self.iowait_data_series) > 1:
+            if len(self.__iowait_data_series__) > 1:
                 display_val = abs(
-                    self.iowait_data_series.values[-2].last_reading
+                    self.__iowait_data_series__.values[-2].last_reading
                     - iowait_time_reading
                 )
                 display_val /= 2
             else:
                 display_val = abs(
-                    self.iowait_data_series.getLast().last_reading - iowait_time_reading
+                    self.__iowait_data_series__.getLast().last_reading
+                    - iowait_time_reading
                 )
             display_val /= 1000000000 * self.REFRESH_SECONDS
             return RelativeDataPoint(display_val, iowait_time_reading)
 
-        self.iowait_data_series.setWatchCallback(
+        self.__iowait_data_series__.setWatchCallback(
             1000 * self.REFRESH_SECONDS, getIOwaitData
         )
-        self.mem_data_series.setValues([DataPoint(0)])
-        self.mem_data_series.max_value = self.parent.connection.maxMemory()
+        self.__mem_data_series__.setValues([DataPoint(0)])
+        self.__mem_data_series__.max_value = self.parent.connection.maxMemory()
 
         def getMemData():
             return DataPoint(self.parent.connection.getHostMemoryUsage() * 1024)
 
-        self.mem_data_series.setWatchCallback(1000 * self.REFRESH_SECONDS, getMemData)
+        self.__mem_data_series__.setWatchCallback(
+            1000 * self.REFRESH_SECONDS, getMemData
+        )
 
     def end(self):
         """Stop gathering information."""
-        self.cpu_data_series.stopWatchCallback()
-        self.iowait_data_series.stopWatchCallback()
-        self.mem_data_series.stopWatchCallback()
-        self.is_started = False
+        self.__cpu_data_series__.stopWatchCallback()
+        self.__iowait_data_series__.stopWatchCallback()
+        self.__mem_data_series__.stopWatchCallback()
+        self.__is_started__ = False
