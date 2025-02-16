@@ -42,7 +42,7 @@ class AddNetDialog:
         self.dialog.connect("closed", self.onDialogClosed)
         self.dialog.present(self.window)
 
-        prefs_page = RealmsPreferencesPage()
+        prefs_page = RealmsPreferencesPage(clamp=False)
         self.obj("prefs-box").append(prefs_page)
 
         self.prefs_group = NetGeneralGroup(True, self.window, lambda *x: [], None)
