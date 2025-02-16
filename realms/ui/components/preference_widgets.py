@@ -25,7 +25,10 @@ def RealmsClamp() -> Adw.Clamp:
 
 class RealmsPreferencesPage(Gtk.ScrolledWindow):
     def __init__(self, clamp: bool = True):
-        super().__init__(hexpand=True, vexpand=True)
+        super().__init__(
+            hexpand=True,
+            vexpand=True,
+        )
 
         if clamp:
             self.__clamp__ = RealmsClamp()
@@ -44,8 +47,8 @@ class RealmsPreferencesPage(Gtk.ScrolledWindow):
             self.__box__ = Gtk.Box(
                 orientation=Gtk.Orientation.VERTICAL,
                 spacing=18,
-                margin_start=0,
-                margin_end=0,
+                margin_start=3,
+                margin_end=3,
                 margin_top=6,
                 margin_bottom=6,
             )
