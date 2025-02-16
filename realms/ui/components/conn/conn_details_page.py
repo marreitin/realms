@@ -88,9 +88,6 @@ class ConnectionDetailsPage(Gtk.Box):
             spacing=6,
             margin_top=6,
             margin_bottom=6,
-            margin_start=6,
-            margin_end=6,
-            width_request=108,
         )
         clamp.set_child(actions_box)
 

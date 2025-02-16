@@ -18,7 +18,9 @@ from gi.repository import Adw, Gtk
 
 
 def RealmsClamp() -> Adw.Clamp:
-    return Adw.Clamp(tightening_threshold=400, maximum_size=750)
+    return Adw.Clamp(
+        tightening_threshold=400, maximum_size=750, margin_start=12, margin_end=12
+    )
 
 
 class RealmsPreferencesPage(Gtk.ScrolledWindow):
@@ -31,8 +33,10 @@ class RealmsPreferencesPage(Gtk.ScrolledWindow):
         self.__box__ = Gtk.Box(
             orientation=Gtk.Orientation.VERTICAL,
             spacing=18,
-            margin_start=12,
-            margin_end=12,
+            margin_start=0,
+            margin_end=0,
+            margin_top=6,
+            margin_bottom=6,
         )
         self.__clamp__.set_child(self.__box__)
         self.add = self.__box__.append

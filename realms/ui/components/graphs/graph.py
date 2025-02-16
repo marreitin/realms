@@ -18,38 +18,31 @@ from gi.repository import Adw, Gsk, Gtk
 from .data_series import DataPoint, DataSeries
 
 
-class Graph(Gtk.Frame):
-    """Simple and minimalist graph drawing a DataSeries."""
+class InnerGraph(Gtk.Frame):
+    """A Gtk Frame that draws the actual graph."""
 
     def __init__(self, data_series: DataSeries):
-        super().__init__(
-            hexpand=True,
-            vexpand=True,
-            margin_top=12,
-            margin_end=12,
-            margin_bottom=12,
-            margin_start=12,
-        )
-        self.set_margin_top(3)
-        self.vpadding = 3
-        self.data_series = data_series
-        self.data_series.registerRedrawCallback(self.onRedraw)
+        super().__init__(height_request=200)
 
-    def onRedraw(self):
+        self.__vpadding__ = 1
+        self.__data_series__ = data_series
+        self.__data_series__.registerRedrawCallback(self.__onRedraw__)
+
+    def __onRedraw__(self):
         # Only redraw if the widget is visible
         if self.is_drawable():
             self.queue_draw()
 
-    def fitValue(self, p: DataPoint) -> float:
+    def __fitValue__(self, p: DataPoint) -> float:
         """Calculate the y-coordinate of a given point"""
         value = (
-            self.vpadding
-            + (self.get_height() - 2 * self.vpadding)
-            - (self.get_height() - self.vpadding)
-            * (p.value / self.data_series.max_value)
+            self.__vpadding__
+            + (self.get_height() - 2 * self.__vpadding__)
+            - (self.get_height() - self.__vpadding__)
+            * (p.value / self.__data_series__.max_value)
         )
-        value = max(self.vpadding, value)
-        value = min(self.get_height() - self.vpadding, value)
+        value = max(self.__vpadding__, value)
+        value = min(self.get_height() - self.__vpadding__, value)
         return value
 
     def do_snapshot(self, snapshot, *_):
@@ -62,20 +55,22 @@ class Graph(Gtk.Frame):
         line_color = style_manager.get_accent_color_rgba()
 
         # Build path
-        if len(self.data_series) < 2:
+        if len(self.__data_series__) < 2:
             return  # A line needs at least two points
 
         builder = Gsk.PathBuilder()
-        move_width = self.get_width() / (self.data_series.max_size - 1)
-        start_x = (self.data_series.max_size - len(self.data_series)) * move_width
+        move_width = self.get_width() / (self.__data_series__.max_size - 1)
+        start_x = (
+            self.__data_series__.max_size - len(self.__data_series__)
+        ) * move_width
         builder.move_to(
             start_x,
-            self.fitValue(self.data_series.getFirst()),
+            self.__fitValue__(self.__data_series__.getFirst()),
         )
-        for i, v in enumerate(self.data_series.values):
+        for i, v in enumerate(self.__data_series__.values):
             builder.line_to(
                 start_x + i * move_width,
-                self.fitValue(v),
+                self.__fitValue__(v),
             )
 
         path = builder.to_path()
@@ -85,8 +80,32 @@ class Graph(Gtk.Frame):
         builder.add_path(path)
         builder.line_to(self.get_width(), self.get_height())
         builder.line_to(start_x, self.get_height())
-        builder.line_to(start_x, self.fitValue(self.data_series.getFirst()))
+        builder.line_to(start_x, self.__fitValue__(self.__data_series__.getFirst()))
 
         snapshot.push_opacity(0.2)
         snapshot.append_fill(builder.to_path(), Gsk.FillRule.WINDING, line_color)
         snapshot.pop()
+
+
+class Graph(Gtk.Box):
+    """Simple and minimalist graph drawing a DataSeries."""
+
+    def __init__(self, data_series: DataSeries, title: str):
+        """Create Graph
+
+        Args:
+            data_series (DataSeries): Data series to draw
+            title (str): Title for graph
+        """
+        super().__init__(
+            hexpand=True, vexpand=True, orientation=Gtk.Orientation.VERTICAL
+        )
+
+        title_box = Gtk.Box(spacing=12, margin_top=3, margin_bottom=3)
+        self.append(title_box)
+        title_box.append(
+            Gtk.Label(label=title, halign=Gtk.Align.START, css_classes=["heading"])
+        )
+
+        self.__frame__ = InnerGraph(data_series)
+        self.append(self.__frame__)
