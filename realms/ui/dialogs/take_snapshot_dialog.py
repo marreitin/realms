@@ -21,8 +21,8 @@ from gi.repository import Adw, Gtk
 from realms.helpers import ResultWrapper, failableAsyncJob
 from realms.libvirt_wrap import Domain
 from realms.libvirt_wrap.constants import *
-from realms.ui.builders import sourceViewGetText, xmlSourceView
-from realms.ui.builders.common import simpleErrorDialog
+from realms.ui.components import sourceViewGetText, xmlSourceView
+from realms.ui.components.common import simpleErrorDialog
 
 
 class TakeSnapshotDialog:

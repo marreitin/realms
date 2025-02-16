@@ -17,7 +17,7 @@ from gi.repository import Adw
 
 from realms.libvirt_wrap import Connection
 from realms.libvirt_wrap.constants import *
-from realms.ui.builders.conn import (
+from realms.ui.components.conn import (
     ConnectionDetailsPage,
     ConnectionPerformancePage,
     SecretsPage,

@@ -18,7 +18,7 @@ from gi.repository import Adw, Gtk
 
 from realms.libvirt_wrap import Domain
 from realms.libvirt_wrap.constants import *
-from realms.ui.builders import sourceViewSetText, xmlSourceView
+from realms.ui.components import sourceViewSetText, xmlSourceView
 
 
 class InspectSnapshotDialog:

@@ -21,9 +21,9 @@ from gi.repository import Adw, Gtk
 from realms.helpers.async_jobs import ResultWrapper, failableAsyncJob
 from realms.libvirt_wrap import Domain, Volume
 from realms.libvirt_wrap.constants import *
-from realms.ui.builders import GenericPreferencesRow, hspacer
-from realms.ui.builders.common import simpleErrorDialog
-from realms.ui.builders.preference_widgets import RealmsPreferencesPage
+from realms.ui.components import GenericPreferencesRow, hspacer
+from realms.ui.components.common import simpleErrorDialog
+from realms.ui.components.preference_widgets import RealmsPreferencesPage
 
 
 class CloneVolumeBox(GenericPreferencesRow):

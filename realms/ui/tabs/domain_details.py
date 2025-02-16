@@ -22,7 +22,7 @@ from realms.helpers import failableAsyncJob
 from realms.helpers.show_domain_video import hasDisplay, show
 from realms.libvirt_wrap import Domain
 from realms.libvirt_wrap.constants import *
-from realms.ui.builders import (
+from realms.ui.components import (
     ActionOption,
     ApplyRow,
     XMLView,
@@ -30,9 +30,9 @@ from realms.ui.builders import (
     iconButton,
     selectDialog,
 )
-from realms.ui.builders.domain import PerformanceBox, SnapshotBox
-from realms.ui.builders.domain.domain_page_host import DomainPageHost
-from realms.ui.builders.domain.pages import (
+from realms.ui.components.domain import PerformanceBox, SnapshotBox
+from realms.ui.components.domain.domain_page_host import DomainPageHost
+from realms.ui.components.domain.pages import (
     BaseDevicePage,
     ClockPage,
     FeaturesPage,
@@ -41,7 +41,7 @@ from realms.ui.builders.domain.pages import (
     GeneralPage,
     tagToPage,
 )
-from realms.ui.builders.preference_widgets import RealmsClamp, RealmsPreferencesPage
+from realms.ui.components.preference_widgets import RealmsClamp, RealmsPreferencesPage
 from realms.ui.dialogs.add_device_dialog import AddDeviceDialog
 from realms.ui.dialogs.clone_domain_dialog import CloneDomainDialog
 from realms.ui.dialogs.take_snapshot_dialog import TakeSnapshotDialog

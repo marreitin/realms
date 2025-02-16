@@ -21,10 +21,10 @@ from gi.repository import Adw, Gtk
 
 from realms.libvirt_wrap import Domain
 from realms.libvirt_wrap.constants import *
-from realms.ui.builders import sourceViewGetText, sourceViewSetText, xmlSourceView
-from realms.ui.builders.common import simpleErrorDialog
-from realms.ui.builders.domain.domain_page_host import DomainPageHost
-from realms.ui.builders.domain.tag_to_page import tagToPage
+from realms.ui.components import sourceViewGetText, sourceViewSetText, xmlSourceView
+from realms.ui.components.common import simpleErrorDialog
+from realms.ui.components.domain.domain_page_host import DomainPageHost
+from realms.ui.components.domain.tag_to_page import tagToPage
 from realms.ui.window_reference import WindowReference
 
 

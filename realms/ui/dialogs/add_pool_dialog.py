@@ -19,9 +19,9 @@ from gi.repository import Adw, Gtk
 
 from realms.libvirt_wrap import Connection
 from realms.libvirt_wrap.constants import *
-from realms.ui.builders import sourceViewGetText, sourceViewSetText, xmlSourceView
-from realms.ui.builders.common import simpleErrorDialog
-from realms.ui.builders.pool.pool_prefs_group import PoolPreferencesGroup
+from realms.ui.components import sourceViewGetText, sourceViewSetText, xmlSourceView
+from realms.ui.components.common import simpleErrorDialog
+from realms.ui.components.pool.pool_prefs_group import PoolPreferencesGroup
 
 
 class AddPoolDialog:

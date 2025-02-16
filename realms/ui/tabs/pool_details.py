@@ -18,11 +18,11 @@ from gi.repository import Adw, GLib, Gtk
 from realms.helpers import RepeatJob, bytesToString, failableAsyncJob
 from realms.libvirt_wrap import Pool
 from realms.libvirt_wrap.constants import *
-from realms.ui.builders import ActionOption, ApplyRow, XMLView, selectDialog
-from realms.ui.builders.common import hspacer, iconButton
-from realms.ui.builders.pool.pool_prefs_group import PoolPreferencesGroup
-from realms.ui.builders.pool.pool_volumes_group import VolumesGroup
-from realms.ui.builders.preference_widgets import RealmsClamp, RealmsPreferencesPage
+from realms.ui.components import ActionOption, ApplyRow, XMLView, selectDialog
+from realms.ui.components.common import hspacer, iconButton
+from realms.ui.components.pool.pool_prefs_group import PoolPreferencesGroup
+from realms.ui.components.pool.pool_volumes_group import VolumesGroup
+from realms.ui.components.preference_widgets import RealmsClamp, RealmsPreferencesPage
 
 from .base_details import BaseDetailsTab
 

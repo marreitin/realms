@@ -17,8 +17,8 @@ import xml.etree.ElementTree as ET
 
 from gi.repository import Adw, Gtk
 
-from realms.ui.builders.bindable_entries import BindableEntryRow
-from realms.ui.builders.common import iconButton
+from realms.ui.components.bindable_entries import BindableEntryRow
+from realms.ui.components.common import iconButton
 
 
 class DHCPHostRow(Adw.ExpanderRow):

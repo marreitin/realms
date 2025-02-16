@@ -15,7 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from gi.repository import Adw, Gio, GLib, Gtk
 
-from realms.ui.builders import iconButton
+from realms.ui.components import iconButton
 from realms.ui.connection_row import ConnectionRow
 from realms.ui.tabs import BaseDetailsTab
 

@@ -27,15 +27,15 @@ from realms.helpers import (
 )
 from realms.libvirt_wrap import Pool
 from realms.libvirt_wrap.constants import *
-from realms.ui.builders import (
+from realms.ui.components import (
     BindableEntryRow,
     GenericPreferencesRow,
     sourceViewGetText,
     sourceViewSetText,
     xmlSourceView,
 )
-from realms.ui.builders.common import simpleErrorDialog
-from realms.ui.builders.pool.pool_permissions_box import PoolPermissionsBox
+from realms.ui.components.common import simpleErrorDialog
+from realms.ui.components.pool.pool_permissions_box import PoolPermissionsBox
 
 
 class AddVolumeDialog:

@@ -19,10 +19,10 @@ from gi.repository import Adw, Gtk
 
 from realms.libvirt_wrap import Connection
 from realms.libvirt_wrap.constants import *
-from realms.ui.builders import sourceViewGetText, sourceViewSetText, xmlSourceView
-from realms.ui.builders.common import simpleErrorDialog
-from realms.ui.builders.net import NetGeneralGroup, NetIPGroup
-from realms.ui.builders.preference_widgets import RealmsPreferencesPage
+from realms.ui.components import sourceViewGetText, sourceViewSetText, xmlSourceView
+from realms.ui.components.common import simpleErrorDialog
+from realms.ui.components.net import NetGeneralGroup, NetIPGroup
+from realms.ui.components.preference_widgets import RealmsPreferencesPage
 
 
 class AddNetDialog:

@@ -25,7 +25,7 @@ from jinja2 import Environment
 from realms.helpers import stringToBytes
 from realms.libvirt_wrap import Connection
 from realms.libvirt_wrap.constants import *
-from realms.ui.builders import (
+from realms.ui.components import (
     GenericPreferencesRow,
     hspacer,
     iconButton,
@@ -33,10 +33,10 @@ from realms.ui.builders import (
     sourceViewGetText,
     xmlSourceView,
 )
-from realms.ui.builders.common import simpleErrorDialog
-from realms.ui.builders.network_chooser import NetworkChooserRow
-from realms.ui.builders.preference_widgets import RealmsPreferencesPage
-from realms.ui.builders.volume_chooser import VolumeChooser
+from realms.ui.components.common import simpleErrorDialog
+from realms.ui.components.network_chooser import NetworkChooserRow
+from realms.ui.components.preference_widgets import RealmsPreferencesPage
+from realms.ui.components.volume_chooser import VolumeChooser
 
 
 class SettingsField:

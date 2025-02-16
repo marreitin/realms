@@ -20,7 +20,7 @@ from gi.repository import Adw, Gtk
 from realms.helpers import failableAsyncJob
 from realms.libvirt_wrap import Network
 from realms.libvirt_wrap.constants import *
-from realms.ui.builders import (
+from realms.ui.components import (
     ActionOption,
     ApplyRow,
     XMLView,
@@ -28,7 +28,7 @@ from realms.ui.builders import (
     iconButton,
     selectDialog,
 )
-from realms.ui.builders.net import (
+from realms.ui.components.net import (
     BaseNetSettingsPage,
     NetDNSPage,
     NetGeneralGroup,
@@ -37,7 +37,7 @@ from realms.ui.builders.net import (
     NetQOSPage,
     NetRoutePage,
 )
-from realms.ui.builders.preference_widgets import RealmsClamp, RealmsPreferencesPage
+from realms.ui.components.preference_widgets import RealmsClamp, RealmsPreferencesPage
 
 from .base_details import BaseDetailsTab
 

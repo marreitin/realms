@@ -20,7 +20,7 @@ from gi.repository import Adw, Gtk
 from realms.helpers import getETText
 from realms.libvirt_wrap import Connection, Secret
 from realms.libvirt_wrap.constants import *
-from realms.ui.builders import (
+from realms.ui.components import (
     ActionOption,
     BindableComboRow,
     BindableEntryRow,
@@ -33,7 +33,7 @@ from realms.ui.builders import (
     sourceViewSetText,
     xmlSourceView,
 )
-from realms.ui.builders.common import simpleErrorDialog
+from realms.ui.components.common import simpleErrorDialog
 
 (
     MODE_ADDING,
