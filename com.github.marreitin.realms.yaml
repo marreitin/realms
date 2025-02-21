@@ -19,6 +19,7 @@ finish-args:
   - --device=dri
   - --filesystem=home
   - --filesystem=/run/libvirt
+  - --filesystem=xdg-run/libvirt
 modules:
   - name: realms
     buildsystem: meson
