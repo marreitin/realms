@@ -79,6 +79,11 @@ def splitIconButton(label: str, icon_name: str, **kwargs) -> Gtk.Button:
     return button
 
 
+def controlButton(label: str, cb: callable, **kwargs):
+    """Start/Stop/Pause button in uniform style."""
+    return iconButton(label=label, icon_name="", cb=cb, width_request=120, **kwargs)
+
+
 def propertyRow(title: str, **kwargs) -> Adw.ActionRow:
     """Generate a property row
 

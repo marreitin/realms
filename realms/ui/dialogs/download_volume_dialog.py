@@ -47,6 +47,8 @@ class DownloadVolumeDialog:
         self.start()
 
     def start(self):
+        """Start the download of the volume."""
+
         def updateProgress(size, bytes_received):
             percentage = int((bytes_received / size) * 100)
             self.obj("download-progress").set_fraction(bytes_received / size)
@@ -54,7 +56,8 @@ class DownloadVolumeDialog:
                 f"{ bytesToString(bytes_received) } / { bytesToString(size) } - { percentage }%"
             )
 
-        def downloadTo(folder: str):
+        def downloadVolume(folder: str):
+            """Run the download and write contents to the chosen file."""
             stream = self.volume.pool.connection.connection.newStream()
             try:
                 size = self.volume.getCapacity()
@@ -101,7 +104,7 @@ class DownloadVolumeDialog:
             else:
                 self.dialog.present(None)
                 asyncJob(
-                    downloadTo, [folder.get_path()], lambda *x: self.dialog.close()
+                    downloadVolume, [folder.get_path()], lambda *x: self.dialog.close()
                 )
 
         # Present dialog to pick saving location
@@ -109,6 +112,7 @@ class DownloadVolumeDialog:
         dialog.select_folder(self.window, None, onFolderSelected)
 
     def onCancelClicked(self, btn):
+        """Cancel the download."""
         self.cancel_event.set()
         btn.set_sensitive(False)
 

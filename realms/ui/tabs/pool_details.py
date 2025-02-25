@@ -19,7 +19,7 @@ from realms.helpers import RepeatJob, bytesToString, failableAsyncJob
 from realms.libvirt_wrap import Pool
 from realms.libvirt_wrap.constants import *
 from realms.ui.components import ActionOption, ApplyRow, XMLView, selectDialog
-from realms.ui.components.common import hspacer, iconButton
+from realms.ui.components.common import controlButton, hspacer
 from realms.ui.components.pool.pool_prefs_group import PoolPreferencesGroup
 from realms.ui.components.pool.pool_volumes_group import VolumesGroup
 from realms.ui.components.preference_widgets import RealmsClamp, RealmsPreferencesPage
@@ -101,14 +101,10 @@ class PoolDetailsTab(BaseDetailsTab):
         )
         clamp.set_child(actions_box)
 
-        self.start_btn = iconButton(
-            "Start", "media-playback-start-symbolic", self.onStartClicked
-        )
+        self.start_btn = controlButton("Start", self.onStartClicked)
         actions_box.append(self.start_btn)
 
-        self.stop_btn = iconButton(
-            "Stop", "media-playback-stop-symbolic", self.onStopClicked
-        )
+        self.stop_btn = controlButton("Stop", self.onStopClicked)
         actions_box.append(self.stop_btn)
 
         actions_box.append(hspacer())

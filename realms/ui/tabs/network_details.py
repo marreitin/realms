@@ -28,6 +28,7 @@ from realms.ui.components import (
     iconButton,
     selectDialog,
 )
+from realms.ui.components.common import controlButton
 from realms.ui.components.net import (
     BaseNetSettingsPage,
     NetDNSPage,
@@ -161,14 +162,10 @@ class NetworkDetailsTab(BaseDetailsTab):
             ),
         )
 
-        self.start_btn = iconButton(
-            "Start", "media-playback-start-symbolic", self.onStartClicked
-        )
+        self.start_btn = controlButton("Start", self.onStartClicked)
         actions_box.append(self.start_btn)
 
-        self.stop_btn = iconButton(
-            "Stop", "media-playback-stop-symbolic", self.onStopClicked
-        )
+        self.stop_btn = controlButton("Stop", self.onStopClicked)
         actions_box.append(self.stop_btn)
 
         actions_box.append(hspacer())

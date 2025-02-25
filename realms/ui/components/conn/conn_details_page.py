@@ -25,6 +25,7 @@ from realms.ui.components import (
     propertyRow,
     selectDialog,
 )
+from realms.ui.components.common import controlButton
 from realms.ui.components.preference_widgets import RealmsClamp, RealmsPreferencesPage
 
 
@@ -91,12 +92,11 @@ class ConnectionDetailsPage(Gtk.Box):
         )
         clamp.set_child(actions_box)
 
-        self.disconnect_btn = iconButton("Disconnect", "", self.onDisconnectClicked)
+        self.disconnect_btn = controlButton("Disconnect", self.onDisconnectClicked)
         actions_box.append(self.disconnect_btn)
 
-        self.connect_btn = iconButton(
+        self.connect_btn = controlButton(
             "Connect",
-            "",
             self.onConnectClicked,
             css_classes=["suggested-action"],
         )

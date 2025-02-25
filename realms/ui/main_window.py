@@ -188,7 +188,6 @@ class MainWindow(Adw.ApplicationWindow):
         self.no_tabs_status = Adw.StatusPage(
             vexpand=True,
             icon_name="com.github.marreitin.realms",
-            title="Realms",
         )
         self.main_area_overlay.add_overlay(self.no_tabs_status)
 

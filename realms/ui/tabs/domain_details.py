@@ -30,6 +30,7 @@ from realms.ui.components import (
     iconButton,
     selectDialog,
 )
+from realms.ui.components.common import controlButton
 from realms.ui.components.domain import PerformanceBox, SnapshotBox
 from realms.ui.components.domain.domain_page_host import DomainPageHost
 from realms.ui.components.domain.pages import (
@@ -250,40 +251,41 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         )
         self.actions_box.append(self.back_btn)
 
-        self.start_btn = iconButton(
+        self.start_btn = controlButton(
             "Start",
-            "media-playback-start-symbolic",
             self.onStartClicked,
             css_classes=["suggested-action"],
         )
         self.actions_box.append(self.start_btn)
 
-        self.resume_btn = iconButton(
+        self.resume_btn = controlButton(
             "Resume",
-            "media-playback-start-symbolic",
             self.onResumeClicked,
             css_classes=["suggested-action"],
         )
         self.actions_box.append(self.resume_btn)
 
-        self.pause_btn = iconButton(
-            "Pause", "media-playback-pause-symbolic", self.onPauseClicked
-        )
-        self.actions_box.append(self.pause_btn)
-
-        self.stop_btn = iconButton(
+        self.stop_btn = controlButton(
             "Stop",
-            "media-playback-stop-symbolic",
             self.onStopClicked,
             css_classes=["destructive-action"],
         )
         self.actions_box.append(self.stop_btn)
 
+        self.pause_btn = iconButton(
+            "",
+            "media-playback-pause-symbolic",
+            self.onPauseClicked,
+            tooltip_text="Pause",
+        )
+        self.actions_box.append(self.pause_btn)
+
         self.open_btn = iconButton(
-            "Open",
+            "",
             "computer-symbolic",
             lambda *b: show(self.domain, self.window_ref.window),
             css_classes=["suggested-action"],
+            tooltip_text="Open",
         )
         self.actions_box.append(self.open_btn)
 

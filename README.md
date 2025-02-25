@@ -19,5 +19,5 @@
 ## Flatpak
 
 ```sh
-flatpak-builder --force-clean --install-deps-from=flathub --user --repo=repo --install builddir com.github.marreitin.realms.yaml
+flatpak run org.flatpak.Builder --install ~/Projects/builddir com.github.marreitin.realms.yaml --user --install-deps-from=flathub repo=~/Projects/repo  --force-clean && flatpak run com.github.marreitin.realms
 ```
