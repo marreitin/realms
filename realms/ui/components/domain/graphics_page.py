@@ -25,6 +25,7 @@ from realms.ui.components.bindable_entries import (
     BindablePasswordRow,
     BindableSpinRow,
     BindableSwitchRow,
+    ExistentialComboRow,
 )
 
 from .base_device_page import BaseDevicePage
@@ -260,6 +261,10 @@ class GraphicsPage(BaseDevicePage):
             "filetransfer",
             "gl",
             "listen",
+            "image",
+            "jpeg",
+            "zlib",
+            "playback",
         ],
         "rdp": ["multiUser", "replaceUser", "listen"],
         "desktop": ["display", "fullscreen"],
@@ -349,6 +354,39 @@ class GraphicsPage(BaseDevicePage):
         self.rows["address"] = BindableEntryRow(title="DBus Address")
         self.group.add(self.rows["address"])
 
+        # Compression Rows for SPICE.
+        self.rows["image"] = ExistentialComboRow(
+            "image",
+            "compression",
+            ["auto_glz", "auto_lz", "quic", "glz", "lz", "off"],
+            "",
+            title="Image Compression",
+        )
+        self.group.add(self.rows["image"])
+
+        self.rows["jpeg"] = ExistentialComboRow(
+            "jpeg",
+            "compression",
+            ["auto", "never", "always"],
+            "",
+            title="JPEG Compression",
+        )
+        self.group.add(self.rows["jpeg"])
+
+        self.rows["zlib"] = ExistentialComboRow(
+            "zlib",
+            "compression",
+            ["auto", "never", "always"],
+            "",
+            title="ZLib Compression",
+        )
+        self.group.add(self.rows["zlib"])
+
+        self.rows["playback"] = ExistentialComboRow(
+            "playback", "compression", ["on", "off"], "", title="Playback Compression"
+        )
+        self.group.add(self.rows["playback"])
+
         if not self.use_for_adding:
             delete_row = Adw.ActionRow()
             self.group.add(delete_row)
@@ -399,6 +437,8 @@ class GraphicsPage(BaseDevicePage):
                     audio = ET.Element("audio")
                 row.bindAttr(audio, "id", self.__onAudioChanged__)
             elif row_name in ["gl", "listen"]:
+                row.bind(self.xml_tree, self.showApply)
+            elif row_name in ["image", "jpeg", "zlib", "playback"]:
                 row.bind(self.xml_tree, self.showApply)
 
     def __onTypeChanged__(self):
