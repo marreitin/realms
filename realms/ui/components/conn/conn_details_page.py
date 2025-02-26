@@ -167,31 +167,31 @@ class ConnectionDetailsPage(Gtk.Box):
         refresh_btn.connect("clicked", self.refreshInfo)
         self.info_group.set_header_suffix(refresh_btn)
 
-        self.hostname_row = propertyRow("Hostname")
+        self.hostname_row = propertyRow("Hostname", subtitle="unavailable")
         self.info_group.add(self.hostname_row)
 
-        self.max_vcpus_row = propertyRow("Available vCPUs")
+        self.max_vcpus_row = propertyRow("Available vCPUs", subtitle="unavailable")
         self.info_group.add(self.max_vcpus_row)
 
-        self.max_mem_row = propertyRow("Available Memory")
+        self.max_mem_row = propertyRow("Available Memory", subtitle="unavailable")
         self.info_group.add(self.max_mem_row)
 
-        self.emulator_path_row = propertyRow("Emulator Path")
+        self.emulator_path_row = propertyRow("Emulator Path", subtitle="unavailable")
         self.info_group.add(self.emulator_path_row)
 
-        self.domain_type_row = propertyRow("Hypervisor Type")
+        self.domain_type_row = propertyRow("Hypervisor Type", subtitle="unavailable")
         self.info_group.add(self.domain_type_row)
 
-        self.machine_row = propertyRow("Machine Type")
+        self.machine_row = propertyRow("Machine Type", subtitle="unavailable")
         self.info_group.add(self.machine_row)
 
-        self.arch_row = propertyRow("Architecture")
+        self.arch_row = propertyRow("Architecture", subtitle="unavailable")
         self.info_group.add(self.arch_row)
 
-        self.libvirt_ver_row = propertyRow("Libvirt Version")
+        self.libvirt_ver_row = propertyRow("Libvirt Version", subtitle="unavailable")
         self.info_group.add(self.libvirt_ver_row)
 
-        self.conn_ver_row = propertyRow("Hypervisor Version")
+        self.conn_ver_row = propertyRow("Hypervisor Version", subtitle="unavailable")
         self.info_group.add(self.conn_ver_row)
 
     def setStatus(self):
@@ -244,15 +244,30 @@ class ConnectionDetailsPage(Gtk.Box):
 
         self.info_group.set_visible(True)
 
-        self.hostname_row.set_subtitle(str(self.parent.connection.hostname()))
-        self.max_vcpus_row.set_subtitle(str(self.parent.connection.maxVCPUs()))
-        self.max_mem_row.set_subtitle(bytesToString(self.parent.connection.maxMemory()))
+        try:
+            self.hostname_row.set_subtitle(str(self.parent.connection.hostname()))
+        except:
+            pass
+        try:
+            self.max_vcpus_row.set_subtitle(str(self.parent.connection.maxVCPUs()))
+        except:
+            pass
+        try:
+            self.max_mem_row.set_subtitle(
+                bytesToString(self.parent.connection.maxMemory())
+            )
+        except:
+            pass
 
-        domain_caps = self.parent.connection.getDomainCapabilities()
-        self.emulator_path_row.set_subtitle(domain_caps.emulator_path)
-        self.domain_type_row.set_subtitle(domain_caps.domain)
-        self.machine_row.set_subtitle(domain_caps.machine)
-        self.arch_row.set_subtitle(domain_caps.arch)
+        try:
+            domain_caps = self.parent.connection.getDomainCapabilities()
+            self.emulator_path_row.set_subtitle(domain_caps.emulator_path)
+            self.domain_type_row.set_subtitle(domain_caps.domain)
+            self.machine_row.set_subtitle(domain_caps.machine)
+            self.arch_row.set_subtitle(domain_caps.arch)
+        except:
+            pass
+
         self.libvirt_ver_row.set_subtitle(
             str(self.parent.connection.getLibvirtVersion())
         )
