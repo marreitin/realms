@@ -171,6 +171,10 @@ templates:
               <resolution x='2560' y='1440'/>
             </model>
           </video>
+          <redirdev bus='usb' type='spicevmc'>
+          </redirdev>
+          <redirdev bus='usb' type='spicevmc'>
+          </redirdev>
           <memballoon model='virtio'>
           </memballoon>
           <rng model='virtio'>
@@ -330,6 +334,10 @@ templates:
               <resolution x='2560' y='1440'/>
             </model>
           </video>
+          <redirdev bus='usb' type='spicevmc'>
+          </redirdev>
+          <redirdev bus='usb' type='spicevmc'>
+          </redirdev>
           <memballoon model='virtio'>
           </memballoon>
           <rng model='virtio'>
@@ -477,6 +485,10 @@ templates:
               <resolution x='2560' y='1440'/>
             </model>
           </video>
+          <redirdev bus='usb' type='spicevmc'>
+          </redirdev>
+          <redirdev bus='usb' type='spicevmc'>
+          </redirdev>
           <memballoon model='virtio'>
           </memballoon>
           <rng model='virtio'>
