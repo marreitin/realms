@@ -13,11 +13,12 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+import traceback
 import xml.etree.ElementTree as ET
 
 from gi.repository import Adw, Gtk
 
-from realms.helpers import asyncJob
+from realms.helpers.async_jobs import ResultWrapper, failableAsyncJob
 from realms.ui.components import iconButton
 from realms.ui.components.bindable_entries import BindableComboRow
 
@@ -61,7 +62,17 @@ class HostdevPage(BaseDevicePage):
         self.onTypeChanged(True)
 
     def onTypeChanged(self, first_run=False):
-        def onDevsListed(node_devs: list):
+        def onDevsListingFailed(e: Exception):
+            pass
+
+        def onDevsListed(res: ResultWrapper):
+            if res.failed:
+                traceback.print_exc()
+                self.dev_row.set_sensitive(False)
+                self.dev_row.set_title("No devices found")
+                return
+
+            node_devs = res.data
             self.dev_row.set_sensitive(True)
             self.dev_row.set_title("Device")
             search_type = self.type_row.getSelectedString()
@@ -88,7 +99,12 @@ class HostdevPage(BaseDevicePage):
         self.dev_row.set_title("Loading devices...")
 
         self.dev_row.set_model(Gtk.StringList(strings=[]))
-        asyncJob(self.parent.domain.connection.listNodeDevices, [], onDevsListed)
+        failableAsyncJob(
+            self.parent.domain.connection.listNodeDevices,
+            [],
+            onDevsListingFailed,
+            onDevsListed,
+        )
 
     def onDeviceChanged(self, combo_row, *_):
         if not self.devices:

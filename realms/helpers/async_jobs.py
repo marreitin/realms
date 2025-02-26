@@ -49,7 +49,8 @@ def failableAsyncJob(f: callable, args: any, except_cb: callable, finally_cb: ca
     Args:
         f (callable): Function to run asynchronously
         args (any): Arguments for f
-        cb (callable): Callback, will be called with exception
+        except_cb (callable): Callback on failure, called with exception
+        finally_cb (callable): Final callback with ResultWrapper for data
     """
 
     def onExcept(e: Exception):

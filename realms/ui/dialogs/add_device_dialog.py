@@ -131,8 +131,12 @@ class AddDeviceDialog(DomainPageHost):
 
     def onTypeSelected(self, *args):
         if self.type_row.get_selected() == 0:
+            if self.device_settings is not None:
+                self.obj("edit-box").remove(self.device_settings.prefs_page)
+            self.obj("btn-finish").set_sensitive(False)
             return
 
+        self.obj("btn-finish").set_sensitive(True)
         tag = self.device_names[self.type_row.get_selected()]
         self.device_tree = ET.Element(tag)
 
