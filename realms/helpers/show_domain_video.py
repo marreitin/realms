@@ -20,6 +20,7 @@ from urllib.parse import urlparse
 from gi.repository import Adw
 
 from realms.libvirt_wrap import Domain
+from realms.ui.components.common import simpleErrorDialog
 
 
 def getDisplay(domain_xml: ET.Element) -> ET.Element | None:
@@ -54,8 +55,10 @@ def show(domain: Domain, window: Adw.ApplicationWindow):
     display = getDisplay(xml)
 
     if display is None:
-        window.pushToastText("No display could be found")
+        simpleErrorDialog("No Display", "The domain doesn't have any display.", window)
         return
+
+    spice_cmd = []
 
     graphics_type = display.get("type")
     if graphics_type == "spice":
@@ -63,11 +66,6 @@ def show(domain: Domain, window: Adw.ApplicationWindow):
         if listen_type is not None and listen_type.get("type") == "socket":
             path = listen_type.get("socket")
             spice_cmd = ["remote-viewer", f"spice+unix://{ path }"]
-            try:
-                subprocess.Popen(spice_cmd)
-            except Exception as e:
-                window.pushToastText("Failed to open remote-viewer: " + str(e))
-                return
         elif (
             listen_type is not None and listen_type.get("type") == "address"
         ) or listen_type is None:
@@ -79,12 +77,16 @@ def show(domain: Domain, window: Adw.ApplicationWindow):
                 display_url = f"{ graphics_type }://localhost:{ graphics_port if graphics_port is not None else '5900' }"
 
             spice_cmd = ["remote-viewer", display_url]
-            try:
-                subprocess.Popen(spice_cmd)
-            except Exception as e:
-                window.pushToastText("Failed to open remote-viewer: " + str(e))
-                return
         else:
+            simpleErrorDialog("Unknown Display Type", "", window)
             raise NotImplementedError
     else:
+        simpleErrorDialog("Unknown Graphics Type", "", window)
         raise NotImplementedError
+
+    print(spice_cmd)
+    try:
+        subprocess.Popen(spice_cmd)
+    except Exception as e:
+        simpleErrorDialog("Failed to open display", str(e), window)
+        return
