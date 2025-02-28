@@ -49,11 +49,12 @@ from realms.ui.dialogs.take_snapshot_dialog import TakeSnapshotDialog
 from .base_details import BaseDetailsTab
 
 
-class DeviceRow:
+class DeviceRow(Gtk.ListBoxRow):
     """Preferences row, mostly used for listing all virtual devices. Contains
     an object type for subclasses of BaseDevicePage and an xml-tree for it,
     to show that page upon row selection. For performance reasons, that page
-    will only be built upon selection."""
+    will only be built upon selection.
+    Also for performance reasons this row emulates an Adw.ActionRow."""
 
     def __init__(
         self, parent, device_page_type: type, xml_tree: ET.Element, can_update=False
@@ -63,36 +64,38 @@ class DeviceRow:
         self.xml_tree = xml_tree
         self.can_update = can_update
         self.index = 0
-        self.row = None
+        self.label = None
 
         self.device_page = self.device_page_type(
             self.parent, self.xml_tree, can_update=self.can_update
         )
 
+        self.box = Gtk.Box(
+            spacing=12, margin_start=12, margin_top=15, margin_bottom=15, margin_end=12
+        )
+        super().__init__(child=self.box)
+
     def build(self):
         """Build the actual action row"""
-        self.row = Adw.ActionRow(
-            title=self.getTitle(),
-            activatable=True,
-            selectable=False,
-        )
-
         main_icon = Gtk.Image.new_from_icon_name(self.device_page.getIconName())
-        self.row.add_prefix(main_icon)
+        self.box.append(main_icon)
 
-        open_icon = Gtk.Image.new_from_icon_name("go-next-symbolic")
-        self.row.add_suffix(open_icon)
+        self.label = Gtk.Label(label=self.getTitle())
+        self.box.append(self.label)
 
-        self.row.connect("activated", self.onActivated)
+        self.box.append(hspacer())
 
-    def onActivated(self, row):
+        open_icon = Gtk.Image.new_from_icon_name("right-symbolic")
+        self.box.append(open_icon)
+
+    def onActivated(self):
         self.device_page.buildFull()
         self.parent.showNavPage(self.device_page.nav_page)
 
     def setIndex(self, index):
         self.index = index
-        if self.row is not None:
-            self.row.set_title(self.getTitle())
+        if self.label is not None:
+            self.label.set_label(self.getTitle())
 
     def getTitle(self) -> str:
         if self.index == 0:
@@ -135,9 +138,12 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
 
         self.navigation_view = None
         self.general_group = None
+        self.general_listbox = None
         self.general_rows = []
 
         self.devices_group = None
+        self.devices_listbox = None
+
         self.xml_tree = None
         self.device_rows = {}
 
@@ -201,9 +207,25 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         self.general_group = Adw.PreferencesGroup()
         devices_page.add(self.general_group)
 
+        self.general_listbox = Gtk.ListBox(
+            css_classes=["boxed-list"],
+            selection_mode=Gtk.SelectionMode.NONE,
+            hexpand=True,
+        )
+        self.general_group.add(self.general_listbox)
+        self.general_listbox.connect("row-activated", lambda _, r: r.onActivated())
+
         # Device rows
         self.devices_group = Adw.PreferencesGroup(title="Virtual devices")
         devices_page.add(self.devices_group)
+
+        self.devices_listbox = Gtk.ListBox(
+            css_classes=["boxed-list"],
+            selection_mode=Gtk.SelectionMode.NONE,
+            hexpand=True,
+        )
+        self.devices_group.add(self.devices_listbox)
+        self.devices_listbox.connect("row-activated", lambda _, r: r.onActivated())
 
         add_btn = iconButton(
             "Add device",
@@ -213,6 +235,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
             hexpand=False,
             halign=Gtk.Align.CENTER,
             margin_top=12,
+            margin_bottom=12,
         )
         self.devices_group.add(add_btn)
 
@@ -248,9 +271,8 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
 
         self.back_btn = iconButton(
             "",
-            "go-previous-symbolic",
+            "left-symbolic",
             self.onBackClicked,
-            css_classes=["flat"],
             visible=False,
         )
 
@@ -271,14 +293,16 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
 
         self.pause_btn = iconButton(
             "",
-            "media-playback-pause-symbolic",
+            "pause-symbolic",
             self.onPauseClicked,
             tooltip_text="Pause",
+            css_classes=["flat"],
         )
 
-        self.open_btn = controlButton(
-            "Open",
-            lambda *b: show(self.domain, self.window_ref.window),
+        self.open_btn = iconButton(
+            "",
+            "display-symbolic",
+            lambda *_: show(self.domain, self.window_ref.window),
             css_classes=["suggested-action"],
         )
 
@@ -312,7 +336,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         self.autostart = self.domain.getAutostart()
 
         for row in self.general_rows:
-            self.general_group.remove(row.row)
+            self.general_listbox.remove(row)
         self.general_rows.clear()
 
         for row in [
@@ -323,12 +347,12 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
             DeviceRow(self, FeaturesPage, self.xml_tree),
         ]:
             row.build()
-            self.general_group.add(row.row)
+            self.general_listbox.append(row)
             self.general_rows.append(row)
 
         # Virtual devices
         for row in self.device_rows.values():
-            self.devices_group.remove(row.row)
+            self.devices_listbox.remove(row)
         self.device_rows.clear()
 
         # Only show the update row in the device page if
@@ -348,7 +372,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
                 row.setIndex(index)
             self.device_rows[row.getTitle()] = row
             row.build()
-            self.devices_group.add(row.row)
+            self.devices_listbox.append(row)
 
         # Update currently visible page if possible, otherwise
         # close it. TODO

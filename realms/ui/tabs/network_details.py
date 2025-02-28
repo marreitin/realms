@@ -69,7 +69,7 @@ class SubsettingsRow(Adw.ActionRow):
         main_icon = Gtk.Image.new_from_icon_name(self.icon_name)
         self.add_prefix(main_icon)
 
-        open_icon = Gtk.Image.new_from_icon_name("go-next-symbolic")
+        open_icon = Gtk.Image.new_from_icon_name("right-symbolic")
         self.add_suffix(open_icon)
 
         self.connect("activated", self.onActivated)
@@ -121,7 +121,7 @@ class NetworkDetailsTab(BaseDetailsTab):
         self.stop_btn = controlButton("Stop", self.onStopClicked)
         self.back_btn = iconButton(
             "",
-            "go-previous-symbolic",
+            "left-symbolic",
             self.onBackClicked,
             visible=False,
         )

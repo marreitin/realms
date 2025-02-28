@@ -33,6 +33,7 @@
   <file preprocess="xml-stripblanks" alias="harddisk-symbolic.svg">hicolor/scalable/actions/harddisk-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="horizontal-arrows-symbolic.svg">hicolor/scalable/actions/horizontal-arrows-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="info-outline-symbolic.svg">hicolor/scalable/actions/info-outline-symbolic.svg</file>
+  <file preprocess="xml-stripblanks" alias="left-symbolic.svg">hicolor/scalable/actions/left-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="padlock2-symbolic.svg">hicolor/scalable/actions/padlock2-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="keyboard3-symbolic.svg">hicolor/scalable/actions/keyboard3-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="key-login-symbolic.svg">hicolor/scalable/actions/key-login-symbolic.svg</file>
@@ -42,11 +43,13 @@
   <file preprocess="xml-stripblanks" alias="network-proxy-symbolic.svg">hicolor/scalable/actions/network-proxy-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="network-server-symbolic.svg">hicolor/scalable/actions/network-server-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="offline-globe-symbolic.svg">hicolor/scalable/actions/offline-globe-symbolic.svg</file>
+  <file preprocess="xml-stripblanks" alias="pause-symbolic.svg">hicolor/scalable/actions/pause-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="padlock2-open-symbolic.svg">hicolor/scalable/actions/padlock2-open-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="panel-left-symbolic.svg">hicolor/scalable/actions/panel-left-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="pci-card-symbolic.svg">hicolor/scalable/actions/pci-card-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="play-symbolic.svg">hicolor/scalable/actions/play-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="processor-symbolic.svg">hicolor/scalable/actions/processor-symbolic.svg</file>
+  <file preprocess="xml-stripblanks" alias="right-symbolic.svg">hicolor/scalable/actions/right-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="settings-symbolic.svg">hicolor/scalable/actions/settings-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="skull-symbolic.svg">hicolor/scalable/actions/skull-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="smartcard-symbolic.svg">hicolor/scalable/actions/smartcard-symbolic.svg</file>

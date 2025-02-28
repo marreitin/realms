@@ -145,7 +145,7 @@ class IPRow(Adw.ExpanderRow):
         )
         self.add_row(self.dhcphosts_row)
 
-        open_icon = Gtk.Image.new_from_icon_name("go-next-symbolic")
+        open_icon = Gtk.Image.new_from_icon_name("right-symbolic")
         self.dhcphosts_row.add_suffix(open_icon)
 
         self.dhcphosts_row.connect("activated", self.onDHCPHostsActivated)
