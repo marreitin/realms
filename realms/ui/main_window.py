@@ -154,7 +154,7 @@ class MainWindow(Adw.ApplicationWindow):
         self.main_area_overlay = Gtk.Overlay(hexpand=True, vexpand=True)
         self.main_toolbar_view.set_content(self.main_area_overlay)
 
-        self.tab_bar = Adw.TabBar(hexpand=True, autohide=False)
+        self.tab_bar = Adw.TabBar(hexpand=True, autohide=True)
         self.main_toolbar_view.add_top_bar(self.tab_bar)
 
         self.tab_view = Adw.TabView(hexpand=True, vexpand=True)
