@@ -15,6 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import threading
 import traceback
+from dataclasses import dataclass
 
 from gi.repository import GLib
 
@@ -28,18 +29,18 @@ def asyncJob(f: callable, args: any, cb: callable):
         cb (callable): Callback, will be called with results from f
     """
 
-    def run(args):
+    def __run__(args):
         ret = f(*args)
         GLib.idle_add(cb, ret)
 
-    thread = threading.Thread(target=run, args=[args])
+    thread = threading.Thread(target=__run__, args=[args], daemon=True)
     thread.start()
 
 
+@dataclass
 class ResultWrapper:
-    def __init__(self, data: any, failed: bool):
-        self.data = data
-        self.failed = failed
+    data: any
+    failed: bool
 
 
 def failableAsyncJob(f: callable, args: any, except_cb: callable, finally_cb: callable):
@@ -53,25 +54,26 @@ def failableAsyncJob(f: callable, args: any, except_cb: callable, finally_cb: ca
         finally_cb (callable): Final callback with ResultWrapper for data
     """
 
-    def onExcept(e: Exception):
+    def __onExcept__(e: Exception):
         except_cb(e)
         finally_cb(ResultWrapper(None, True))
 
-    def run(args):
+    def __run__(args):
         try:
             res = f(*args)
             GLib.idle_add(finally_cb, ResultWrapper(res, False))
         except Exception as e:
             traceback.print_exc()
-            GLib.idle_add(onExcept, e)
+            GLib.idle_add(__onExcept__, e)
 
-    thread = threading.Thread(target=run, args=[args])
+    thread = threading.Thread(target=__run__, args=[args], daemon=True)
     thread.start()
 
 
 class RepeatJob:
     def __init__(self, f: callable, args: any, cb: callable, interval: int):
-        """Generic job that runs asynchronously and then calls back with the result repeatedly after <interval> seconds
+        """Job that spawns after interval a thread to run a job, then calls back
+        with the result to the main thread.
 
         Args:
             f (callable): Function to run asynchronously
@@ -84,14 +86,14 @@ class RepeatJob:
         self.cb = cb
         self.stop_flag = threading.Event()
 
-        GLib.timeout_add(interval * 1000, self.onTimeout)
-        self.onTimeout()
+        GLib.timeout_add(interval * 1000, self.__onTimeout__)
+        self.__onTimeout__()
 
-    def onTimeout(self):
+    def __onTimeout__(self):
         if self.stop_flag.is_set():
             self.stop_flag.clear()
             return False  # Cancel timeout
-        thread = threading.Thread(target=self.run, args=[self.args])
+        thread = threading.Thread(target=self.run, args=[self.args], daemon=True)
         thread.start()
         return True
 
