@@ -53,6 +53,8 @@ class PoolDetailsTab(BaseDetailsTab):
         self.pool_prefs_group = None
 
         # Volumes
+        self.volume_page = None
+        self.volume_stack_page = None
         self.volume_group = None
 
         self.build()
@@ -113,12 +115,12 @@ class PoolDetailsTab(BaseDetailsTab):
         self.prefs_page.add(self.pool_prefs_group)
 
         # Volume group
-        volume_page = RealmsPreferencesPage()
-        self.stack.add_titled_with_icon(
-            volume_page, "volumes", "Volumes", "drive-multidisk-symbolic"
+        self.volume_page = RealmsPreferencesPage()
+        self.volume_stack_page = self.stack.add_titled_with_icon(
+            self.volume_page, "volumes", "Volumes", "drive-multidisk-symbolic"
         )
         self.volume_group = VolumesGroup(self.pool, self.showApply, self.window_ref)
-        volume_page.add(self.volume_group)
+        self.volume_page.add(self.volume_group)
 
         # XML
         self.xml_view = XMLView(self.showApply)
@@ -131,6 +133,7 @@ class PoolDetailsTab(BaseDetailsTab):
         GLib.idle_add(lambda *x: self.presentUsage())
 
     def presentUsage(self):
+        """Show the usage of the pool with the progress bar."""
         def gatherUsage():
             allocated = self.pool.getAllocation()
             capacity = self.pool.getCapacity()
@@ -169,6 +172,8 @@ class PoolDetailsTab(BaseDetailsTab):
             self.title_widget.set_subtitle("active")
 
             self.apply_row.setShowWarning(True)
+            self.volume_stack_page.set_visible(True)
+            self.volume_group.onRefreshClicked(True)
         else:
             self.start_btn.set_visible(True)
             self.stop_btn.set_visible(False)
@@ -176,6 +181,8 @@ class PoolDetailsTab(BaseDetailsTab):
             self.title_widget.set_subtitle("inactive")
 
             self.apply_row.setShowWarning(False)
+
+            self.volume_stack_page.set_visible(False)
 
     def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id, opaque):
         if type_id == CALLBACK_TYPE_POOL_GENERIC:

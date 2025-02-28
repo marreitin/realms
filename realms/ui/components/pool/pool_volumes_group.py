@@ -62,7 +62,6 @@ class VolumesGroup(Adw.PreferencesGroup):
         box.append(vol_refresh_btn)
 
         self.set_header_suffix(box)
-        self.onRefreshClicked(refresh=False)
 
     def onAddClicked(self, *args):
         AddVolumeDialog(self.window_ref.window, self.pool)
