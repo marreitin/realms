@@ -129,7 +129,6 @@ class NetGeneralGroup(Adw.PreferencesGroup):
         if not self.allow_name_edit:
             self.name_row.set_subtitle(getETText(name))
             self.uuid_row.set_subtitle(getETText(uuid))
-            self.set_title("Network: " + getETText(name))
         else:
             if name is None:
                 name = ET.SubElement(self.xml_tree, "name")

@@ -112,8 +112,6 @@ class PoolPreferencesGroup(Adw.PreferencesGroup):
         if not self.allow_name_edit:
             self.name_row.set_subtitle(getETText(name))
             self.uuid_row.set_subtitle(getETText(self.xml_tree.find("uuid")))
-
-            self.set_title("Pool: " + getETText(name))
         else:
             self.name_row.bindText(name, self.show_apply_cb)
 

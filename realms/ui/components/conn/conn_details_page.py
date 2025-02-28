@@ -62,9 +62,9 @@ class ConnectionDetailsPage(Gtk.Box):
         self.libvirt_ver_row = None
         self.conn_ver_row = None
 
-        self.build()
+        self.__build__()
 
-    def build(self):
+    def __build__(self):
         """Build self."""
         toolbar_view = Adw.ToolbarView(hexpand=True, vexpand=True)
         self.append(toolbar_view)
@@ -81,9 +81,7 @@ class ConnectionDetailsPage(Gtk.Box):
         self.prefs_page = RealmsPreferencesPage()
         toolbar_view.set_content(self.prefs_page)
 
-        self.prefs_group = Adw.PreferencesGroup(
-            title="Connection Details",
-        )
+        self.prefs_group = Adw.PreferencesGroup()
         self.prefs_page.add(self.prefs_group)
 
         # Security status icons
@@ -127,13 +125,13 @@ class ConnectionDetailsPage(Gtk.Box):
         )
         action_row.add_prefix(self.forget_btn)
 
-        self.buildHypervisorInfo()
+        self.__buildHypervisorInfo__()
 
         self.loadSettings()
         self.setStatus()
         self.refreshInfo()
 
-    def buildHypervisorInfo(self):
+    def __buildHypervisorInfo__(self):
         """Build the box with hypervisor info."""
         # Some hypervisor infos
         self.info_group = Adw.PreferencesGroup()

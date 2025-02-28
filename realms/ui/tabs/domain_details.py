@@ -26,11 +26,10 @@ from realms.ui.components import (
     ActionOption,
     ApplyRow,
     XMLView,
-    hspacer,
     iconButton,
     selectDialog,
 )
-from realms.ui.components.common import controlButton
+from realms.ui.components.common import controlButton, hspacer
 from realms.ui.components.domain import PerformanceBox, SnapshotBox
 from realms.ui.components.domain.domain_page_host import DomainPageHost
 from realms.ui.components.domain.pages import (
@@ -42,7 +41,7 @@ from realms.ui.components.domain.pages import (
     GeneralPage,
     tagToPage,
 )
-from realms.ui.components.preference_widgets import RealmsClamp, RealmsPreferencesPage
+from realms.ui.components.preference_widgets import RealmsPreferencesPage
 from realms.ui.dialogs.add_device_dialog import AddDeviceDialog
 from realms.ui.dialogs.clone_domain_dialog import CloneDomainDialog
 from realms.ui.dialogs.take_snapshot_dialog import TakeSnapshotDialog
@@ -308,7 +307,6 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
             ET.indent(self.xml_tree)
             self.xml_box.setText(ET.tostring(self.xml_tree, "unicode"))
 
-        self.general_group.set_title("Domain: " + self.domain.getDisplayName())
         self.title_widget.set_title(self.domain.getDisplayName())
 
         self.autostart = self.domain.getAutostart()

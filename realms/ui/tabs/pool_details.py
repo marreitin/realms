@@ -134,6 +134,7 @@ class PoolDetailsTab(BaseDetailsTab):
 
     def presentUsage(self):
         """Show the usage of the pool with the progress bar."""
+
         def gatherUsage():
             allocated = self.pool.getAllocation()
             capacity = self.pool.getCapacity()
