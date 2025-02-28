@@ -33,6 +33,10 @@ class BaseDetailsTab(Gtk.Box):
         """Will be called once a tab gets closed to release any resources."""
         raise NotImplementedError
 
+    def setWindowHeader(self, window: Adw.ApplicationWindow):
+        """Implement callback when this tab is presented."""
+        raise NotImplementedError
+
     def getUniqueIdentifier(self) -> str:
         """Return a unique identifier for this tab, used to prevent duplicate tabs
         inside a window.

@@ -42,10 +42,10 @@ class PoolDetailsTab(BaseDetailsTab):
 
         # Action group
         self.prefs_page = None
+        self.title_widget = None
         self.start_btn = None
         self.stop_btn = None
         self.delete_btn = None
-        self.status_label = None
         self.fill_progress = None
         self.apply_row = None
 
@@ -92,25 +92,9 @@ class PoolDetailsTab(BaseDetailsTab):
         prefs_box.append(self.prefs_page)
 
         # Top group with buttons
-        clamp = RealmsClamp()
-        toolbar_view.add_top_bar(clamp)
-        actions_box = Gtk.Box(
-            spacing=6,
-            margin_top=6,
-            margin_bottom=6,
-        )
-        clamp.set_child(actions_box)
-
+        self.title_widget = Adw.WindowTitle(title=self.pool.getDisplayName())
         self.start_btn = controlButton("Start", self.onStartClicked)
-        actions_box.append(self.start_btn)
-
         self.stop_btn = controlButton("Stop", self.onStopClicked)
-        actions_box.append(self.stop_btn)
-
-        actions_box.append(hspacer())
-
-        self.status_label = Gtk.Label(label="Down", css_classes=["dim-label"])
-        actions_box.append(self.status_label)
 
         # Group with general pool settings
         fill_group = Adw.PreferencesGroup()
@@ -182,14 +166,14 @@ class PoolDetailsTab(BaseDetailsTab):
             self.start_btn.set_visible(False)
             self.stop_btn.set_visible(True)
 
-            self.status_label.set_label("active")
+            self.title_widget.set_subtitle("active")
 
             self.apply_row.setShowWarning(True)
         else:
             self.start_btn.set_visible(True)
             self.stop_btn.set_visible(False)
 
-            self.status_label.set_label("inactive")
+            self.title_widget.set_subtitle("inactive")
 
             self.apply_row.setShowWarning(False)
 
@@ -276,3 +260,8 @@ class PoolDetailsTab(BaseDetailsTab):
 
     def getUniqueIdentifier(self) -> str:
         return self.pool.getUUID()
+
+    def setWindowHeader(self, window):
+        window.headerSetTitleWidget(self.title_widget)
+        window.headerPackStart(self.start_btn)
+        window.headerPackStart(self.stop_btn)

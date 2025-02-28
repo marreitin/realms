@@ -96,11 +96,11 @@ class NetworkDetailsTab(BaseDetailsTab):
         self.actions_prefs_page = None
         self.apply_row = None
 
+        self.title_widget = None
         self.back_btn = None
         self.start_btn = None
         self.stop_btn = None
         self.delete_btn = None
-        self.status_label = None
 
         # General settings
         self.prefs_page = None
@@ -115,6 +115,16 @@ class NetworkDetailsTab(BaseDetailsTab):
     def build(self):
         self.set_hexpand(True)
         self.set_vexpand(True)
+
+        self.title_widget = Adw.WindowTitle(title=self.network.getDisplayName())
+        self.start_btn = controlButton("Start", self.onStartClicked)
+        self.stop_btn = controlButton("Stop", self.onStopClicked)
+        self.back_btn = iconButton(
+            "",
+            "go-previous-symbolic",
+            self.onBackClicked,
+            visible=False,
+        )
 
         toolbar_view = Adw.ToolbarView(hexpand=True, vexpand=True)
         self.append(toolbar_view)
@@ -136,42 +146,12 @@ class NetworkDetailsTab(BaseDetailsTab):
         self.stack.add_titled_with_icon(
             self.navigation_view, "settings", "Settings", "settings-symbolic"
         )
-
-        # Top group with buttons
-        clamp = RealmsClamp()
-        toolbar_view.add_top_bar(clamp)
-        actions_box = Gtk.Box(
-            spacing=6,
-            margin_top=6,
-            margin_bottom=6,
-        )
-        clamp.set_child(actions_box)
-
-        self.back_btn = iconButton(
-            "",
-            "go-previous-symbolic",
-            self.onBackClicked,
-            css_classes=["flat"],
-            visible=False,
-        )
-        actions_box.append(self.back_btn)
         self.navigation_view.connect(
             "popped",
             lambda *_: self.back_btn.set_visible(
                 self.navigation_view.get_visible_page() != self.main_nav_page
             ),
         )
-
-        self.start_btn = controlButton("Start", self.onStartClicked)
-        actions_box.append(self.start_btn)
-
-        self.stop_btn = controlButton("Stop", self.onStopClicked)
-        actions_box.append(self.stop_btn)
-
-        actions_box.append(hspacer())
-
-        self.status_label = Gtk.Label(label="Down", css_classes=["dim-label"])
-        actions_box.append(self.status_label)
 
         # Settings
         prefs_box = Gtk.Box(
@@ -239,8 +219,20 @@ class NetworkDetailsTab(BaseDetailsTab):
             self.xml_box, "xml", "XML", "folder-code-legacy-symbolic"
         )
 
+        self.stack.connect("notify::visible-child-name", self.__onStackChanged__)
+
         self.updateData()
         self.setStatus()
+
+    def __onStackChanged__(self, stack, _):
+        """Hide the back-btn when not the main page is shown."""
+        visible_child_name = stack.get_visible_child_name()
+        if visible_child_name == "settings":
+            self.back_btn.set_visible(
+                self.navigation_view.get_visible_page() != self.main_nav_page
+            )
+        else:
+            self.back_btn.set_visible(False)
 
     def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id, opaque):
         if type_id == CALLBACK_TYPE_NETWORK_GENERIC:
@@ -257,13 +249,13 @@ class NetworkDetailsTab(BaseDetailsTab):
         if self.network.isActive():
             self.start_btn.set_visible(False)
             self.stop_btn.set_visible(True)
-            self.status_label.set_label("up")
+            self.title_widget.set_subtitle("up")
 
             self.apply_row.setShowWarning(True)
         else:
             self.start_btn.set_visible(True)
             self.stop_btn.set_visible(False)
-            self.status_label.set_label("down")
+            self.title_widget.set_subtitle("down")
 
             self.apply_row.setShowWarning(False)
 
@@ -364,3 +356,9 @@ class NetworkDetailsTab(BaseDetailsTab):
 
     def getUniqueIdentifier(self) -> str:
         return self.network.getUUID()
+
+    def setWindowHeader(self, window):
+        window.headerSetTitleWidget(self.title_widget)
+        window.headerPackStart(self.back_btn)
+        window.headerPackStart(self.start_btn)
+        window.headerPackStart(self.stop_btn)

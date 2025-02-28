@@ -17,6 +17,7 @@ from gi.repository import Adw
 
 from realms.libvirt_wrap import Connection
 from realms.libvirt_wrap.constants import *
+from realms.ui.components.common import controlButton
 from realms.ui.components.conn import (
     ConnectionDetailsPage,
     ConnectionPerformancePage,
@@ -35,6 +36,9 @@ class ConnectionDetailsTab(BaseDetailsTab):
         self.connection = connection
         self.connection.register_callback_any(self.onConnectionEvent, None)
 
+        self.disconnect_btn = None
+        self.connect_btn = None
+
         self.stack = None
         self.stack_switcher = None
 
@@ -47,6 +51,16 @@ class ConnectionDetailsTab(BaseDetailsTab):
     def build(self):
         self.set_hexpand(True)
         self.set_vexpand(True)
+
+        self.title_widget = Adw.WindowTitle(title=self.connection.name)
+
+        self.disconnect_btn = controlButton("Disconnect", self.__onDisconnectClicked__)
+
+        self.connect_btn = controlButton(
+            "Connect",
+            self.__onConnectClicked__,
+            css_classes=["suggested-action"],
+        )
 
         toolbar_view = Adw.ToolbarView(hexpand=True, vexpand=True)
         self.append(toolbar_view)
@@ -87,14 +101,30 @@ class ConnectionDetailsTab(BaseDetailsTab):
         self.setStatus()
 
     def setStatus(self):
+        self.title_widget.set_title(self.connection.name)
+
         state = self.connection.getState()
         if state == CONNECTION_STATE_CONNECTED:
+            self.title_widget.set_subtitle("connected")
+            self.connect_btn.set_visible(False)
+            self.disconnect_btn.set_visible(True)
+
             self.stack_switcher.set_reveal(True)
 
             self.perf_page.start()
         elif state == CONNECTION_STATE_CONNECTING:
+            self.title_widget.set_subtitle("connecting...")
+            self.connect_btn.set_visible(True)
+            self.connect_btn.set_sensitive(False)
+            self.disconnect_btn.set_visible(False)
+
             self.stack_switcher.set_reveal(False)
         else:
+            self.title_widget.set_subtitle("disconnected")
+            self.connect_btn.set_visible(True)
+            self.connect_btn.set_sensitive(True)
+            self.disconnect_btn.set_visible(False)
+
             self.stack_switcher.set_reveal(False)
             # Important to not be stuck on secrets page upon disconnection
             self.stack.set_visible_child_name("settings")
@@ -102,6 +132,14 @@ class ConnectionDetailsTab(BaseDetailsTab):
             self.perf_page.end()
 
         self.conn_details_page.setStatus()
+
+    def __onConnectClicked__(self, _):
+        """Try to connect."""
+        self.connection.tryConnect()
+
+    def __onDisconnectClicked__(self, _):
+        """Disconnect."""
+        self.connection.disconnect()
 
     def end(self):
         # Unsubscribe from events
@@ -112,3 +150,8 @@ class ConnectionDetailsTab(BaseDetailsTab):
 
     def getUniqueIdentifier(self) -> str:
         return self.connection.url
+
+    def setWindowHeader(self, window):
+        window.headerSetTitleWidget(self.title_widget)
+        window.headerPackStart(self.connect_btn)
+        window.headerPackStart(self.disconnect_btn)

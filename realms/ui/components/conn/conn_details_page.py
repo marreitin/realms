@@ -20,13 +20,11 @@ from realms.libvirt_wrap.constants import *
 from realms.ui.components import (
     ActionOption,
     ApplyRow,
-    hspacer,
     iconButton,
     propertyRow,
     selectDialog,
 )
-from realms.ui.components.common import controlButton
-from realms.ui.components.preference_widgets import RealmsClamp, RealmsPreferencesPage
+from realms.ui.components.preference_widgets import RealmsPreferencesPage
 
 
 class ConnectionDetailsPage(Gtk.Box):
@@ -39,9 +37,6 @@ class ConnectionDetailsPage(Gtk.Box):
         super().__init__()
 
         self.parent = parent
-
-        self.disconnect_btn = None
-        self.connect_btn = None
         self.forget_btn = None
 
         self.apply_row = None
@@ -82,38 +77,6 @@ class ConnectionDetailsPage(Gtk.Box):
         toolbar_view.add_bottom_bar(self.apply_row)
         self.apply_row.set_visible(False)
 
-        # Top button row
-        clamp = RealmsClamp()
-        toolbar_view.add_top_bar(clamp)
-        actions_box = Gtk.Box(
-            spacing=6,
-            margin_top=6,
-            margin_bottom=6,
-        )
-        clamp.set_child(actions_box)
-
-        self.disconnect_btn = controlButton("Disconnect", self.onDisconnectClicked)
-        actions_box.append(self.disconnect_btn)
-
-        self.connect_btn = controlButton(
-            "Connect",
-            self.onConnectClicked,
-            css_classes=["suggested-action"],
-        )
-        actions_box.append(self.connect_btn)
-
-        # Security status icons
-        actions_box.append(hspacer())
-        self.secure_icon = Gtk.Image.new_from_icon_name("security-high")
-        self.secure_icon.set_tooltip_text("Secure")
-        actions_box.append(self.secure_icon)
-
-        self.encrypted_icon = Gtk.Image.new_from_icon_name(
-            "network-wireless-encrypted-symbolic"
-        )
-        self.encrypted_icon.set_tooltip_text("Encrypted")
-        actions_box.append(self.encrypted_icon)
-
         # Main preferences
         self.prefs_page = RealmsPreferencesPage()
         toolbar_view.set_content(self.prefs_page)
@@ -123,6 +86,21 @@ class ConnectionDetailsPage(Gtk.Box):
         )
         self.prefs_page.add(self.prefs_group)
 
+        # Security status icons
+        status_box = Gtk.Box(spacing=6)
+        self.prefs_group.set_header_suffix(status_box)
+
+        self.secure_icon = Gtk.Image.new_from_icon_name("security-high")
+        self.secure_icon.set_tooltip_text("Secure")
+        status_box.append(self.secure_icon)
+
+        self.encrypted_icon = Gtk.Image.new_from_icon_name(
+            "network-wireless-encrypted-symbolic"
+        )
+        self.encrypted_icon.set_tooltip_text("Encrypted")
+        status_box.append(self.encrypted_icon)
+
+        # Preference rows.
         self.name_row = Adw.EntryRow(title="Name")
         self.prefs_group.add(self.name_row)
         self.desc_row = Adw.EntryRow(title="Description")
@@ -198,29 +176,18 @@ class ConnectionDetailsPage(Gtk.Box):
         """Update the status (icons and some buttons)."""
         state = self.parent.connection.getState()
         if state == CONNECTION_STATE_CONNECTED:
-            self.connect_btn.set_visible(False)
-            self.disconnect_btn.set_visible(True)
-
             self.secure_icon.set_visible(self.parent.connection.isSecure())
             self.encrypted_icon.set_visible(self.parent.connection.isEncrypted())
 
             self.apply_row.setShowWarning(True)
             self.apply_row.setShowApply(False)
         elif state == CONNECTION_STATE_CONNECTING:
-            self.connect_btn.set_visible(True)
-            self.connect_btn.set_sensitive(False)
-            self.disconnect_btn.set_visible(False)
-
             self.secure_icon.set_visible(False)
             self.encrypted_icon.set_visible(False)
 
             self.apply_row.setShowWarning(False)
             self.apply_row.setShowApply(True)
         else:
-            self.connect_btn.set_visible(True)
-            self.connect_btn.set_sensitive(True)
-            self.disconnect_btn.set_visible(False)
-
             self.secure_icon.set_visible(False)
             self.encrypted_icon.set_visible(False)
 
@@ -295,14 +262,6 @@ class ConnectionDetailsPage(Gtk.Box):
             "autoconnect": self.autoconnect_row.get_active(),
         }
         self.apply_row.set_visible(new_settings != self.parent.connection.settings)
-
-    def onConnectClicked(self, _):
-        """Try to connect."""
-        self.parent.connection.tryConnect()
-
-    def onDisconnectClicked(self, _):
-        """Disconnect."""
-        self.parent.connection.disconnect()
 
     def onForgetClicked(self, _):
         """Deletion was requested."""

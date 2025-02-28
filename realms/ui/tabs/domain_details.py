@@ -116,8 +116,16 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         self.stack = None
         self.toolbar_view = None
 
-        self.apply_row = None
+        self.title_widget = None
         self.back_btn = None
+        self.start_btn = None
+        self.stop_btn = None
+        self.pause_btn = None
+        self.resume_btn = None
+        self.clone_btn = None
+        self.snapshot_btn = None
+
+        self.apply_row = None
         self.start_btn = None
         self.stop_btn = None
         self.delete_btn = None
@@ -164,7 +172,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         self.toolbar_view.add_bottom_bar(switcher)
 
         # Control buttons
-        self.buildControlRow()
+        self.buildControlWidgets()
 
         # Box with main content
         main_box = Gtk.Box(
@@ -227,20 +235,17 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
             self.perf_box, "perf", "Performance", "speedometer5-symbolic"
         )
 
+        self.stack.connect("notify::visible-child-name", self.__onStackChanged__)
+
         self.__built__ = True
 
         self.updateData()
         self.setStatus()
 
-    def buildControlRow(self):
-        clamp = RealmsClamp()
-        self.toolbar_view.add_top_bar(clamp)
-        self.actions_box = Gtk.Box(
-            spacing=6,
-            margin_top=6,
-            margin_bottom=6,
+    def buildControlWidgets(self):
+        self.title_widget = Adw.WindowTitle(
+            title=self.domain.getDisplayName(), subtitle=self.domain.getStateText()
         )
-        clamp.set_child(self.actions_box)
 
         self.back_btn = iconButton(
             "",
@@ -249,28 +254,21 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
             css_classes=["flat"],
             visible=False,
         )
-        self.actions_box.append(self.back_btn)
 
         self.start_btn = controlButton(
             "Start",
             self.onStartClicked,
-            css_classes=["suggested-action"],
         )
-        self.actions_box.append(self.start_btn)
 
         self.resume_btn = controlButton(
             "Resume",
             self.onResumeClicked,
-            css_classes=["suggested-action"],
         )
-        self.actions_box.append(self.resume_btn)
 
         self.stop_btn = controlButton(
             "Stop",
             self.onStopClicked,
-            css_classes=["destructive-action"],
         )
-        self.actions_box.append(self.stop_btn)
 
         self.pause_btn = iconButton(
             "",
@@ -278,21 +276,16 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
             self.onPauseClicked,
             tooltip_text="Pause",
         )
-        self.actions_box.append(self.pause_btn)
 
-        self.open_btn = iconButton(
-            "",
-            "computer-symbolic",
+        self.open_btn = controlButton(
+            "Open",
             lambda *b: show(self.domain, self.window_ref.window),
             css_classes=["suggested-action"],
-            tooltip_text="Open",
         )
-        self.actions_box.append(self.open_btn)
 
         self.clone_btn = iconButton(
             "", "copy-symbolic", self.onCloneClicked, tooltip_text="Clone"
         )
-        self.actions_box.append(self.clone_btn)
 
         self.snapshot_btn = iconButton(
             "",
@@ -300,14 +293,6 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
             self.onTakeSnapshotClicked,
             tooltip_text="Snapshot",
         )
-        self.actions_box.append(self.snapshot_btn)
-
-        self.actions_box.append(hspacer())
-
-        self.status_label = Gtk.Label(
-            label="Down", css_classes=["dim-label"], margin_top=6, margin_bottom=6
-        )
-        self.actions_box.append(self.status_label)
 
     def updateData(self, reuse_tree=False) -> None:
         """Update data bindings, and try to reuse existing rows
@@ -324,6 +309,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
             self.xml_box.setText(ET.tostring(self.xml_tree, "unicode"))
 
         self.general_group.set_title("Domain: " + self.domain.getDisplayName())
+        self.title_widget.set_title(self.domain.getDisplayName())
 
         self.autostart = self.domain.getAutostart()
 
@@ -379,12 +365,22 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         self.navigation_view.push(page)
         self.back_btn.set_visible(True)
 
+    def __onStackChanged__(self, stack, _):
+        """Hide the back-btn when not the main page is shown."""
+        visible_child_name = stack.get_visible_child_name()
+        if visible_child_name == "settings":
+            self.back_btn.set_visible(
+                self.navigation_view.get_visible_page() != self.main_nav_page
+            )
+        else:
+            self.back_btn.set_visible(False)
+
     def setStatus(self) -> None:
         """Update the status description."""
         if not self.__built__:
             return
 
-        self.status_label.set_label(self.domain.getStateText())
+        self.title_widget.set_subtitle(self.domain.getStateText())
 
         self.start_btn.set_visible(False)
         self.resume_btn.set_visible(False)
@@ -674,3 +670,14 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
 
     def getConnection(self):
         return self.domain.connection
+
+    def setWindowHeader(self, window):
+        window.headerSetTitleWidget(self.title_widget)
+        window.headerPackStart(self.back_btn)
+        window.headerPackStart(self.start_btn)
+        window.headerPackStart(self.stop_btn)
+        window.headerPackStart(self.pause_btn)
+        window.headerPackStart(self.resume_btn)
+        window.headerPackEnd(self.clone_btn)
+        window.headerPackEnd(self.snapshot_btn)
+        window.headerPackEnd(self.open_btn)

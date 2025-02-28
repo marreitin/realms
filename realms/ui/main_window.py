@@ -47,6 +47,7 @@ class MainWindow(Adw.ApplicationWindow):
         self.toast_overlay = None
         self.main_toolbar_view = None
         self.header = None
+        self.__header_widgets__ = []
         self.main_area_overlay = None
         self.no_conns_status = None
         self.add_conn_button = None
@@ -56,7 +57,7 @@ class MainWindow(Adw.ApplicationWindow):
         self.options_popover = None
         self.hamburger_button = None
 
-        self.open_sidebar_btn = None
+        self.sidebar_header = None
         self.sidebar_list_box = None
 
         self.overlay_status = OVERLAY_NO_CONN
@@ -98,28 +99,24 @@ class MainWindow(Adw.ApplicationWindow):
         self.toast_overlay.set_child(self.main_toolbar_view)
 
         # Main content (Up to AdwTabView)
-        self.header = Adw.HeaderBar()
+        self.header = Adw.HeaderBar(title_widget=Adw.WindowTitle())
         self.main_toolbar_view.add_top_bar(self.header)
-
-        # Hamburger menu
-        self.buildHamburgerMenu()
 
         # Content of main page
         self.buildMainArea()
 
         # Sidebar stuff
         if self.is_primary:
-            self.open_sidebar_btn = iconButton(
-                "",
-                "panel-left-symbolic",
-                lambda *btn: self.nav_view.set_show_sidebar(
-                    not self.nav_view.get_show_sidebar()
-                ),
-            )
-            self.header.pack_start(self.open_sidebar_btn)
+            self.sidebar_header = Adw.HeaderBar()
+            sidebar_toolbarview = Adw.ToolbarView()
+            sidebar_toolbarview.add_top_bar(self.sidebar_header)
+            self.sidebar_nav_page.set_child(sidebar_toolbarview)
+
+            # Hamburger menu
+            self.buildHamburgerMenu()
 
             scroll = Gtk.ScrolledWindow()
-            self.sidebar_nav_page.set_child(scroll)
+            sidebar_toolbarview.set_content(scroll)
 
             self.sidebar_list_box = Gtk.ListBox(
                 css_classes=["navigation-sidebar"],
@@ -150,7 +147,7 @@ class MainWindow(Adw.ApplicationWindow):
         self.hamburger_button = Gtk.MenuButton(
             popover=self.options_popover, icon_name="open-menu-symbolic"
         )
-        self.header.pack_end(self.hamburger_button)
+        self.sidebar_header.pack_end(self.hamburger_button)
 
     def buildMainArea(self):
         """Build the content of the main area, mostly a bunch of overlays."""
@@ -162,10 +159,11 @@ class MainWindow(Adw.ApplicationWindow):
 
         self.tab_view = Adw.TabView(hexpand=True, vexpand=True)
         self.tab_bar.set_view(self.tab_view)
-        self.tab_view.connect("close-page", self.onTabClosed)
-        self.tab_view.connect("page-attached", self.onTabAttached)
-        self.tab_view.connect("page-detached", self.onTabDetached)
-        self.tab_view.connect("create-window", self.onCreateWindow)
+        self.tab_view.connect("notify::selected-page", self.__onTabSelected__)
+        self.tab_view.connect("close-page", self.__onTabClosed__)
+        self.tab_view.connect("page-attached", self.__onTabAttached__)
+        self.tab_view.connect("page-detached", self.__onTabDetached__)
+        self.tab_view.connect("create-window", self.__onCreateWindow__)
         self.main_area_overlay.set_child(self.tab_view)
 
         if self.is_primary:
@@ -291,7 +289,33 @@ class MainWindow(Adw.ApplicationWindow):
             tab.get_child().end()
         self.get_application().onWindowClosed(self)
 
-    def onTabClosed(self, _, tab_page):
+    def headerPackStart(self, widget: Gtk.Widget):
+        self.header.pack_start(widget)
+        self.__header_widgets__.append(widget)
+
+    def headerPackEnd(self, widget: Gtk.Widget):
+        self.header.pack_end(widget)
+        self.__header_widgets__.append(widget)
+
+    def headerSetTitleWidget(self, widget: Gtk.Widget):
+        self.header.set_title_widget(widget)
+
+    def __onTabSelected__(self, tab_view, _):
+        """A tab was selected, adjust the window title."""
+        for child in self.__header_widgets__:
+            self.header.remove(child)
+        self.__header_widgets__.clear()
+
+        self.header.set_title_widget(Adw.WindowTitle())
+
+        tab_page = tab_view.get_selected_page()
+        if tab_page is None:
+            return
+
+        tab_content: BaseDetailsTab = tab_page.get_child()
+        tab_content.setWindowHeader(self)
+
+    def __onTabClosed__(self, _, tab_page):
         """Is called when the tab closes. It ends the page inside."""
         tab_page.get_child().end()
 
@@ -299,7 +323,7 @@ class MainWindow(Adw.ApplicationWindow):
             self.overlay_status = OVERLAY_NO_TAB
             self.setOverlays()
 
-    def onTabAttached(self, tab_view, tab_page, pos):
+    def __onTabAttached__(self, tab_view, tab_page, pos):
         """Add tab was dragged into this window."""
         for page in self.open_tabs:
             if (
@@ -316,7 +340,7 @@ class MainWindow(Adw.ApplicationWindow):
         self.overlay_status = OVERLAY_NONE
         self.setOverlays()
 
-    def onTabDetached(self, _, tab_page, pos):
+    def __onTabDetached__(self, _, tab_page, pos):
         """A tab was detached from this window."""
         # The page might not be in there if page attachment was refused.
         if tab_page in self.open_tabs:
@@ -331,7 +355,7 @@ class MainWindow(Adw.ApplicationWindow):
             )
             self.setOverlays()
 
-    def onCreateWindow(self, _):
+    def __onCreateWindow__(self, _):
         """A new window was created"""
         win = self.get_application().addWindow(False)
         return win.tab_view
@@ -347,7 +371,7 @@ class MainWindow(Adw.ApplicationWindow):
             application_name="Realms",
             comments="An incomplete libvirt client for the modern GNOME desktop",
             developers=["marreitin"],
-            version="20240130",
+            version="20240228",
             license_type=Gtk.License.GPL_3_0,
             website="https://github.com/marreitin/realms",
             issue_url="https://github.com/marreitin/realms/issues",
@@ -394,7 +418,6 @@ class MainWindow(Adw.ApplicationWindow):
         """
         if self.is_primary:
             self.nav_view.set_show_sidebar(True)
-            self.open_sidebar_btn.set_visible(True)
 
         if self.overlay_status == OVERLAY_NONE:
             if self.is_primary:
@@ -408,7 +431,6 @@ class MainWindow(Adw.ApplicationWindow):
 
         elif self.overlay_status == OVERLAY_NO_CONN and self.is_primary:
             self.nav_view.set_show_sidebar(False)
-            self.open_sidebar_btn.set_visible(False)
 
             if self.is_primary:
                 self.no_conns_status.set_visible(True)
