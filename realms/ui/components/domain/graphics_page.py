@@ -88,7 +88,7 @@ class GLRow(Adw.ExpanderRow):
 
 
 class ListenRow(Adw.ExpanderRow):
-    def __init__(self, window: Adw.ApplicationWindow):
+    def __init__(self):
         super().__init__(title="Listen Type")
 
         self.xml_tree = None
@@ -303,7 +303,7 @@ class GraphicsPage(BaseDevicePage):
         self.rows["gl"] = GLRow()
         self.group.add(self.rows["gl"])
 
-        self.rows["listen"] = ListenRow(self.parent.getWindow())
+        self.rows["listen"] = ListenRow()
         self.group.add(self.rows["listen"])
 
         self.rows["passwd"] = BindablePasswordRow(title="Connection Password")

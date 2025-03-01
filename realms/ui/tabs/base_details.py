@@ -34,7 +34,8 @@ class BaseDetailsTab(Gtk.Box):
         raise NotImplementedError
 
     def setWindowHeader(self, window: Adw.ApplicationWindow):
-        """Implement callback when this tab is presented."""
+        """Implement callback when this tab is presented. It is
+        used to add control buttons to the main windows headerbar."""
         raise NotImplementedError
 
     def getUniqueIdentifier(self) -> str:

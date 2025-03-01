@@ -29,7 +29,7 @@ from realms.ui.components import (
     iconButton,
     selectDialog,
 )
-from realms.ui.components.common import controlButton, hspacer
+from realms.ui.components.common import hspacer
 from realms.ui.components.domain import PerformanceBox, SnapshotBox
 from realms.ui.components.domain.domain_page_host import DomainPageHost
 from realms.ui.components.domain.pages import (
@@ -59,48 +59,52 @@ class DeviceRow(Gtk.ListBoxRow):
     def __init__(
         self, parent, device_page_type: type, xml_tree: ET.Element, can_update=False
     ):
-        self.parent = parent
-        self.device_page_type = device_page_type
-        self.xml_tree = xml_tree
-        self.can_update = can_update
-        self.index = 0
-        self.label = None
+        self.__parent__ = parent
+        self.__device_page_type__ = device_page_type
+        self.__xml_tree__ = xml_tree
+        self.__can_update__ = can_update
+        self.__index__ = 0
+        self.__label__ = None
 
-        self.device_page = self.device_page_type(
-            self.parent, self.xml_tree, can_update=self.can_update
+        self.device_page = self.__device_page_type__(
+            self.__parent__, self.__xml_tree__, can_update=self.__can_update__
         )
 
-        self.box = Gtk.Box(
+        self.__box__ = Gtk.Box(
             spacing=12, margin_start=12, margin_top=15, margin_bottom=15, margin_end=12
         )
-        super().__init__(child=self.box)
+        super().__init__(child=self.__box__)
 
     def build(self):
-        """Build the actual action row"""
+        """Build the "action row" """
         main_icon = Gtk.Image.new_from_icon_name(self.device_page.getIconName())
-        self.box.append(main_icon)
+        self.__box__.append(main_icon)
 
-        self.label = Gtk.Label(label=self.getTitle())
-        self.box.append(self.label)
+        self.__label__ = Gtk.Label(label=self.getTitle())
+        self.__box__.append(self.__label__)
 
-        self.box.append(hspacer())
+        self.__box__.append(hspacer())
 
         open_icon = Gtk.Image.new_from_icon_name("right-symbolic")
-        self.box.append(open_icon)
+        self.__box__.append(open_icon)
 
     def onActivated(self):
+        """Callback from DomainDetailsTab that this device row
+        was activated."""
         self.device_page.buildFull()
-        self.parent.showNavPage(self.device_page.nav_page)
+        self.__parent__.showNavPage(self.device_page.nav_page)
 
-    def setIndex(self, index):
-        self.index = index
-        if self.label is not None:
-            self.label.set_label(self.getTitle())
+    def setIndex(self, index: int):
+        """Set the index of this device, i.e. hard drive #3"""
+        self.__index__ = index
+        if self.__label__ is not None:
+            self.__label__.set_label(self.getTitle())
 
     def getTitle(self) -> str:
-        if self.index == 0:
+        """Get the displayed title of this row."""
+        if self.__index__ == 0:
             return self.device_page.getTitle()
-        return self.device_page.getTitle() + " " + str(self.index)
+        return self.device_page.getTitle() + " " + str(self.__index__)
 
 
 class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
@@ -166,7 +170,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
 
         # Apply Row
         self.apply_row = ApplyRow(
-            self.onApplyClicked,
+            self.__onApplyClicked__,
             lambda *x: self.updateData(),
             "Changes only available after restart",
         )
@@ -177,7 +181,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         self.toolbar_view.add_bottom_bar(switcher)
 
         # Control buttons
-        self.buildControlWidgets()
+        self.__buildControlWidgets__()
 
         # Box with main content
         main_box = Gtk.Box(
@@ -230,7 +234,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         add_btn = iconButton(
             "Add device",
             "",
-            self.onAddDeviceClicked,
+            self.__onAddDeviceClicked__,
             css_classes=["pill", "suggested-action"],
             hexpand=False,
             halign=Gtk.Align.CENTER,
@@ -262,9 +266,10 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         self.__built__ = True
 
         self.updateData()
-        self.setStatus()
+        self.__setStatus__()
 
-    def buildControlWidgets(self):
+    def __buildControlWidgets__(self):
+        """Create the widgets that will go into the windows headerbar."""
         self.title_widget = Adw.WindowTitle(
             title=self.domain.getDisplayName(), subtitle=self.domain.getStateText()
         )
@@ -272,7 +277,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         self.back_btn = iconButton(
             "",
             "left-symbolic",
-            self.onBackClicked,
+            self.__onBackClicked__,
             visible=False,
             margin_end=16,
         )
@@ -280,7 +285,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         self.start_btn = iconButton(
             "",
             "play-symbolic",
-            self.onStartClicked,
+            self.__onStartClicked__,
             css_classes=["suggested-action"],
             tooltip_text="Start",
         )
@@ -288,7 +293,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         self.resume_btn = iconButton(
             "",
             "play-symbolic",
-            self.onResumeClicked,
+            self.__onResumeClicked__,
             css_classes=["suggested-action"],
             tooltip_text="Resume",
         )
@@ -296,7 +301,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         self.stop_btn = iconButton(
             "",
             "stop-symbolic",
-            self.onStopClicked,
+            self.__onStopClicked__,
             css_classes=["destructive-action"],
             tooltip_text="Stop",
         )
@@ -304,7 +309,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         self.pause_btn = iconButton(
             "",
             "pause-symbolic",
-            self.onPauseClicked,
+            self.__onPauseClicked__,
             tooltip_text="Pause",
         )
 
@@ -317,13 +322,13 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         )
 
         self.clone_btn = iconButton(
-            "", "copy-symbolic", self.onCloneClicked, tooltip_text="Clone"
+            "", "copy-symbolic", self.__onCloneClicked__, tooltip_text="Clone"
         )
 
         self.snapshot_btn = iconButton(
             "",
             "bookmark-new-symbolic",
-            self.onTakeSnapshotClicked,
+            self.__onTakeSnapshotClicked__,
             tooltip_text="Snapshot",
         )
 
@@ -393,21 +398,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         self.apply_row.set_visible(False)
         self.__definition_changed__ = False
 
-    def showNavPage(self, page: BaseDevicePage):
-        self.navigation_view.push(page)
-        self.back_btn.set_visible(True)
-
-    def __onStackChanged__(self, stack, _):
-        """Hide the back-btn when not the main page is shown."""
-        visible_child_name = stack.get_visible_child_name()
-        if visible_child_name == "settings":
-            self.back_btn.set_visible(
-                self.navigation_view.get_visible_page() != self.main_nav_page
-            )
-        else:
-            self.back_btn.set_visible(False)
-
-    def setStatus(self) -> None:
+    def __setStatus__(self) -> None:
         """Update the status description."""
         if not self.__built__:
             return
@@ -431,29 +422,45 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
             self.stop_btn.set_visible(True)
             self.pause_btn.set_visible(True)
             self.open_btn.set_visible(hasDisplay(self.xml_tree))
-            self.setApplyWarningVisibility(True)
+            self.__setApplyWarningVisibility__(True)
 
             for row in self.device_rows.values():
                 row.device_page.setCanUpdate(True)
         elif state == libvirt.VIR_DOMAIN_PAUSED:
             self.resume_btn.set_visible(True)
             self.open_btn.set_visible(hasDisplay(self.xml_tree))
-            self.setApplyWarningVisibility(True)
+            self.__setApplyWarningVisibility__(True)
 
             for row in self.device_rows.values():
                 row.device_page.setCanUpdate(True)
         else:
             self.start_btn.set_visible(True)
-            self.setApplyWarningVisibility(False)
+            self.__setApplyWarningVisibility__(False)
 
             for row in self.device_rows.values():
                 row.device_page.setCanUpdate(False)
 
-    def setApplyWarningVisibility(self, visibility: bool):
+    def showNavPage(self, page: BaseDevicePage):
+        """Push a navigation page (for a device)"""
+        self.navigation_view.push(page)
+        self.back_btn.set_visible(True)
+
+    def __onStackChanged__(self, stack, _):
+        """Hide the back-btn when not the main page is shown."""
+        visible_child_name = stack.get_visible_child_name()
+        if visible_child_name == "settings":
+            self.back_btn.set_visible(
+                self.navigation_view.get_visible_page() != self.main_nav_page
+            )
+        else:
+            self.back_btn.set_visible(False)
+
+    def __setApplyWarningVisibility__(self, visibility: bool):
         """Whether to show the apply button on the apply row."""
         self.apply_row.setShowWarning(visibility)
 
     def onDefinitionChanged(self):
+        """The domain was edited."""
         self.__definition_changed__ = True
         self.apply_row.set_visible(True)
 
@@ -473,9 +480,9 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
             if event_id in [CONNECTION_EVENT_DISCONNECTED, CONNECTION_EVENT_DELETED]:
                 self.window_ref.window.closeTab(self)
                 return
-        self.setStatus()
+        self.__setStatus__()
 
-    def onStartClicked(self, btn):
+    def __onStartClicked__(self, btn):
         btn.set_sensitive(False)
         failableAsyncJob(
             self.domain.start,
@@ -484,7 +491,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
             lambda r: btn.set_sensitive(True),
         )
 
-    def onResumeClicked(self, btn):
+    def __onResumeClicked__(self, btn):
         btn.set_sensitive(False)
         failableAsyncJob(
             self.domain.resume,
@@ -493,7 +500,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
             lambda r: btn.set_sensitive(True),
         )
 
-    def onStopClicked(self, btn):
+    def __onStopClicked__(self, btn):
         def onResetSelected():
             self.stop_btn.set_sensitive(False)
             failableAsyncJob(
@@ -541,7 +548,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         )
         dialog.present(self.window_ref.window)
 
-    def onPauseClicked(self, btn):
+    def __onPauseClicked__(self, btn):
         btn.set_sensitive(False)
         failableAsyncJob(
             self.domain.pause,
@@ -573,21 +580,21 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         )
         dialog.present(self.window_ref.window)
 
-    def onCloneClicked(self, btn):
+    def __onCloneClicked__(self, _):
         CloneDomainDialog(self.window_ref.window, self.domain)
 
-    def onMigrateClicked(self, btn):
-        raise NotImplementedError
-
-    def onTakeSnapshotClicked(self, btn):
+    def __onTakeSnapshotClicked__(self, _):
         TakeSnapshotDialog(self.window_ref.window, self.domain)
 
-    def onAddDeviceClicked(self, btn):
+    def __onAddDeviceClicked__(self, _):
         AddDeviceDialog(
-            self.window_ref.window, self.domain, self.xml_tree, self.onDeviceAdded
+            self.window_ref.window, self.domain, self.xml_tree, self.__onDeviceAdded__
         )
 
-    def onDeviceAdded(self, device_tree: ET.Element):
+    def __onBackClicked__(self, _):
+        self.navigation_view.pop()
+
+    def __onDeviceAdded__(self, device_tree: ET.Element):
         """Callback from device adding dialog to create device.
         Handle the option to hotplug devices, with a fallback to just
         adding them to the regular configuration."""
@@ -665,7 +672,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         else:
             detachNormal()
 
-    def onApplyClicked(self, *args):
+    def __onApplyClicked__(self, *args):
         """Callback when the regular apply button was clicked."""
         try:
             if self.stack.get_visible_child_name() == "xml":
@@ -681,29 +688,27 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         """Callback from a page, asking for the device to be updated."""
         self.domain.updateDevice(device_xml)
 
-    def onBackClicked(self, _):
-        self.navigation_view.pop()
-
     def end(self):
+        """Implement BaseDetailsTab."""
         # Unsubscribe from events
         self.perf_box.end()
         self.snapshots_box.end()
         self.domain.unregister_callback(self.onConnectionEvent)
 
     def getUniqueIdentifier(self) -> str:
+        """Implement BaseDetailsTab."""
         return self.domain.getUUID()
 
-    # Implement DomainPageHost
     def getWindow(self):
+        """Implement DomainPageHost."""
         return self.window_ref.window
 
     def getWindowRef(self):
+        """Implement DomainPageHost."""
         return self.window_ref
 
-    def getConnection(self):
-        return self.domain.connection
-
     def setWindowHeader(self, window):
+        """Implement BaseDetailsTab."""
         window.headerSetTitleWidget(self.title_widget)
         window.headerPackStart(self.back_btn)
         window.headerPackStart(self.start_btn)

@@ -56,27 +56,29 @@ class SubsettingsRow(Adw.ActionRow):
             activatable=True,
             selectable=False,
         )
-        self.title = title
-        self.icon_name = icon_name
-        self.parent = parent
-        self.settings_page = settings_page
+        self.__title__ = title
+        self.__icon_name__ = icon_name
+        self.__parent__ = parent
+        self.__settings_page__ = settings_page
 
-        self.build()
+        self.__build__()
 
-    def build(self):
-        main_icon = Gtk.Image.new_from_icon_name(self.icon_name)
+    def __build__(self):
+        main_icon = Gtk.Image.new_from_icon_name(self.__icon_name__)
         self.add_prefix(main_icon)
 
         open_icon = Gtk.Image.new_from_icon_name("right-symbolic")
         self.add_suffix(open_icon)
 
-        self.connect("activated", self.onActivated)
+        self.connect("activated", self.__onActivated__)
+
+    def __onActivated__(self, _):
+        """The row was clicked."""
+        self.__parent__.onSubsettingsSelected(self.__settings_page__)
 
     def updateData(self, xml_tree: ET.Element):
-        self.settings_page.updateData(xml_tree)
-
-    def onActivated(self, row):
-        self.parent.onSubsettingsSelected(self.settings_page)
+        """Update the xml tree with new data."""
+        self.__settings_page__.updateData(xml_tree)
 
 
 class NetworkDetailsTab(BaseDetailsTab):
@@ -105,12 +107,12 @@ class NetworkDetailsTab(BaseDetailsTab):
 
         self.xml_box = None
 
-        self.build()
+        self.__build__()
 
         # Only follow the events interesting for this network
         self.network.register_callback_any(self.onConnectionEvent, None)
 
-    def build(self):
+    def __build__(self):
         self.set_hexpand(True)
         self.set_vexpand(True)
 
@@ -118,7 +120,7 @@ class NetworkDetailsTab(BaseDetailsTab):
         self.start_btn = iconButton(
             "",
             "play-symbolic",
-            self.onStartClicked,
+            self.__onStartClicked__,
             css_classes=["suggested-action"],
             tooltip_text="Start",
         )
@@ -132,7 +134,7 @@ class NetworkDetailsTab(BaseDetailsTab):
         self.back_btn = iconButton(
             "",
             "left-symbolic",
-            self.onBackClicked,
+            self.__onBackClicked__,
             visible=False,
             margin_end=16,
         )
@@ -144,8 +146,8 @@ class NetworkDetailsTab(BaseDetailsTab):
         toolbar_view.set_content(self.stack)
 
         self.apply_row = ApplyRow(
-            self.onApplyClicked,
-            self.onCancelClicked,
+            self.__onApplyClicked__,
+            self.__onCancelClicked__,
             "Changes only available after restart",
         )
         toolbar_view.add_bottom_bar(self.apply_row)
@@ -176,7 +178,7 @@ class NetworkDetailsTab(BaseDetailsTab):
         prefs_box.append(self.prefs_page)
 
         self.general_prefs_group = NetGeneralGroup(
-            False, self.window_ref.window, self.showApply, self.onDeleteClicked
+            False, self.window_ref.window, self.showApply, self.__onDeleteClicked__
         )
         self.prefs_page.add(self.general_prefs_group)
 
@@ -232,45 +234,10 @@ class NetworkDetailsTab(BaseDetailsTab):
 
         self.stack.connect("notify::visible-child-name", self.__onStackChanged__)
 
-        self.updateData()
-        self.setStatus()
+        self.__updateData__()
+        self.__setStatus__()
 
-    def __onStackChanged__(self, stack, _):
-        """Hide the back-btn when not the main page is shown."""
-        visible_child_name = stack.get_visible_child_name()
-        if visible_child_name == "settings":
-            self.back_btn.set_visible(
-                self.navigation_view.get_visible_page() != self.main_nav_page
-            )
-        else:
-            self.back_btn.set_visible(False)
-
-    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id, opaque):
-        if type_id == CALLBACK_TYPE_NETWORK_GENERIC:
-            if event_id == NETWORK_EVENT_DELETED:
-                self.window_ref.window.closeTab(self)
-                return
-        elif type_id == CALLBACK_TYPE_CONNECTION_GENERIC:
-            if event_id in [CONNECTION_EVENT_DISCONNECTED, CONNECTION_EVENT_DELETED]:
-                self.window_ref.window.closeTab(self)
-                return
-        self.setStatus()
-
-    def setStatus(self):
-        if self.network.isActive():
-            self.start_btn.set_visible(False)
-            self.stop_btn.set_visible(True)
-            self.title_widget.set_subtitle("up")
-
-            self.apply_row.setShowWarning(True)
-        else:
-            self.start_btn.set_visible(True)
-            self.stop_btn.set_visible(False)
-            self.title_widget.set_subtitle("down")
-
-            self.apply_row.setShowWarning(False)
-
-    def updateData(self):
+    def __updateData__(self):
         self.xml_tree = self.network.getETree()
 
         # Set QOS row visibility
@@ -294,11 +261,52 @@ class NetworkDetailsTab(BaseDetailsTab):
 
         self.apply_row.set_visible(False)
 
+    def __setStatus__(self):
+        """Update visible elements depending on status."""
+        if self.network.isActive():
+            self.start_btn.set_visible(False)
+            self.stop_btn.set_visible(True)
+            self.title_widget.set_subtitle("up")
+
+            self.apply_row.setShowWarning(True)
+        else:
+            self.start_btn.set_visible(True)
+            self.stop_btn.set_visible(False)
+            self.title_widget.set_subtitle("down")
+
+            self.apply_row.setShowWarning(False)
+
+    def showApply(self):
+        """Show the apply row."""
+        self.apply_row.set_visible(True)
+
     def onSubsettingsSelected(self, page):
+        """Callback from subsettings-row that it was activated."""
         self.navigation_view.push(page)
         self.back_btn.set_visible(True)
 
-    def onApplyClicked(self, btn):
+    def __onStackChanged__(self, stack, _):
+        """Hide the back-btn when not the main page is shown."""
+        visible_child_name = stack.get_visible_child_name()
+        if visible_child_name == "settings":
+            self.back_btn.set_visible(
+                self.navigation_view.get_visible_page() != self.main_nav_page
+            )
+        else:
+            self.back_btn.set_visible(False)
+
+    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id, opaque):
+        if type_id == CALLBACK_TYPE_NETWORK_GENERIC:
+            if event_id == NETWORK_EVENT_DELETED:
+                self.window_ref.window.closeTab(self)
+                return
+        elif type_id == CALLBACK_TYPE_CONNECTION_GENERIC:
+            if event_id in [CONNECTION_EVENT_DISCONNECTED, CONNECTION_EVENT_DELETED]:
+                self.window_ref.window.closeTab(self)
+                return
+        self.__setStatus__()
+
+    def __onApplyClicked__(self, _):
         self.network.setAutostart(self.general_prefs_group.getAutostart())
 
         try:
@@ -306,17 +314,14 @@ class NetworkDetailsTab(BaseDetailsTab):
                 self.network.updateDefinition(self.xml_box.getText())
             else:
                 self.network.update(self.xml_tree)
-            self.updateData()
+            self.__updateData__()
         except Exception as e:
             self.window_ref.window.pushToastText(str(e))
 
-    def onCancelClicked(self, btn):
-        self.updateData()
+    def __onCancelClicked__(self, _):
+        self.__updateData__()
 
-    def showApply(self, *args):
-        self.apply_row.set_visible(True)
-
-    def onStartClicked(self, btn):
+    def __onStartClicked__(self, _):
         self.start_btn.set_sensitive(False)
         failableAsyncJob(
             self.network.start,
@@ -348,10 +353,10 @@ class NetworkDetailsTab(BaseDetailsTab):
         )
         dialog.present(self.window_ref.window)
 
-    def onBackClicked(self, btn):
+    def __onBackClicked__(self, _):
         self.navigation_view.pop()
 
-    def onDeleteClicked(self, btn):
+    def __onDeleteClicked__(self, btn):
         def onDelete():
             btn.set_sensitive(False)
             try:
@@ -373,17 +378,20 @@ class NetworkDetailsTab(BaseDetailsTab):
         dialog.present(self.window_ref.window)
 
     def end(self):
+        """Implement BaseDetailsTab."""
         # Unsubscribe from events
         self.network.unregister_callback(self.onConnectionEvent)
 
-    def getWindow(self):
-        return self.window_ref.window
-
     def getUniqueIdentifier(self) -> str:
+        """Implement BaseDetailsTab."""
         return self.network.getUUID()
 
     def setWindowHeader(self, window):
+        """Implement BaseDetailsTab."""
         window.headerSetTitleWidget(self.title_widget)
         window.headerPackStart(self.back_btn)
         window.headerPackStart(self.start_btn)
         window.headerPackStart(self.stop_btn)
+
+    def getWindow(self) -> Adw.ApplicationWindow:
+        return self.window_ref.window
