@@ -19,10 +19,10 @@ from realms.helpers import RepeatJob, bytesToString, failableAsyncJob
 from realms.libvirt_wrap import Pool
 from realms.libvirt_wrap.constants import *
 from realms.ui.components import ActionOption, ApplyRow, XMLView, selectDialog
-from realms.ui.components.common import controlButton, hspacer
+from realms.ui.components.common import iconButton
 from realms.ui.components.pool.pool_prefs_group import PoolPreferencesGroup
 from realms.ui.components.pool.pool_volumes_group import VolumesGroup
-from realms.ui.components.preference_widgets import RealmsClamp, RealmsPreferencesPage
+from realms.ui.components.preference_widgets import RealmsPreferencesPage
 
 from .base_details import BaseDetailsTab
 
@@ -95,8 +95,20 @@ class PoolDetailsTab(BaseDetailsTab):
 
         # Top group with buttons
         self.title_widget = Adw.WindowTitle(title=self.pool.getDisplayName())
-        self.start_btn = controlButton("Start", self.onStartClicked)
-        self.stop_btn = controlButton("Stop", self.onStopClicked)
+        self.start_btn = iconButton(
+            "",
+            "play-symbolic",
+            self.onStartClicked,
+            css_classes=["suggested-action"],
+            tooltip_text="Start",
+        )
+        self.stop_btn = iconButton(
+            "",
+            "stop-symbolic",
+            self.onStopClicked,
+            css_classes=["destructive-action"],
+            tooltip_text="Stop",
+        )
 
         # Group with general pool settings
         fill_group = Adw.PreferencesGroup()

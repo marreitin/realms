@@ -24,11 +24,9 @@ from realms.ui.components import (
     ActionOption,
     ApplyRow,
     XMLView,
-    hspacer,
     iconButton,
     selectDialog,
 )
-from realms.ui.components.common import controlButton
 from realms.ui.components.net import (
     BaseNetSettingsPage,
     NetDNSPage,
@@ -38,7 +36,7 @@ from realms.ui.components.net import (
     NetQOSPage,
     NetRoutePage,
 )
-from realms.ui.components.preference_widgets import RealmsClamp, RealmsPreferencesPage
+from realms.ui.components.preference_widgets import RealmsPreferencesPage
 
 from .base_details import BaseDetailsTab
 
@@ -117,13 +115,26 @@ class NetworkDetailsTab(BaseDetailsTab):
         self.set_vexpand(True)
 
         self.title_widget = Adw.WindowTitle(title=self.network.getDisplayName())
-        self.start_btn = controlButton("Start", self.onStartClicked)
-        self.stop_btn = controlButton("Stop", self.onStopClicked)
+        self.start_btn = iconButton(
+            "",
+            "play-symbolic",
+            self.onStartClicked,
+            css_classes=["suggested-action"],
+            tooltip_text="Start",
+        )
+        self.stop_btn = iconButton(
+            "",
+            "stop-symbolic",
+            self.__onStopClicked__,
+            css_classes=["destructive-action"],
+            tooltip_text="Stop",
+        )
         self.back_btn = iconButton(
             "",
             "left-symbolic",
             self.onBackClicked,
             visible=False,
+            margin_end=16,
         )
 
         toolbar_view = Adw.ToolbarView(hexpand=True, vexpand=True)
@@ -314,14 +325,28 @@ class NetworkDetailsTab(BaseDetailsTab):
             lambda r: self.start_btn.set_sensitive(True),
         )
 
-    def onStopClicked(self, btn):
-        self.stop_btn.set_sensitive(False)
-        failableAsyncJob(
-            self.network.stop,
-            [],
-            lambda e: self.window_ref.window.pushToastText(str(e)),
-            lambda r: self.stop_btn.set_sensitive(True),
+    def __onStopClicked__(self, _):
+        def onStopSelected():
+            self.stop_btn.set_sensitive(False)
+            failableAsyncJob(
+                self.network.stop,
+                [],
+                lambda e: self.window_ref.window.pushToastText(str(e)),
+                lambda r: self.stop_btn.set_sensitive(True),
+            )
+
+        dialog = selectDialog(
+            "Stop network?",
+            "",
+            [
+                ActionOption(
+                    "Stop",
+                    onStopSelected,
+                    appearance=Adw.ResponseAppearance.DESTRUCTIVE,
+                )
+            ],
         )
+        dialog.present(self.window_ref.window)
 
     def onBackClicked(self, btn):
         self.navigation_view.pop()

@@ -274,21 +274,31 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
             "left-symbolic",
             self.onBackClicked,
             visible=False,
+            margin_end=16,
         )
 
-        self.start_btn = controlButton(
-            "Start",
+        self.start_btn = iconButton(
+            "",
+            "play-symbolic",
             self.onStartClicked,
+            css_classes=["suggested-action"],
+            tooltip_text="Start",
         )
 
-        self.resume_btn = controlButton(
-            "Resume",
+        self.resume_btn = iconButton(
+            "",
+            "play-symbolic",
             self.onResumeClicked,
+            css_classes=["suggested-action"],
+            tooltip_text="Resume",
         )
 
-        self.stop_btn = controlButton(
-            "Stop",
+        self.stop_btn = iconButton(
+            "",
+            "stop-symbolic",
             self.onStopClicked,
+            css_classes=["destructive-action"],
+            tooltip_text="Stop",
         )
 
         self.pause_btn = iconButton(
@@ -296,7 +306,6 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
             "pause-symbolic",
             self.onPauseClicked,
             tooltip_text="Pause",
-            css_classes=["flat"],
         )
 
         self.open_btn = iconButton(
@@ -304,6 +313,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
             "display-symbolic",
             lambda *_: show(self.domain, self.window_ref.window),
             css_classes=["suggested-action"],
+            tooltip_text="Display",
         )
 
         self.clone_btn = iconButton(
@@ -513,7 +523,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
             )
 
         dialog = selectDialog(
-            "Stopping domain",
+            "Stop domain?",
             "Choose how to stop the domain",
             [
                 ActionOption("Reset", onResetSelected),
