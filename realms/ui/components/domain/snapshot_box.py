@@ -150,7 +150,7 @@ class SnapshotBox(Gtk.Box):
 
         self.build()
 
-        self.domain.register_callback_any(self.onConnectionEvent, None)
+        self.domain.register_callback_any(self.onConnectionEvent)
 
     def build(self):
         self.snapshot_overlay = Gtk.Overlay(vexpand=True)
@@ -224,7 +224,7 @@ class SnapshotBox(Gtk.Box):
         self.group.add(row)
         self.snapshot_rows.append(row)
 
-    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id, opaque):
+    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id):
         if type_id == CALLBACK_TYPE_DOMAIN_GENERIC:
             if event_id in [DOMAIN_EVENT_SNAPSHOT_TAKEN, DOMAIN_EVENT_SNAPSHOT_DELETED]:
                 self.updateData()

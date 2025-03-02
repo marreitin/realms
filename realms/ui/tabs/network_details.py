@@ -110,7 +110,7 @@ class NetworkDetailsTab(BaseDetailsTab):
         self.__build__()
 
         # Only follow the events interesting for this network
-        self.network.register_callback_any(self.onConnectionEvent, None)
+        self.network.register_callback_any(self.onConnectionEvent)
 
     def __build__(self):
         self.set_hexpand(True)
@@ -295,7 +295,7 @@ class NetworkDetailsTab(BaseDetailsTab):
         else:
             self.back_btn.set_visible(False)
 
-    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id, opaque):
+    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id):
         if type_id == CALLBACK_TYPE_NETWORK_GENERIC:
             if event_id == NETWORK_EVENT_DELETED:
                 self.window_ref.window.closeTab(self)

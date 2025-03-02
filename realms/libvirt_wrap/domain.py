@@ -32,7 +32,7 @@ class Domain(EventManager):
 
         self.connection = connection
         self.connection.isAlive()
-        self.connection.register_callback_any(self.onConnectionEvent, None)
+        self.connection.register_callback_any(self.onConnectionEvent)
         self.domain_capabilites = self.connection.getDomainCapabilities()
         self.domain = domain
 
@@ -40,7 +40,7 @@ class Domain(EventManager):
     # Callbacks
     ############################################
 
-    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id, opaque):
+    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id):
         # Filter unwanted stuff
         if (
             type_id in [CALLBACK_TYPE_DOMAIN_LIFECYCLE, CALLBACK_TYPE_DOMAIN_GENERIC]

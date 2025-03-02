@@ -29,7 +29,7 @@ class DownloadVolumeDialog:
     def __init__(self, window: Adw.ApplicationWindow, volume: Volume):
         self.window = window
         self.volume = volume
-        self.volume.pool.register_callback_any(self.onConnectionEvent, None)
+        self.volume.pool.register_callback_any(self.onConnectionEvent)
         self.tree = None
         self.cancel_event = Event()
 
@@ -122,7 +122,7 @@ class DownloadVolumeDialog:
             raise NotImplementedError(f"Object { name } could not be found!")
         return o
 
-    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id, opaque):
+    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id):
         if type_id == CALLBACK_TYPE_CONNECTION_GENERIC:
             if event_id in [CONNECTION_EVENT_DISCONNECTED, CONNECTION_EVENT_DELETED]:
                 self.onCancelClicked(self.obj("btn-cancel"))

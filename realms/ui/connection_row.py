@@ -104,7 +104,7 @@ class ConnectionRow(Gtk.ListBoxRow):
 
         self.window = window
         self.connection = Connection(conn_settings)
-        self.connection.register_callback_any(self.onConnectionEvent, None)
+        self.connection.register_callback_any(self.onConnectionEvent)
 
         self.build()
 
@@ -297,7 +297,7 @@ class ConnectionRow(Gtk.ListBoxRow):
             elif event_id == DOMAIN_EVENT_ADDED:
                 self.addDomain(obj, open_tab=True)
 
-    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id, opaque):
+    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id):
         """Top level event handler."""
         print(
             "Connection Row registered connection event: ", type_id, event_id, detail_id

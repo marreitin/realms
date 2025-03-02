@@ -72,7 +72,7 @@ class SecretsPage(Gtk.Box):
         self.parent = parent
 
         self.connection = self.parent.connection
-        self.connection.register_callback_any(self.onConnectionEvent, None)
+        self.connection.register_callback_any(self.onConnectionEvent)
 
         self.secret_rows = []
 
@@ -142,7 +142,7 @@ class SecretsPage(Gtk.Box):
         """Plus was clicked."""
         SecretDialog(self.parent.window_ref.window, self.connection, None)
 
-    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id, opaque):
+    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id):
         """Handle connection events."""
         if type_id == CALLBACK_TYPE_SECRET_GENERIC:
             if event_id == SECRET_EVENT_ADDED:

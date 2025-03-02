@@ -29,7 +29,7 @@ class AddPoolDialog:
         self.window = window
         self.connection = connection
 
-        self.connection.register_callback_any(self.__onConnectionEvent__, None)
+        self.connection.register_callback_any(self.__onConnectionEvent__)
 
         # Create a Builder
         self.builder = Gtk.Builder.new_from_resource(

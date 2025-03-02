@@ -37,7 +37,7 @@ class PoolRow(BaseRow):
 
         self.build()
 
-        self.pool.register_callback_any(self.onConnectionEvent, None)
+        self.pool.register_callback_any(self.onConnectionEvent)
 
     def build(self):
         hbox = Gtk.Box(spacing=6)
@@ -97,7 +97,7 @@ class PoolRow(BaseRow):
                 tab_page_content, self.pool.getDisplayName(), "drive-multidisk-symbolic"
             )
 
-    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id, opaque):
+    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id):
         if type_id == CALLBACK_TYPE_CONNECTION_GENERIC:
             if event_id in [CONNECTION_EVENT_DISCONNECTED, CONNECTION_EVENT_DELETED]:
                 self.usage_task.stopTask()

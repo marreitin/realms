@@ -29,14 +29,14 @@ class Network(EventManager):
 
         self.connection = connection
         self.connection.isAlive()
-        self.connection.register_callback_any(self.onConnectionEvent, None)
+        self.connection.register_callback_any(self.onConnectionEvent)
         self.network = network
 
     ############################################
     # Callbacks
     ############################################
 
-    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id, opaque):
+    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id):
         # Filter unwanted stuff
         if (
             type_id in [CALLBACK_TYPE_NETWORK_LIFECYCLE, CALLBACK_TYPE_NETWORK_GENERIC]

@@ -50,13 +50,13 @@ class Pool(EventManager):
         self.isAlive = self.connection.isAlive
         self.pool_capabilities = self.connection.getPoolCapabilities()
 
-        self.connection.register_callback_any(self.onConnectionEvent, None)
+        self.connection.register_callback_any(self.onConnectionEvent)
 
     ############################################
     # Callbacks
     ############################################
 
-    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id, opaque):
+    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id):
         # Filter unwanted stuff
         if (
             type_id in [CALLBACK_TYPE_POOL_LIFECYCLE, CALLBACK_TYPE_POOL_GENERIC]

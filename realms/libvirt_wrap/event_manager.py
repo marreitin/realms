@@ -13,7 +13,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from realms.helpers import Callback
 
 from .common import *
 
@@ -27,25 +26,24 @@ class EventManager:
     def __init__(self):
         self.event_callbacks = []
 
-    def register_callback_any(self, _cb: callable, _opaque: any):
+    def register_callback_any(self, _cb: callable):
         """Register a callback to the wrappers callback multiplexer.
         It will be called on any lifecycle event of *any* domain.
 
         Args:
             _cb (callable): Callback
-            _opaque (any): Any data to pass to the callback additionally
 
         Raises:
             ValueError: Raise if function already registered
         """
         el = None
         for cb in self.event_callbacks:
-            if cb.cb == _cb:
+            if cb == _cb:
                 el = cb
                 break
         if el is not None:
             raise ValueError("Callback already registered")
-        self.event_callbacks.append(Callback(_cb, _opaque))
+        self.event_callbacks.append(_cb)
 
     def unregister_callback(self, _cb: callable):
         """Unregister event callback
@@ -58,7 +56,7 @@ class EventManager:
         """
         el = None
         for cb in self.event_callbacks:
-            if cb.cb == _cb:
+            if cb == _cb:
                 el = cb
                 break
         if el is not None:
@@ -71,4 +69,4 @@ class EventManager:
         """Send out event to all subscribed callbacks"""
         printEvent(conn, obj, type_id, event_id, detail_id)
         for cb in self.event_callbacks.copy():
-            cb.callback(conn, obj, type_id, event_id, detail_id)
+            cb(conn, obj, type_id, event_id, detail_id)

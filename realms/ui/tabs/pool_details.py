@@ -60,7 +60,7 @@ class PoolDetailsTab(BaseDetailsTab):
         self.build()
 
         # Only follow the events interesting for this pool
-        self.pool.register_callback_any(self.onConnectionEvent, None)
+        self.pool.register_callback_any(self.onConnectionEvent)
 
     def build(self):
         self.set_hexpand(True)
@@ -197,7 +197,7 @@ class PoolDetailsTab(BaseDetailsTab):
 
             self.volume_stack_page.set_visible(False)
 
-    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id, opaque):
+    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id):
         if type_id == CALLBACK_TYPE_POOL_GENERIC:
             if event_id == POOL_EVENT_DELETED:
                 self.window_ref.window.closeTab(self)

@@ -29,14 +29,14 @@ class Secret(EventManager):
         super().__init__()
         self.connection = connection
         self.connection.isAlive()
-        self.connection.register_callback_any(self.onConnectionEvent, None)
+        self.connection.register_callback_any(self.onConnectionEvent)
         self.secret = secret
 
     ############################################
     # Callbacks
     ############################################
 
-    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id, opaque):
+    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id):
         # Filter unwanted stuff
         if (
             type_id in [CALLBACK_TYPE_SECRET_LIFECYCLE, CALLBACK_TYPE_SECRET_GENERIC]

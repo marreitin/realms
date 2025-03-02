@@ -33,7 +33,7 @@ class NetworkRow(BaseRow):
 
         self.build()
 
-        self.network.register_callback_any(self.onConnectionEvent, None)
+        self.network.register_callback_any(self.onConnectionEvent)
 
     def build(self):
         self.set_activatable(True)
@@ -71,7 +71,7 @@ class NetworkRow(BaseRow):
                 "network-wired-symbolic",
             )
 
-    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id, opaque):
+    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id):
         if type_id == CALLBACK_TYPE_CONNECTION_GENERIC:
             if event_id in [CONNECTION_EVENT_DISCONNECTED, CONNECTION_EVENT_DELETED]:
                 self.network.unregister_callback(self.onConnectionEvent)

@@ -34,7 +34,7 @@ class ConnectionDetailsTab(BaseDetailsTab):
         super().__init__(window)
 
         self.connection = connection
-        self.connection.register_callback_any(self.onConnectionEvent, None)
+        self.connection.register_callback_any(self.onConnectionEvent)
 
         self.disconnect_btn = None
         self.connect_btn = None
@@ -92,7 +92,7 @@ class ConnectionDetailsTab(BaseDetailsTab):
 
         self.setStatus()
 
-    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id, opaque):
+    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id):
         if type_id == CALLBACK_TYPE_CONNECTION_GENERIC:
             if event_id == CONNECTION_EVENT_SETTINGS_CHANGED:
                 self.conn_details_page.loadSettings()

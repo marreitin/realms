@@ -156,7 +156,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         self.build()
 
         # Only follow the events interesting for this domain
-        self.domain.register_callback_any(self.onConnectionEvent, None)
+        self.domain.register_callback_any(self.onConnectionEvent)
 
     def build(self):
         self.set_hexpand(True)
@@ -464,7 +464,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         self.__definition_changed__ = True
         self.apply_row.set_visible(True)
 
-    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id, opaque):
+    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id):
         if type_id == CALLBACK_TYPE_DOMAIN_GENERIC:
             if event_id == DOMAIN_EVENT_DELETED:
                 self.window_ref.window.closeTab(self)

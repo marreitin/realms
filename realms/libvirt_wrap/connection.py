@@ -68,16 +68,16 @@ class Connection(EventManager):
     # Event handlers
     ############################################
 
-    def onDomainEvent(self, conn, dom: libvirt.virDomain, event, detail, opaque):
+    def onDomainEvent(self, conn, dom: libvirt.virDomain, event, detail, _):
         self.sendEvent(conn, dom, CALLBACK_TYPE_DOMAIN_LIFECYCLE, event, detail)
 
-    def onStorageEvent(self, conn, pool, event, detail, opaque):
+    def onStorageEvent(self, conn, pool, event, detail, _):
         self.sendEvent(conn, pool, CALLBACK_TYPE_POOL_LIFECYCLE, event, detail)
 
-    def onNetworkEvent(self, conn, network, event, detail, opaque):
+    def onNetworkEvent(self, conn, network, event, detail, _):
         self.sendEvent(conn, network, CALLBACK_TYPE_NETWORK_LIFECYCLE, event, detail)
 
-    def onSecretEvent(self, conn, secret, event, detail, opaque):
+    def onSecretEvent(self, conn, secret, event, detail, _):
         self.sendEvent(conn, secret, CALLBACK_TYPE_SECRET_LIFECYCLE, event, detail)
 
     ############################################
