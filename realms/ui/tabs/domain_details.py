@@ -715,6 +715,6 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         window.headerPackStart(self.stop_btn)
         window.headerPackStart(self.pause_btn)
         window.headerPackStart(self.resume_btn)
+        window.headerPackStart(self.open_btn)
         window.headerPackEnd(self.clone_btn)
         window.headerPackEnd(self.snapshot_btn)
-        window.headerPackEnd(self.open_btn)
