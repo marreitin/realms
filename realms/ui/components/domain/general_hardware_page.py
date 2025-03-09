@@ -50,62 +50,50 @@ class GeneralHardwarePage(BaseDevicePage):
         self.vcpus_row.spin_row.set_sensitive(False)
         prefs_group.add(self.vcpus_row.spin_row)
 
-        self.memory_row = BindableEntryRow(title="Memory")
-        prefs_group.add(self.memory_row)
-
         self.domain_caps = self.parent.domain.connection.getDomainCapabilities()
 
         self.config_row = BindableComboRow(
-            self.domain_caps.cpu_modes,
-            "",
-            title="CPU configuration",
-            subtitle="How the virtual CPU is configured",
+            self.domain_caps.cpu_modes, "", title="CPU Configuration"
         )
         prefs_group.add(self.config_row)
 
         self.cpu_model_row = BindableComboRow(
-            self.domain_caps.custom_cpu_models, title="CPU model"
+            self.domain_caps.custom_cpu_models, title="CPU Model"
         )
         prefs_group.add(self.cpu_model_row)
 
         self.match_row = BindableComboRow(
-            ["minimum", "exact", "strict"],
-            "",
-            title="CPU match",
-            subtitle="How well vCPUs have to match requirements",
+            ["minimum", "exact", "strict"], "", title="CPU Match"
         )
         prefs_group.add(self.match_row)
 
         self.check_row = BindableComboRow(
-            ["partial", "full"],
-            "",
-            title="CPU match checking",
-            subtitle="If libvirt checks how vCPUs match requirements (if at all)",
+            ["partial", "full"], "", title="CPU Match Check"
         )
         prefs_group.add(self.check_row)
 
         self.topology_row = Adw.ExpanderRow(
-            title="Explicit CPU topology", show_enable_switch=True
+            title="Explicit CPU Topology", show_enable_switch=True
         )
         self.topology_row.connect("notify::enable-expansion", self.onTopologyEnabled)
 
         self.sockets_row = BindableSpinRow(
             lambda i: str(int(i)),
-            title="CPU sockets",
+            title="CPU Sockets",
             digits=0,
             adjustment=Gtk.Adjustment(step_increment=1),
         )
         self.topology_row.add_row(self.sockets_row.getWidget())
         self.cores_row = BindableSpinRow(
             lambda i: str(int(i)),
-            title="CPU cores",
+            title="CPU Cores",
             digits=0,
             adjustment=Gtk.Adjustment(step_increment=1),
         )
         self.topology_row.add_row(self.cores_row.getWidget())
         self.threads_row = BindableSpinRow(
             lambda i: str(int(i)),
-            title="CPU threads",
+            title="CPU Threads",
             numeric=True,
             digits=0,
             adjustment=Gtk.Adjustment(step_increment=1),
@@ -113,6 +101,9 @@ class GeneralHardwarePage(BaseDevicePage):
         self.topology_row.add_row(self.threads_row.getWidget())
 
         prefs_group.add(self.topology_row)
+
+        self.memory_row = BindableEntryRow(title="Memory")
+        prefs_group.add(self.memory_row)
 
         self.updateData()
 
