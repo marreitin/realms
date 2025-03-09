@@ -19,18 +19,19 @@ from gi.repository import Adw, Gtk
 
 from realms.ui.components import iconButton
 from realms.ui.components.bindable_entries import BindableComboRow, BindableDropDown
-from realms.ui.components.generic_preferences_row import GenericPreferencesRow
 
 from .base_device_page import BaseDevicePage
 
 # TODO: Timezone, variable and absolute clock modes
 
 
-class TimerRow(GenericPreferencesRow):
+class TimerRow(Adw.ExpanderRow):
     """Row for a single time source."""
 
     def __init__(self, xml_elem: ET.Element, parent, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(
+            title="Timer", show_enable_switch=False, enable_expansion=True, **kwargs
+        )
 
         self.xml_elem = xml_elem
         self.parent = parent
@@ -45,43 +46,36 @@ class TimerRow(GenericPreferencesRow):
             "armvtimer",
             "platform",
         ]
-        name_box = Gtk.Box(spacing=6)
-        self.addChild(name_box)
-        self.name_row = BindableDropDown(self.valid_names, "", hexpand=True)
-        self.name_row.bindAttr(self.xml_elem, "name", self.__onNameChanged__)
-        name_box.append(self.name_row)
 
-        remove = iconButton(
+        self.name_row = BindableDropDown(
+            self.valid_names,
+            "",
+            vexpand=False,
+            valign=Gtk.Align.CENTER,
+            width_request=120,
+        )
+        self.name_row.bindAttr(self.xml_elem, "name", self.__onNameChanged__)
+        self.add_suffix(self.name_row)
+
+        self.track_combo = BindableComboRow(
+            ["boot", "guest", "wall", "realtime"], "", title="Track"
+        )
+        self.add_row(self.track_combo)
+
+        self.tickpolicy_combo = BindableComboRow(
+            ["delay", "catchup", "merge", "discard"], "", title="Tick policy"
+        )
+        self.add_row(self.tickpolicy_combo)
+
+        delete_row = Adw.ActionRow()
+        self.add_row(delete_row)
+        self.delete_btn = iconButton(
             "Remove",
             "user-trash-symbolic",
             self.__onRemoveClicked__,
             css_classes=["flat"],
-            hexpand=False,
         )
-        name_box.append(remove)
-
-        self.track_box = Gtk.Box(spacing=6, margin_start=18)
-        self.addChild(self.track_box)
-        self.track_box.append(
-            Gtk.Label(label="track", hexpand=True, halign=Gtk.Align.START)
-        )
-        self.track_combo = BindableDropDown(
-            ["boot", "guest", "wall", "realtime"],
-            "",
-            css_classes=["flat"],
-            tooltip_text="What the timer tracks",
-        )
-        self.track_box.append(self.track_combo)
-
-        tickpolicy_box = Gtk.Box(spacing=6, margin_start=18)
-        tickpolicy_box.append(
-            Gtk.Label(label="Tick Policy", halign=Gtk.Align.START, hexpand=True)
-        )
-        self.tickpolicy_combo = BindableDropDown(
-            ["delay", "catchup", "merge", "discard"], "", css_classes=["flat"]
-        )
-        tickpolicy_box.append(self.tickpolicy_combo)
-        self.addChild(tickpolicy_box)
+        delete_row.add_prefix(self.delete_btn)
 
         self.update()
 
@@ -92,10 +86,10 @@ class TimerRow(GenericPreferencesRow):
 
         name = self.name_row.getSelectedString()
         if name in ["rtc", "platform"]:
-            self.track_box.set_visible(True)
+            self.track_combo.set_visible(True)
             self.track_combo.bindAttr(self.xml_elem, "track", self.parent.showApply)
         else:
-            self.track_box.set_visible(False)
+            self.track_combo.set_visible(False)
             if self.xml_elem.get("track") is not None:
                 del self.xml_elem.attrib["track"]
 
@@ -138,6 +132,7 @@ class ClockPage(BaseDevicePage):
             css_classes=["flat"],
         )
         self.timer_group.set_header_suffix(add_timer)
+        self.timer_rows.clear()
 
         self.updateData()
 
