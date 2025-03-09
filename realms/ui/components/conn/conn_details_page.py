@@ -85,18 +85,17 @@ class ConnectionDetailsPage(Gtk.Box):
         self.prefs_page.add(self.prefs_group)
 
         # Security status icons
-        status_box = Gtk.Box(spacing=6)
-        self.prefs_group.set_header_suffix(status_box)
+        sec_status_box = Gtk.Box(spacing=6)
 
         self.secure_icon = Gtk.Image.new_from_icon_name("security-high")
         self.secure_icon.set_tooltip_text("Secure")
-        status_box.append(self.secure_icon)
+        sec_status_box.append(self.secure_icon)
 
         self.encrypted_icon = Gtk.Image.new_from_icon_name(
             "network-wireless-encrypted-symbolic"
         )
         self.encrypted_icon.set_tooltip_text("Encrypted")
-        status_box.append(self.encrypted_icon)
+        sec_status_box.append(self.encrypted_icon)
 
         # Preference rows.
         self.name_row = Adw.EntryRow(title="Name")
@@ -109,6 +108,9 @@ class ConnectionDetailsPage(Gtk.Box):
             title="Autoconnect", subtitle="Connect when opening app"
         )
         self.prefs_group.add(self.autoconnect_row)
+        security_row = Adw.ActionRow(title="Connection Security")
+        security_row.add_suffix(sec_status_box)
+        self.prefs_group.add(security_row)
 
         self.name_row.connect("changed", self.onSettingsChanged)
         self.desc_row.connect("changed", self.onSettingsChanged)
