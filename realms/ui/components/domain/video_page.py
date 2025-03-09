@@ -32,7 +32,7 @@ from .base_device_page import BaseDevicePage
 
 class ResolutionRow(Adw.ExpanderRow):
     def __init__(self, show_apply_cb: callable, **kwargs):
-        super().__init__(title="Resolution", show_enable_switch=True, **kwargs)
+        super().__init__(title="Default Resolution", show_enable_switch=True, **kwargs)
 
         self.show_apply_cb = show_apply_cb
         self.model_xml = None
@@ -110,11 +110,11 @@ class VideoPage(BaseDevicePage):
         )
         self.group.add(self.heads_row.spin_row)
 
+        self.accel_row = BindableSwitchRow("yes", "no", title="OpenGL Support")
+        self.group.add(self.accel_row.switch_row)
+
         self.res_row = ResolutionRow(self.showApply)
         self.group.add(self.res_row)
-
-        self.accel_row = BindableSwitchRow("yes", "no", title="Use 3D acceleration")
-        self.group.add(self.accel_row.switch_row)
 
         self.address_row = AddressRow(self.xml_tree, self.showApply, ["pci"])
         self.group.add(self.address_row)
