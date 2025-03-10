@@ -20,35 +20,41 @@ from gi.repository import Gtk
 from realms.ui.components.bindable_entries import BindableEntry
 
 
-class PoolPermissionsBox(Gtk.FlowBox):
+class PoolPermissionsBox(Gtk.Box):
     def __init__(self, show_apply_cb: callable, **kwargs):
-        super().__init__(homogeneous=True, max_children_per_line=2, **kwargs)
+        super().__init__(spacing=6, orientation=Gtk.Orientation.VERTICAL, **kwargs)
 
         self.show_apply_cb = show_apply_cb
+
+        box = Gtk.Box(spacing=6)
+        self.append(box)
 
         self.owner_entry = BindableEntry(
             placeholder_text="Owner ID",
             input_purpose=Gtk.InputPurpose.DIGITS,
-            tooltip_text="Owner user ID",
+            tooltip_text="Owner ID",
+            hexpand=True,
         )
-        self.append(self.owner_entry)
+        box.append(self.owner_entry)
 
         self.group_entry = BindableEntry(
             placeholder_text="Group ID",
             input_purpose=Gtk.InputPurpose.DIGITS,
             tooltip_text="Group ID",
+            hexpand=True,
         )
-        self.append(self.group_entry)
+        box.append(self.group_entry)
 
         self.perm_label = BindableEntry(
             placeholder_text="Mode",
             input_purpose=Gtk.InputPurpose.DIGITS,
             tooltip_text="UNIX Permissions Mode Octet",
+            hexpand=True,
         )
-        self.append(self.perm_label)
+        box.append(self.perm_label)
 
         self.se_label_entry = BindableEntry(
-            placeholder_text="SE Label", tooltip_text="SE-Linux label"
+            placeholder_text="SE Label", tooltip_text="SE-Linux label", hexpand=True
         )
         self.append(self.se_label_entry)
 
