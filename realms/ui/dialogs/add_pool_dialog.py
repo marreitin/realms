@@ -92,7 +92,7 @@ class AddPoolDialog:
             raise NotImplementedError(f"Object { name } could not be found!")
         return o
 
-    def __onConnectionEvent__(self, conn, obj, type_id, event_id, detail_id, _):
+    def __onConnectionEvent__(self, conn, obj, type_id, event_id, detail_id):
         if type_id == CALLBACK_TYPE_CONNECTION_GENERIC:
             if event_id in [CONNECTION_EVENT_DISCONNECTED, CONNECTION_EVENT_DELETED]:
                 self.dialog.close()
