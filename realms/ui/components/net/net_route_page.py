@@ -18,7 +18,7 @@ import xml.etree.ElementTree as ET
 from gi.repository import Adw, Gtk
 
 from realms.ui.components.bindable_entries import BindableEntryRow
-from realms.ui.components.common import iconButton
+from realms.ui.components.common import deleteRow, iconButton
 
 from .net_base_settings_page import BaseNetSettingsPage
 
@@ -80,13 +80,7 @@ class RouteRow(Adw.ExpanderRow):
         self.metric_switch.connect("notify::active", self.onMetricSwitchChanged)
 
         # Lower action row
-        action_row = Adw.ActionRow()
-        self.add_row(action_row)
-        self.delete_btn = iconButton(
-            "Delete", "user-trash-symbolic", self.onDeleteClicked
-        )
-        self.delete_btn.set_css_classes(["flat"])
-        action_row.add_prefix(self.delete_btn)
+        self.add_row(deleteRow(self.onDeleteClicked))
 
     def onAddressChanged(self, row, *args):
         self.address_row.set_css_classes([])

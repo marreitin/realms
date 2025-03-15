@@ -18,8 +18,8 @@ import xml.etree.ElementTree as ET
 from gi.repository import Adw
 
 from realms.helpers import getETText
-from realms.ui.components import iconButton, propertyRow
 from realms.ui.components.bindable_entries import BindableComboRow, BindableEntryRow
+from realms.ui.components.common import deleteRow, propertyRow
 
 from .base_device_page import BaseDevicePage
 
@@ -55,15 +55,7 @@ class GeneralPage(BaseDevicePage):
         self.general_group.add(self.autostart_row)
         self.autostart_row.connect("notify::active", self.onAutostartChanged)
 
-        action_row = Adw.ActionRow()
-        self.general_group.add(action_row)
-        self.delete_btn = iconButton(
-            "",
-            "user-trash-symbolic",
-            self.parent.onDeleteClicked,
-            css_classes=["destructive-action"],
-        )
-        action_row.add_prefix(self.delete_btn)
+        self.general_group.add(deleteRow(self.parent.onDeleteClicked))
 
         hypervisor_group = Adw.PreferencesGroup(
             title="General domain options",

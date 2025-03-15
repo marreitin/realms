@@ -17,8 +17,8 @@ import xml.etree.ElementTree as ET
 
 from gi.repository import Adw, Gtk
 
-from realms.ui.components import iconButton
 from realms.ui.components.bindable_entries import BindableComboRow, BindableDropDown
+from realms.ui.components.common import deleteRow, iconButton
 
 from .base_device_page import BaseDevicePage
 
@@ -67,15 +67,7 @@ class TimerRow(Adw.ExpanderRow):
         )
         self.add_row(self.tickpolicy_combo)
 
-        delete_row = Adw.ActionRow()
-        self.add_row(delete_row)
-        self.delete_btn = iconButton(
-            "Remove",
-            "user-trash-symbolic",
-            self.__onRemoveClicked__,
-            css_classes=["flat"],
-        )
-        delete_row.add_prefix(self.delete_btn)
+        self.add_row(deleteRow(self.__onRemoveClicked__))
 
         self.update()
 

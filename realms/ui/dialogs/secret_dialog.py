@@ -33,7 +33,7 @@ from realms.ui.components import (
     sourceViewSetText,
     xmlSourceView,
 )
-from realms.ui.components.common import simpleErrorDialog
+from realms.ui.components.common import deleteRow, simpleErrorDialog
 
 (
     MODE_ADDING,
@@ -118,13 +118,7 @@ class SecretDialog:
         self.group.add(self.value_row.getWidget())
 
         if self.mode == MODE_EDITING:
-            delete_row = Adw.ActionRow()
-            self.group.add(delete_row)
-            self.delete_btn = iconButton(
-                "Remove", "user-trash-symbolic", css_classes=["flat"]
-            )
-            self.delete_btn.connect("clicked", self.onRemoveClicked)
-            delete_row.add_prefix(self.delete_btn)
+            self.group.add(deleteRow(self.onRemoveClicked))
 
         self.updateUI()
 

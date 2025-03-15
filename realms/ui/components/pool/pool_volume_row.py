@@ -20,7 +20,7 @@ from realms.libvirt_wrap import Volume
 from realms.ui.components import ActionOption, selectDialog
 
 # from ..bindable_entries import
-from realms.ui.components.common import iconButton, propertyRow
+from realms.ui.components.common import deleteButton, iconButton, propertyRow
 from realms.ui.components.generic_preferences_row import GenericPreferencesRow
 from realms.ui.dialogs.download_volume_dialog import DownloadVolumeDialog
 from realms.ui.window_reference import WindowReference
@@ -90,10 +90,7 @@ class PoolVolumeRow(Adw.ExpanderRow):
         )
         self.action_row.add_prefix(wipe)
 
-        delete = iconButton(
-            "Delete", "user-trash-symbolic", self.onDeleteClicked, css_classes=["flat"]
-        )
-        self.action_row.add_prefix(delete)
+        self.action_row.add_prefix(deleteButton(self.onDeleteClicked))
 
         download = iconButton(
             "Download",

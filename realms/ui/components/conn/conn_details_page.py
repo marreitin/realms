@@ -17,13 +17,8 @@ from gi.repository import Adw, Gtk
 
 from realms.helpers import bytesToString
 from realms.libvirt_wrap.constants import *
-from realms.ui.components import (
-    ActionOption,
-    ApplyRow,
-    iconButton,
-    propertyRow,
-    selectDialog,
-)
+from realms.ui.components import ActionOption, ApplyRow, propertyRow, selectDialog
+from realms.ui.components.common import deleteRow
 from realms.ui.components.preference_widgets import RealmsPreferencesPage
 
 
@@ -117,15 +112,7 @@ class ConnectionDetailsPage(Gtk.Box):
         self.url_row.connect("changed", self.onSettingsChanged)
         self.autoconnect_row.connect("notify::active", self.onSettingsChanged)
 
-        action_row = Adw.ActionRow()
-        self.prefs_group.add(action_row)
-        self.forget_btn = iconButton(
-            "",
-            "user-trash-symbolic",
-            self.onForgetClicked,
-            css_classes=["destructive-action"],
-        )
-        action_row.add_prefix(self.forget_btn)
+        self.prefs_group.add(deleteRow(self.onForgetClicked))
 
         self.__buildHypervisorInfo__()
 

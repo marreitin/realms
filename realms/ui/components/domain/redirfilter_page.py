@@ -17,8 +17,8 @@ import xml.etree.ElementTree as ET
 
 from gi.repository import Adw
 
-from realms.ui.components import iconButton
 from realms.ui.components.bindable_entries import BindableEntryRow, BindableSwitchRow
+from realms.ui.components.common import deleteRow, iconButton
 
 from .base_device_page import BaseDevicePage
 
@@ -57,15 +57,7 @@ class FilterRow(Adw.ExpanderRow):
         self.add_row(self.version_row)
         self.version_row.bindAttr(xml_tree, "version", parent.showApply)
 
-        delete_row = Adw.ActionRow()
-        self.add_row(delete_row)
-        self.delete_btn = iconButton(
-            "Remove",
-            "user-trash-symbolic",
-            lambda b: parent.onRemoveClicked(self),
-            css_classes=["flat"],
-        )
-        delete_row.add_prefix(self.delete_btn)
+        self.add_row(deleteRow(lambda _: parent.onRemoveClicked(self)))
 
 
 class RedirfilterPage(BaseDevicePage):
@@ -88,12 +80,7 @@ class RedirfilterPage(BaseDevicePage):
         self.filter_group.set_header_suffix(add_btn)
 
         if not self.use_for_adding:
-            delete_row = Adw.ActionRow()
-            self.group.add(delete_row)
-            self.delete_btn = iconButton(
-                "Remove", "user-trash-symbolic", self.deleteDevice, css_classes=["flat"]
-            )
-            delete_row.add_prefix(self.delete_btn)
+            self.group.add(deleteRow(self.deleteDevice))
 
         self.updateData()
 

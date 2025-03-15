@@ -20,7 +20,7 @@ from gi.repository import Adw
 from realms.helpers import getETText
 from realms.libvirt_wrap import PoolCapabilities
 from realms.ui.components.bindable_entries import BindableComboRow, BindableEntryRow
-from realms.ui.components.common import iconButton, propertyRow
+from realms.ui.components.common import deleteRow, propertyRow
 from realms.ui.window_reference import WindowReference
 
 from .pool_source_row import PoolSourceRow
@@ -92,15 +92,7 @@ class PoolPreferencesGroup(Adw.PreferencesGroup):
         self.add(self.target_row)
 
         if self.delete_cb is not None:
-            delete_row = Adw.ActionRow()
-            self.add(delete_row)
-            self.delete_btn = iconButton(
-                "",
-                "user-trash-symbolic",
-                self.delete_cb,
-                css_classes=["destructive-action"],
-            )
-            delete_row.add_prefix(self.delete_btn)
+            self.add(deleteRow(self.delete_cb))
 
     def updateBindings(self, xml_tree: ET.Element, autostart: bool):
         """Update Bindings to xml tree"""

@@ -24,6 +24,7 @@ from realms.ui.components.bindable_entries import (
     ExistentialComboRow,
     ExistentialSwitchRow,
 )
+from realms.ui.components.common import deleteRow
 
 from .base_device_page import BaseDevicePage
 
@@ -41,14 +42,14 @@ readonly
 
 class FilesystemPage(BaseDevicePage):
     def build(self):
-        group = Adw.PreferencesGroup(
+        self.group = Adw.PreferencesGroup(
             title=self.getTitle(),
             description="Export a host volume or directory to the domain",
         )
-        self.prefs_page.add(group)
+        self.prefs_page.add(self.group)
 
         self.type_row = BindableComboRow(["mount", "file"], title="Filesystem type")
-        group.add(self.type_row)
+        self.group.add(self.type_row)
 
         self.driver_type_row = ExistentialComboRow(
             "driver",
@@ -57,10 +58,10 @@ class FilesystemPage(BaseDevicePage):
             "",
             title="Driver type",
         )
-        group.add(self.driver_type_row)
+        self.group.add(self.driver_type_row)
 
         self.source_row = BindableEntryRow(title="Source")
-        group.add(self.source_row)
+        self.group.add(self.source_row)
 
         if self.parent.domain.connection.is_local:
             browse_btn = iconButton(
@@ -73,20 +74,15 @@ class FilesystemPage(BaseDevicePage):
             self.source_row.add_suffix(browse_btn)
 
         self.target_row = BindableEntryRow(title="Target")
-        group.add(self.target_row)
+        self.group.add(self.target_row)
 
         self.readonly_switch_row = ExistentialSwitchRow(
             "readonly", {}, title="Readonly"
         )
-        group.add(self.readonly_switch_row.getWidget())
+        self.group.add(self.readonly_switch_row.getWidget())
 
         if not self.use_for_adding:
-            delete_row = Adw.ActionRow()
-            group.add(delete_row)
-            self.delete_btn = iconButton(
-                "Remove", "user-trash-symbolic", self.deleteDevice, css_classes=["flat"]
-            )
-            delete_row.add_prefix(self.delete_btn)
+            self.group.add(deleteRow(self.deleteDevice))
 
         self.updateData()
 

@@ -17,13 +17,13 @@ import xml.etree.ElementTree as ET
 
 from gi.repository import Adw, Gtk
 
-from realms.ui.components import iconButton
 from realms.ui.components.bindable_entries import (
     BindableComboRow,
     BindableDropDown,
     BindableEntry,
     BindableEntryRow,
 )
+from realms.ui.components.common import deleteRow
 from realms.ui.components.domain.address_row import AddressRow
 from realms.ui.components.domain.boot_order_row import BootOrderRow
 from realms.ui.components.generic_preferences_row import GenericPreferencesRow
@@ -169,12 +169,7 @@ class DiskPage(BaseDevicePage):
         self.group.add(self.address_row)
 
         if not self.use_for_adding:
-            delete_row = Adw.ActionRow()
-            self.group.add(delete_row)
-            self.delete_btn = iconButton(
-                "Remove", "user-trash-symbolic", self.deleteDevice, css_classes=["flat"]
-            )
-            delete_row.add_prefix(self.delete_btn)
+            self.group.add(deleteRow(self.deleteDevice))
 
         self.updateData()
 

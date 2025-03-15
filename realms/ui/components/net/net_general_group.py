@@ -19,7 +19,7 @@ from gi.repository import Adw
 
 from realms.helpers import getETText
 from realms.ui.components.bindable_entries import BindableComboRow, BindableEntryRow
-from realms.ui.components.common import iconButton, propertyRow
+from realms.ui.components.common import deleteRow, propertyRow
 
 
 class NetGeneralGroup(Adw.PreferencesGroup):
@@ -111,15 +111,7 @@ class NetGeneralGroup(Adw.PreferencesGroup):
         self.add(self.domain_row)
 
         if self.delete_cb is not None:
-            delete_row = Adw.ActionRow()
-            self.add(delete_row)
-            self.delete_btn = iconButton(
-                "",
-                "user-trash-symbolic",
-                cb=self.delete_cb,
-                css_classes=["destructive-action"],
-            )
-            delete_row.add_prefix(self.delete_btn)
+            self.add(deleteRow(self.delete_cb))
 
     def updateData(self, xml_tree: ET.Element, autostart: bool):
         self.xml_tree = xml_tree

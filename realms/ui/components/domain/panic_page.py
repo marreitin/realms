@@ -13,12 +13,10 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-import xml.etree.ElementTree as ET
-
 from gi.repository import Adw
 
-from realms.ui.components import iconButton
 from realms.ui.components.bindable_entries import BindableComboRow
+from realms.ui.components.common import deleteRow
 from realms.ui.components.domain.address_row import AddressRow
 
 from .base_device_page import BaseDevicePage
@@ -26,29 +24,24 @@ from .base_device_page import BaseDevicePage
 
 class PanicPage(BaseDevicePage):
     def build(self):
-        group = Adw.PreferencesGroup(
+        self.group = Adw.PreferencesGroup(
             title="Panic device",
             description="Enable libvirt to receive panic notifications",
         )
-        self.prefs_page.add(group)
+        self.prefs_page.add(self.group)
 
         self.model_row = BindableComboRow(
             ["isa", "pseries", "hyperv", "s390", "pvpanic"],
             "",
             title="Panic device model",
         )
-        group.add(self.model_row)
+        self.group.add(self.model_row)
 
         self.address_row = AddressRow(self.xml_tree, self.showApply)
-        group.add(self.address_row)
+        self.group.add(self.address_row)
 
         if not self.use_for_adding:
-            delete_row = Adw.ActionRow()
-            group.add(delete_row)
-            self.delete_btn = iconButton(
-                "Remove", "user-trash-symbolic", self.deleteDevice, css_classes=["flat"]
-            )
-            delete_row.add_prefix(self.delete_btn)
+            self.group.add(deleteRow(self.deleteDevice))
 
         self.updateData()
 

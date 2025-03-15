@@ -169,3 +169,29 @@ def simpleErrorDialog(header: str, msg: str, window: Adw.ApplicationWindow) -> N
     alert_dialog.add_response("0", "Ok")
     alert_dialog.connect("response", lambda *args: [])
     alert_dialog.present(window)
+
+
+def deleteButton(cb: callable) -> Gtk.Button:
+    """Simple, uniform delete button
+
+    Args:
+        cb (callable): Callback when clicked
+
+    Returns:
+        Gtk.Button: Button
+    """
+    return iconButton("Remove", "user-trash-symbolic", cb, css_classes=["flat"])
+
+
+def deleteRow(cb: callable) -> Adw.ActionRow:
+    """Simple complete row with delete button
+
+    Args:
+        cb (callable): Callback when button was clicked
+
+    Returns:
+        Adw.ActionRow: Row
+    """
+    delete_row = Adw.ActionRow()
+    delete_row.add_prefix(deleteButton(cb))
+    return delete_row
