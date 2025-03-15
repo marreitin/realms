@@ -30,7 +30,3 @@ class DomainPageHost:
     def getWindowRef(self) -> Adw.ApplicationWindow:
         """Get a reference to the current window."""
         raise NotImplementedError
-
-    def getConnection(self) -> Connection:
-        """Get the current connection."""
-        raise NotImplementedError

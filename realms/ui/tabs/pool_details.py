@@ -202,9 +202,9 @@ class PoolDetailsTab(BaseDetailsTab):
             if event_id == POOL_EVENT_DELETED:
                 self.window_ref.window.closeTab(self)
                 return
-            elif event_id == POOL_EVENT_VOLUME_ADDED:
+            if event_id == POOL_EVENT_VOLUME_ADDED:
                 self.volume_group.onRefreshClicked()
-            elif event_id == POOL_EVENT_VOLUME_DELETED:
+            if event_id == POOL_EVENT_VOLUME_DELETED:
                 self.volume_group.onRefreshClicked()
         elif type_id == CALLBACK_TYPE_CONNECTION_GENERIC:
             if event_id in [CONNECTION_EVENT_DISCONNECTED, CONNECTION_EVENT_DELETED]:

@@ -204,6 +204,3 @@ class AddDeviceDialog(DomainPageHost):
 
     def getWindowRef(self):
         return WindowReference(self.window)
-
-    def getConnection(self):
-        return self.domain.connection
