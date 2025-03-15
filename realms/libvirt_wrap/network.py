@@ -79,7 +79,7 @@ class Network(EventManager):
     def updateDefinition(self, xml: str):
         self.connection.isAlive()
 
-        new_network = self.connection.connection.networkDefineXML(xml)
+        new_network = self.connection.__connection__.networkDefineXML(xml)
         self.network = new_network
 
     def start(self):

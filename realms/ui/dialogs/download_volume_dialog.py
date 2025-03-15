@@ -58,7 +58,7 @@ class DownloadVolumeDialog:
 
         def downloadVolume(folder: str):
             """Run the download and write contents to the chosen file."""
-            stream = self.volume.pool.connection.connection.newStream()
+            stream = self.volume.pool.connection.__connection__.newStream()
             try:
                 size = self.volume.getCapacity()
                 bytes_received = 0

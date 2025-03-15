@@ -195,7 +195,7 @@ class Domain(EventManager):
         """
         self.connection.isAlive()
 
-        new_domain = self.connection.connection.defineXML(xml)
+        new_domain = self.connection.__connection__.defineXML(xml)
         self.domain = new_domain
 
     def updateDevice(self, device_xml: ET.Element):

@@ -49,7 +49,7 @@ class Connection(EventManager):
         self.__state__ = CONNECTION_STATE_DISCONNECTED
         self.is_local = False
 
-        self.connection: libvirt.virConnect = None
+        self.__connection__: libvirt.virConnect = None
 
         self.driver_capabilities = None
         self.pool_capabilities = None
@@ -63,8 +63,8 @@ class Connection(EventManager):
 
     def onExit(self):
         """Exit handler, should close the connection automatically."""
-        if self.connection is not None:
-            self.connection.close()
+        if self.__connection__ is not None:
+            self.__connection__.close()
 
     ############################################
     # Event handlers
@@ -102,30 +102,30 @@ class Connection(EventManager):
         if self.__state__ != CONNECTION_STATE_CONNECTED:
             raise Exception("Connection is still not alive")
 
-        if self.connection is None or not self.connection.isAlive():
+        if self.__connection__ is None or not self.__connection__.isAlive():
             self.__state__ = CONNECTION_STATE_DISCONNECTED
             self.sendEvent(
-                self.connection,
+                self.__connection__,
                 None,
                 CALLBACK_TYPE_CONNECTION_GENERIC,
                 CONNECTION_EVENT_DISCONNECTED,
                 0,
             )
-            if self.connection is not None:
-                self.connection.close()
-                self.connection = None
+            if self.__connection__ is not None:
+                self.__connection__.close()
+                self.__connection__ = None
             raise Exception("Connection is not alive")
 
     def tryConnect(self) -> None:
         """Try to connect to the libvirt url of this instance. Sends out
         events if connection is established/connection failed.
         """
-        if self.connection:
+        if self.__connection__:
             return
 
         self.__state__ = CONNECTION_STATE_CONNECTING
         self.sendEvent(
-            self.connection,
+            self.__connection__,
             None,
             CALLBACK_TYPE_CONNECTION_GENERIC,
             CONNECTION_EVENT_ATTEMPT_CONNECT,
@@ -134,31 +134,31 @@ class Connection(EventManager):
 
         def init() -> bool:
             try:
-                self.connection = libvirt.open(self.url)
-                if not self.connection:
+                self.__connection__ = libvirt.open(self.url)
+                if not self.__connection__:
                     raise Exception
 
-                self.connection.registerCloseCallback(
+                self.__connection__.registerCloseCallback(
                     lambda *_: self.disconnect(from_disconnect=True),
                     None,
                 )
 
                 # Domain events
-                self.connection.domainEventRegisterAny(
+                self.__connection__.domainEventRegisterAny(
                     None,
                     libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE,
                     self.onDomainEvent,
                     None,
                 )
                 # Network events
-                self.connection.networkEventRegisterAny(
+                self.__connection__.networkEventRegisterAny(
                     None,
                     libvirt.VIR_NETWORK_EVENT_ID_LIFECYCLE,
                     self.onNetworkEvent,
                     None,
                 )
                 # Storage pool events
-                self.connection.storagePoolEventRegisterAny(
+                self.__connection__.storagePoolEventRegisterAny(
                     None,
                     libvirt.VIR_STORAGE_POOL_EVENT_ID_LIFECYCLE,
                     self.onStorageEvent,
@@ -167,7 +167,7 @@ class Connection(EventManager):
 
                 try:
                     # Secrets
-                    self.connection.secretEventRegisterAny(
+                    self.__connection__.secretEventRegisterAny(
                         None,
                         libvirt.VIR_SECRET_EVENT_ID_LIFECYCLE,
                         self.onSecretEvent,
@@ -184,14 +184,14 @@ class Connection(EventManager):
                 return True
             except Exception:
                 print(f"Connection failed to { self.url }")
-                self.connection = None
+                self.__connection__ = None
                 return False
 
         def finish(connected):
             if connected:
                 self.__state__ = CONNECTION_STATE_CONNECTED
                 self.sendEvent(
-                    self.connection,
+                    self.__connection__,
                     None,
                     CALLBACK_TYPE_CONNECTION_GENERIC,
                     CONNECTION_EVENT_CONNECTED,
@@ -200,7 +200,7 @@ class Connection(EventManager):
             else:
                 self.__state__ = CONNECTION_STATE_DISCONNECTED
                 self.sendEvent(
-                    self.connection,
+                    self.__connection__,
                     None,
                     CALLBACK_TYPE_CONNECTION_GENERIC,
                     CONNECTION_EVENT_CONNECTION_FAILED,
@@ -218,13 +218,13 @@ class Connection(EventManager):
             from outside.
         """
         if self.isConnected():
-            self.connection.close()
+            self.__connection__.close()
 
         if self.isConnected() or from_disconnect:
-            self.connection = None
+            self.__connection__ = None
             self.__state__ = CONNECTION_STATE_DISCONNECTED
             self.sendEvent(
-                self.connection,
+                self.__connection__,
                 None,
                 CALLBACK_TYPE_CONNECTION_GENERIC,
                 CONNECTION_EVENT_DISCONNECTED,
@@ -260,7 +260,7 @@ class Connection(EventManager):
 
         def getDomains() -> list[libvirt.virDomain]:
             flag = 0
-            vir_domains = self.connection.listAllDomains(flag)
+            vir_domains = self.__connection__.listAllDomains(flag)
             return vir_domains
 
         asyncJob(getDomains, [], ready_cb)
@@ -275,7 +275,7 @@ class Connection(EventManager):
 
         def getPools() -> list[libvirt.virStoragePool]:
             flag = 0  # All storage pools
-            vir_pools = self.connection.listAllStoragePools(flag)
+            vir_pools = self.__connection__.listAllStoragePools(flag)
             return vir_pools
 
         asyncJob(getPools, [], ready_cb)
@@ -289,7 +289,7 @@ class Connection(EventManager):
         self.isAlive()
 
         def getNetworks() -> list[libvirt.virNetwork]:
-            vir_networks = self.connection.listAllNetworks()
+            vir_networks = self.__connection__.listAllNetworks()
             return vir_networks
 
         asyncJob(getNetworks, [], ready_cb)
@@ -305,7 +305,7 @@ class Connection(EventManager):
             return
 
         def getSecrets() -> list[libvirt.virSecret]:
-            vir_secrets = self.connection.listAllSecrets()
+            vir_secrets = self.__connection__.listAllSecrets()
             return vir_secrets
 
         asyncJob(getSecrets, [], ready_cb)
@@ -320,10 +320,10 @@ class Connection(EventManager):
     def addNetwork(self, xml: str, autostart: bool):
         """Add a network given its xml description."""
         self.isAlive()
-        network = self.connection.networkDefineXML(xml)
+        network = self.__connection__.networkDefineXML(xml)
         network.setAutostart(autostart)
         self.sendEvent(
-            self.connection,
+            self.__connection__,
             network,
             CALLBACK_TYPE_NETWORK_GENERIC,
             NETWORK_EVENT_ADDED,
@@ -332,7 +332,7 @@ class Connection(EventManager):
 
     def addPoolTree(self, tree: ET.Element, autostart: bool):
         """Add a pool given its xml tree."""
-        self.connection.isAlive()
+        self.__connection__.isAlive()
 
         xml = ET.tostring(tree, encoding="unicode")
         self.addPool(xml, autostart)
@@ -340,10 +340,10 @@ class Connection(EventManager):
     def addPool(self, xml: str, autostart: bool):
         """Add a pool given its xml description."""
         self.isAlive()
-        pool = self.connection.storagePoolDefineXML(xml)
+        pool = self.__connection__.storagePoolDefineXML(xml)
         pool.setAutostart(autostart)
         self.sendEvent(
-            self.connection,
+            self.__connection__,
             pool,
             CALLBACK_TYPE_POOL_GENERIC,
             POOL_EVENT_ADDED,
@@ -353,12 +353,12 @@ class Connection(EventManager):
     def addDomain(self, xml: str):
         """Add a domain given its xml description."""
         self.isAlive()
-        domain = self.connection.defineXML(xml)
+        domain = self.__connection__.defineXML(xml)
         # Make sure the event is on the main thread.
         # The event will make the tab of the new domain appear.
         GLib.idle_add(
             self.sendEvent,
-            self.connection,
+            self.__connection__,
             domain,
             CALLBACK_TYPE_DOMAIN_GENERIC,
             DOMAIN_EVENT_ADDED,
@@ -370,11 +370,11 @@ class Connection(EventManager):
         self.isAlive()
         if not self.supports_secrets:
             raise OperationUnsupportedException
-        secret = self.connection.secretDefineXML(xml)
+        secret = self.__connection__.secretDefineXML(xml)
         if value != "":
             secret.setValue(value)
         self.sendEvent(
-            self.connection, secret, CALLBACK_TYPE_SECRET_GENERIC, SECRET_EVENT_ADDED, 0
+            self.__connection__, secret, CALLBACK_TYPE_SECRET_GENERIC, SECRET_EVENT_ADDED, 0
         )
 
     def deleteConnection(self):
@@ -383,11 +383,11 @@ class Connection(EventManager):
         # First notify all other widgets of this event
         # so they can destroy themselves
         if self.isConnected():
-            self.connection.close()
-        self.connection = None
+            self.__connection__.close()
+        self.__connection__ = None
 
         self.sendEvent(
-            self.connection,
+            self.__connection__,
             None,
             CALLBACK_TYPE_CONNECTION_GENERIC,
             CONNECTION_EVENT_DELETED,
@@ -409,7 +409,7 @@ class Connection(EventManager):
     def __loadCapabilities__(self):
         """Load this connections capabilities after connecting."""
         try:
-            xml = self.connection.getCapabilities()
+            xml = self.__connection__.getCapabilities()
             xml_tree = ET.fromstring(xml)
             self.driver_capabilities = DriverCapabilities(xml_tree)
         except:
@@ -417,14 +417,14 @@ class Connection(EventManager):
             self.driver_capabilities = DriverCapabilities(None)
 
         try:
-            xml = self.connection.getStoragePoolCapabilities()
+            xml = self.__connection__.getStoragePoolCapabilities()
             xml_tree = ET.fromstring(xml)
             self.pool_capabilities = PoolCapabilities(xml_tree)
         except:
             self.pool_capabilities = PoolCapabilities(None)
 
         try:
-            xml = self.connection.getDomainCapabilities()
+            xml = self.__connection__.getDomainCapabilities()
             xml_tree = ET.fromstring(xml)
             self.domain_capabilities = DomainCapabilities(xml_tree)
         except:
@@ -433,23 +433,23 @@ class Connection(EventManager):
     def isConnected(self) -> bool:
         """If it is connected."""
         return (
-            self.__state__ == CONNECTION_STATE_CONNECTED and self.connection is not None
+            self.__state__ == CONNECTION_STATE_CONNECTED and self.__connection__ is not None
         )
 
     def isSecure(self) -> bool:
         """If it is securely connected."""
         self.isAlive()
-        return self.connection.isSecure()
+        return self.__connection__.isSecure()
 
     def isEncrypted(self) -> bool:
         """If the connection is encrypted."""
         self.isAlive()
-        return self.connection.isEncrypted()
+        return self.__connection__.isEncrypted()
 
     def maxVCPUs(self) -> int:
         """Maximum number of running VCPUS."""
         self.isAlive()
-        return self.connection.getMaxVcpus(None)
+        return self.__connection__.getMaxVcpus(None)
 
     def maxMemory(self) -> int:
         """Get the hypervisors max memory in bytes
@@ -458,17 +458,17 @@ class Connection(EventManager):
             int: Max memory
         """
         self.isAlive()
-        return self.connection.getInfo()[1] * 1024**2
+        return self.__connection__.getInfo()[1] * 1024**2
 
     def hostname(self) -> str:
         """Hostname of hypervisor."""
         self.isAlive()
-        return self.connection.getHostname()
+        return self.__connection__.getHostname()
 
     def getURLCurr(self) -> str:
         """Return either the URL of the running connection or the one from the settings"""
         if self.isConnected():
-            return self.connection.getURI()
+            return self.__connection__.getURI()
         return self.url
 
     def getDriverCapabilities(self) -> DriverCapabilities:
@@ -501,7 +501,7 @@ class Connection(EventManager):
         self.loadSettings()
         # Emit an event that the settings changed
         self.sendEvent(
-            self.connection,
+            self.__connection__,
             None,
             CALLBACK_TYPE_CONNECTION_GENERIC,
             CONNECTION_EVENT_SETTINGS_CHANGED,
@@ -520,7 +520,7 @@ class Connection(EventManager):
         """Get the libvirt version on the hypervisor
         as major.minor.release"""
         self.isAlive()
-        version = self.connection.getVersion()
+        version = self.__connection__.getVersion()
         return libvirtVersionToString(version)
 
     def getHostCPUTime(self) -> int:
@@ -531,11 +531,11 @@ class Connection(EventManager):
         """
         self.isAlive()
         try:
-            stats = self.connection.getCPUStats(libvirt.VIR_NODE_CPU_STATS_ALL_CPUS)
+            stats = self.__connection__.getCPUStats(libvirt.VIR_NODE_CPU_STATS_ALL_CPUS)
             if "kernel" not in stats or "user" not in stats:
                 return 0
             # Divide usage by number of CPUs
-            return (stats["kernel"] + stats["user"]) / self.connection.getCPUMap()[2]
+            return (stats["kernel"] + stats["user"]) / self.__connection__.getCPUMap()[2]
         except:
             return 0
 
@@ -547,7 +547,7 @@ class Connection(EventManager):
         """
         self.isAlive()
         try:
-            stats = self.connection.getCPUStats(libvirt.VIR_NODE_CPU_STATS_ALL_CPUS)
+            stats = self.__connection__.getCPUStats(libvirt.VIR_NODE_CPU_STATS_ALL_CPUS)
             if "iowait" not in stats:
                 return 0
             return stats["iowait"]
@@ -562,7 +562,7 @@ class Connection(EventManager):
         """
         self.isAlive()
         try:
-            stats = self.connection.getMemoryStats(
+            stats = self.__connection__.getMemoryStats(
                 libvirt.VIR_NODE_MEMORY_STATS_ALL_CELLS
             )
             if (
@@ -585,7 +585,7 @@ class Connection(EventManager):
         self.isAlive()
 
         devs = []
-        for vir_dev in self.connection.listAllDevices():
+        for vir_dev in self.__connection__.listAllDevices():
             dev = NodeDev(self, vir_dev)
             devs.append(dev)
         return devs

@@ -95,7 +95,7 @@ class Secret(EventManager):
         """
         self.connection.isAlive()
 
-        new_secret = self.connection.connection.secretDefineXML(xml)
+        new_secret = self.connection.__connection__.secretDefineXML(xml)
         self.secret = new_secret
 
     ############################################

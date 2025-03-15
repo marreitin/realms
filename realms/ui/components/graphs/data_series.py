@@ -131,7 +131,9 @@ class DataSeries:
         self.triggerRedraw()
 
     def getLast(self) -> DataPoint:
+        """Get the last data point."""
         return self.values[-1]
 
     def getFirst(self) -> DataPoint:
+        """Get the first data point."""
         return self.values[0]

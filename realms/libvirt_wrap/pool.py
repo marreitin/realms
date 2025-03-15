@@ -34,7 +34,7 @@ def getPoolFromName(conn: Connection, name: str):
     Returns:
         _type_: Pool wrapper.
     """
-    vir_pool = conn.connection.storagePoolLookupByName(name)
+    vir_pool = conn.__connection__.storagePoolLookupByName(name)
     return Pool(conn, vir_pool)
 
 
@@ -124,7 +124,7 @@ class Pool(EventManager):
     def updateDefinition(self, xml: str):
         self.connection.isAlive()
 
-        new_pool = self.connection.connection.storagePoolDefineXML(xml)
+        new_pool = self.connection.__connection__.storagePoolDefineXML(xml)
         self.pool = new_pool
 
     def listVolumes(self, ready_cb, refresh=False) -> None:

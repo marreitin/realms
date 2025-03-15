@@ -21,7 +21,8 @@ from .data_series import DataPoint, DataSeries
 
 
 class InnerGraph(Gtk.Frame):
-    """A Gtk Frame that draws the actual graph."""
+    """A Gtk Frame that draws the actual graph. It is only the
+    inner widget and not to be used directly."""
 
     def __init__(self, data_series: DataSeries):
         """Initialize InnerGraph with a data series
