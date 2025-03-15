@@ -13,6 +13,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""Dialog to inspect domain snaphots."""
 import libvirt
 from gi.repository import Adw, Gtk
 
@@ -32,7 +33,7 @@ class InspectSnapshotDialog:
         self.domain = domain
         self.snapshot = snapshot
 
-        self.domain.registerCallback(self.onConnectionEvent)
+        self.domain.registerCallback(self.__onConnectionEvent__)
 
         # Create a Builder
         self.builder = Gtk.Builder.new_from_resource(
@@ -40,22 +41,22 @@ class InspectSnapshotDialog:
         )
 
         # Obtain and show the main window
-        self.dialog = self.obj("main-dialog")
-        self.dialog.connect("closed", self.onDialogClosed)
+        self.dialog = self.__obj__("main-dialog")
+        self.dialog.connect("closed", self.__onDialogClosed__)
         self.dialog.present(self.window)
 
         self.xml_view = xmlSourceView()
         self.xml_view.set_editable(False)
-        self.obj("xml-box").append(self.xml_view)
+        self.__obj__("xml-box").append(self.xml_view)
         sourceViewSetText(self.xml_view, snapshot.getXMLDesc())
 
-    def obj(self, name: str):
+    def __obj__(self, name: str):
         o = self.builder.get_object(name)
         if o is None:
             raise NotImplementedError(f"Object { name } could not be found!")
         return o
 
-    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id):
+    def __onConnectionEvent__(self, conn, obj, type_id, event_id, detail_id):
         if type_id == CALLBACK_TYPE_CONNECTION_GENERIC:
             if event_id in [CONNECTION_EVENT_DISCONNECTED, CONNECTION_EVENT_DELETED]:
                 self.dialog.close()
@@ -63,5 +64,5 @@ class InspectSnapshotDialog:
             if event_id == libvirt.VIR_DOMAIN_EVENT_DEFINED:
                 self.dialog.close()
 
-    def onDialogClosed(self, *args):
-        self.domain.unregisterCallback(self.onConnectionEvent)
+    def __onDialogClosed__(self, *args):
+        self.domain.unregisterCallback(self.__onConnectionEvent__)
