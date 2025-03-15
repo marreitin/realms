@@ -374,7 +374,11 @@ class Connection(EventManager):
         if value != "":
             secret.setValue(value)
         self.sendEvent(
-            self.__connection__, secret, CALLBACK_TYPE_SECRET_GENERIC, SECRET_EVENT_ADDED, 0
+            self.__connection__,
+            secret,
+            CALLBACK_TYPE_SECRET_GENERIC,
+            SECRET_EVENT_ADDED,
+            0,
         )
 
     def deleteConnection(self):
@@ -433,7 +437,8 @@ class Connection(EventManager):
     def isConnected(self) -> bool:
         """If it is connected."""
         return (
-            self.__state__ == CONNECTION_STATE_CONNECTED and self.__connection__ is not None
+            self.__state__ == CONNECTION_STATE_CONNECTED
+            and self.__connection__ is not None
         )
 
     def isSecure(self) -> bool:
@@ -535,7 +540,9 @@ class Connection(EventManager):
             if "kernel" not in stats or "user" not in stats:
                 return 0
             # Divide usage by number of CPUs
-            return (stats["kernel"] + stats["user"]) / self.__connection__.getCPUMap()[2]
+            return (stats["kernel"] + stats["user"]) / self.__connection__.getCPUMap()[
+                2
+            ]
         except:
             return 0
 

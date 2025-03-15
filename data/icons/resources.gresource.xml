@@ -56,6 +56,7 @@
   <file preprocess="xml-stripblanks" alias="soundcard-symbolic.svg">hicolor/scalable/actions/soundcard-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="speaker-symbolic.svg">hicolor/scalable/actions/speaker-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="speedometer5-symbolic.svg">hicolor/scalable/actions/speedometer5-symbolic.svg</file>
+  <file preprocess="xml-stripblanks" alias="star-large-symbolic.svg">hicolor/scalable/actions/star-large-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="step-back-symbolic.svg">hicolor/scalable/actions/step-back-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="stop-symbolic.svg">hicolor/scalable/actions/stop-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="tag-outline-symbolic.svg">hicolor/scalable/actions/tag-outline-symbolic.svg</file>

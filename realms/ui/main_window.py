@@ -18,6 +18,7 @@ from gi.repository import Adw, Gio, GLib, Gtk
 from realms.ui.components import iconButton
 from realms.ui.connection_row import ConnectionRow
 from realms.ui.tabs import BaseDetailsTab
+from realms.ui.tabs.edit_templates import EditTemplatesTab
 
 from .dialogs.add_conn_dialog import AddConnDialog
 
@@ -138,8 +139,15 @@ class MainWindow(Adw.ApplicationWindow):
         add_conn_action.connect("activate", self.onAddConnClicked)
         self.add_action(add_conn_action)
 
+        edit_templates_action = Gio.SimpleAction(
+            name="edit-templates", parameter_type=None
+        )
+        edit_templates_action.connect("activate", self.onEditTemplatesClicked)
+        self.add_action(edit_templates_action)
+
         menu = Gio.Menu()
         menu.append("Add connection", "win.add-connection")
+        menu.append("Edit templates", "win.edit-templates")
         menu.append("About", "win.open-about")
 
         self.options_popover = Gtk.PopoverMenu(menu_model=menu)
@@ -363,6 +371,12 @@ class MainWindow(Adw.ApplicationWindow):
     def onAddConnClicked(self, *_):
         """Open the dialog to add a connection."""
         AddConnDialog(self)
+
+    def onEditTemplatesClicked(self, *_):
+        """Open the dialog to add a connection."""
+        if not self.tabExists("edit-templates"):
+            tab_page_content = EditTemplatesTab(self)
+            self.addOrShowTab(tab_page_content, "Templates", "star-large-symbolic")
 
     def onOpenAboutClicked(self, *_):
         """Open the about dialog."""

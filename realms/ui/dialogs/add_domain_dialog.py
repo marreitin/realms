@@ -18,7 +18,7 @@ from os import listdir
 from os.path import join
 
 import yaml
-from config import * # pylint: disable=import-error
+from config import *  # pylint: disable=import-error
 from gi.repository import Adw, Gio, Gtk
 from jinja2 import Environment
 
@@ -338,7 +338,9 @@ class AddDomainDialog:
         """List all yaml files present in the templates directory."""
         import os
 
-        templates_dir = os.path.join(pkgdatadir, "realms", "templates") # pylint: disable=undefined-variable
+        templates_dir = os.path.join(
+            pkgdatadir, "realms", "templates"  # pylint: disable=undefined-variable
+        )
         return [
             join(templates_dir, f)
             for f in listdir(templates_dir)
