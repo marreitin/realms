@@ -61,7 +61,7 @@ class DomainRow(BaseRow):
 
         self.__build__()
 
-        self.domain.register_callback_any(self.__onConnectionEvent__)
+        self.domain.registerCallback(self.__onConnectionEvent__)
 
     def __build__(self):
         hbox = Gtk.Box(spacing=6)
@@ -149,11 +149,11 @@ class DomainRow(BaseRow):
     def __onConnectionEvent__(self, conn, obj, type_id, event_id, detail_id):
         if type_id == CALLBACK_TYPE_CONNECTION_GENERIC:
             if event_id in [CONNECTION_EVENT_DISCONNECTED, CONNECTION_EVENT_DELETED]:
-                self.domain.unregister_callback(self.__onConnectionEvent__)
+                self.domain.unregisterCallback(self.__onConnectionEvent__)
                 return
         elif type_id == CALLBACK_TYPE_DOMAIN_GENERIC:
             if event_id == DOMAIN_EVENT_DELETED:
-                self.domain.unregister_callback(self.__onConnectionEvent__)
+                self.domain.unregisterCallback(self.__onConnectionEvent__)
                 return
 
         self.__setStatus__()

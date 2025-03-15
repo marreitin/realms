@@ -36,6 +36,7 @@ def transformUnitsAuto(
             bytes_vol /= 10**3
         else:
             return (bytes_vol, unit)
+    raise ValueError("No one has this much storage.")
 
 
 def bytesToString(bytes_vol: int | str, base_unit: str = None) -> str:
@@ -51,11 +52,10 @@ def bytesToString(bytes_vol: int | str, base_unit: str = None) -> str:
     if base_unit is not None and len(base_unit) == 1 and base_unit.upper() != "B":
         base_unit += "iB"  # Transform i.e. M to MiB
 
-    if type(bytes_vol) is str:
+    if isinstance(bytes_vol, str):
         if bytes_vol == "":
             return ""
-        else:
-            bytes_vol = int(bytes_vol)
+        bytes_vol = int(bytes_vol)
     amount, unit = transformUnitsAuto(bytes_vol, base_unit)
     amount = round(amount, 1)
     return f"{ amount } { unit }"
@@ -89,7 +89,7 @@ def stringToBytes(string: str, target_unit: str = None) -> int:
         num = float(string[0:num_end_index])
         unit = string[num_end_index:]
 
-        bytes = 0
+        num_bytes = 0
         if "I" in unit:
             units = [
                 "B",
@@ -104,10 +104,10 @@ def stringToBytes(string: str, target_unit: str = None) -> int:
                 "RIB",
                 "QIB",
             ]
-            bytes = int(num * 1024 ** units.index(unit))
+            num_bytes = int(num * 1024 ** units.index(unit))
         else:
             units = ["B", "KB", "MB", "GB", "TB", "PT", "EB", "ZB", "YB", "RB", "QB"]
-            bytes = int(num * 1000 ** units.index(unit))
+            num_bytes = int(num * 1000 ** units.index(unit))
 
         if target_unit is not None:
             if "I" in target_unit.upper():
@@ -124,7 +124,7 @@ def stringToBytes(string: str, target_unit: str = None) -> int:
                     "RIB",
                     "QIB",
                 ]
-                bytes /= 1024 ** units.index(target_unit.upper())
+                num_bytes /= 1024 ** units.index(target_unit.upper())
             else:
                 units = [
                     "B",
@@ -139,8 +139,8 @@ def stringToBytes(string: str, target_unit: str = None) -> int:
                     "RB",
                     "QB",
                 ]
-                bytes /= 1024 ** units.index(target_unit.upper())
-        return int(bytes)
+                num_bytes /= 1024 ** units.index(target_unit.upper())
+        return int(num_bytes)
 
     except Exception as e:
-        raise ValueError(e)
+        raise ValueError(e) from e

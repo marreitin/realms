@@ -15,10 +15,10 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """Build the rows that pop up allowing to commit the changes."""
 
-from gi.repository import Adw, Gtk
+from gi.repository import Gtk
 
 from realms.ui.components.common import iconButton, warningLabelRow
-from realms.ui.components.preference_widgets import RealmsClamp
+from realms.ui.components.preference_widgets import realmsClamp
 
 
 class ApplyRow(Gtk.Box):
@@ -42,7 +42,7 @@ class ApplyRow(Gtk.Box):
             hexpand=True,
         )
 
-        clamp = RealmsClamp()
+        clamp = realmsClamp()
         self.append(clamp)
         box = Gtk.Box(spacing=6)
         clamp.set_child(box)
@@ -108,7 +108,7 @@ class UpdateRow(Gtk.Box):
             hexpand=True,
         )
 
-        clamp = RealmsClamp()
+        clamp = realmsClamp()
         self.append(clamp)
         box = Gtk.Box(spacing=6)
         clamp.set_child(box)

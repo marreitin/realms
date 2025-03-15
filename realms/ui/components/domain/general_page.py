@@ -206,6 +206,6 @@ class GeneralPage(BaseDevicePage):
     def getDescription(self) -> str:
         return "General domain settings"
 
-    def onAutostartChanged(self, *args):
+    def onAutostartChanged(self, *_):
         self.parent.autostart = self.autostart_row.get_active()
         self.showApply()

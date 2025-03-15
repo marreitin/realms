@@ -32,7 +32,7 @@ class Domain(EventManager):
 
         self.connection = connection
         self.connection.isAlive()
-        self.connection.register_callback_any(self.onConnectionEvent)
+        self.connection.registerCallback(self.onConnectionEvent)
         self.domain_capabilites = self.connection.getDomainCapabilities()
         self.domain = domain
 
@@ -59,7 +59,7 @@ class Domain(EventManager):
             # Only unsubscribe for connection event multiplexer, other objects
             # unsubscribe by themselves
             if event_id in [CONNECTION_EVENT_DISCONNECTED, CONNECTION_EVENT_DELETED]:
-                self.connection.unregister_callback(self.onConnectionEvent)
+                self.connection.unregisterCallback(self.onConnectionEvent)
 
         self.sendEvent(conn, obj, type_id, event_id, detail_id)
 
@@ -276,19 +276,19 @@ class Domain(EventManager):
         state = self.getStateID()
         if state == libvirt.VIR_DOMAIN_NOSTATE:
             return "no state"
-        elif state == libvirt.VIR_DOMAIN_RUNNING:
+        if state == libvirt.VIR_DOMAIN_RUNNING:
             return "running"
-        elif state == libvirt.VIR_DOMAIN_BLOCKED:
+        if state == libvirt.VIR_DOMAIN_BLOCKED:
             return "blocked"
-        elif state == libvirt.VIR_DOMAIN_PAUSED:
+        if state == libvirt.VIR_DOMAIN_PAUSED:
             return "paused"
-        elif state == libvirt.VIR_DOMAIN_SHUTDOWN:
+        if state == libvirt.VIR_DOMAIN_SHUTDOWN:
             return "shutting down"
-        elif state == libvirt.VIR_DOMAIN_SHUTOFF:
+        if state == libvirt.VIR_DOMAIN_SHUTOFF:
             return "shut off"
-        elif state == libvirt.VIR_DOMAIN_CRASHED:
+        if state == libvirt.VIR_DOMAIN_CRASHED:
             return "crashed"
-        elif state == libvirt.VIR_DOMAIN_PMSUSPENDED:
+        if state == libvirt.VIR_DOMAIN_PMSUSPENDED:
             return "pm-suspended"
 
     def getVCPUs(self) -> int:
@@ -340,7 +340,7 @@ class Domain(EventManager):
                 if not pool_name or not vol_name:
                     continue
 
-                pool = getPoolFromName(self.connection, pool_name)
+                pool: Pool = getPoolFromName(self.connection, pool_name)
                 volume = getVolumeFromName(pool, vol_name)
                 volumes.append(volume)
         return volumes

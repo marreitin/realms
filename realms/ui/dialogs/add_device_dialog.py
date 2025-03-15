@@ -101,7 +101,7 @@ class AddDeviceDialog(DomainPageHost):
         self.device_tree = None
         self.device_settings = None
 
-        self.domain.register_callback_any(self.onConnectionEvent)
+        self.domain.registerCallback(self.onConnectionEvent)
 
         # Create a Builder
         self.builder = Gtk.Builder.new_from_resource(
@@ -196,7 +196,7 @@ class AddDeviceDialog(DomainPageHost):
                 self.dialog.close()
 
     def onDialogClosed(self, *args):
-        self.domain.unregister_callback(self.onConnectionEvent)
+        self.domain.unregisterCallback(self.onConnectionEvent)
 
     # Implement DomainPageHost
     def getWindow(self):

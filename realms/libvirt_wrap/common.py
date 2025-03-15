@@ -161,3 +161,20 @@ def printEvent(conn, obj, type_id, event_id, detail_id):
             event_id,
             detail_id,
         )
+
+
+def libvirtVersionToString(version: int) -> str:
+    """Transform a libvirt version encoded as int to str.
+
+    Args:
+        version (int): Version
+
+    Returns:
+        str: Formatted version string: major.minor.release
+    """
+    if version == -1:
+        return "unknown"
+    release = int(version % 1000)
+    minor = int(((version - release) % 1000000) / 1000)
+    major = int((version - minor * 1000 - release) / 1000000)
+    return f"{major}.{minor}.{release}"

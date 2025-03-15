@@ -57,7 +57,7 @@ class SecretDialog:
         else:
             self.mode = MODE_EDITING
 
-        self.connection.register_callback_any(self.onConnectionEvent)
+        self.connection.registerCallback(self.onConnectionEvent)
 
         # Create a Builder
         self.builder = Gtk.Builder.new_from_resource(
@@ -238,7 +238,7 @@ class SecretDialog:
                 self.dialog.close()
 
     def onDialogClosed(self, *args):
-        self.connection.unregister_callback(self.onConnectionEvent)
+        self.connection.unregisterCallback(self.onConnectionEvent)
 
     def onRemoveClicked(self, *args):
         def onDelete():

@@ -17,7 +17,7 @@ import xml.etree.ElementTree as ET
 
 from gi.repository import Adw, Gtk
 
-from realms.helpers import ip_and_netmask_to_cidr
+from realms.helpers import ipNetmaskToCIDR
 from realms.ui.components.bindable_entries import BindableEntry
 from realms.ui.components.common import deleteRow, iconButton
 from realms.ui.dialogs.dhcphosts_dialog import DHCPHostsDialog
@@ -268,7 +268,7 @@ class IPRow(Adw.ExpanderRow):
         if "prefix" not in self.xml_elem.attrib:
             if "netmask" not in self.xml_elem.attrib:
                 self.xml_elem.attrib["netmask"] = "255.255.255.255"
-            prefix = ip_and_netmask_to_cidr(
+            prefix = ipNetmaskToCIDR(
                 self.xml_elem.attrib["address"], self.xml_elem.attrib["netmask"]
             )
         else:

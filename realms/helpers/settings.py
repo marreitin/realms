@@ -57,8 +57,7 @@ class Settings:
             cls.__settings_data__ = json.load(f)
         if key in cls.__settings_data__:
             return cls.__settings_data__[key]
-        else:
-            return None
+        return None
 
     @classmethod
     def put(cls, key: str, data: any) -> None:

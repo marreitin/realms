@@ -55,6 +55,7 @@ class InnerGraph(Gtk.Frame):
         value = min(self.get_height() - self.__vpadding__, value)
         return value
 
+    # pylint: disable-next=invalid-name
     def do_snapshot(self, snapshot, *_):
         """Main widget implementation, here the widget will be actually redrawn.
 

@@ -28,17 +28,6 @@ from realms.ui.components.common import deleteRow
 
 from .base_device_page import BaseDevicePage
 
-"""
-type
-    mount,file
-source
-    dir for mount
-    file for file
-target
-    always dir
-readonly
-"""
-
 
 class FilesystemPage(BaseDevicePage):
     def build(self):
@@ -136,7 +125,7 @@ class FilesystemPage(BaseDevicePage):
         except:
             pass
 
-    def onTypeChanged(self, *args):
+    def onTypeChanged(self, *_):
         source = self.xml_tree.find("source")
         source.clear()
         self.updateSource()

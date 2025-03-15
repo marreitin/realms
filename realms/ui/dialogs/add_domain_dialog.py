@@ -285,7 +285,7 @@ class AddDomainDialog:
 
         self.settings_page = None
 
-        self.connection.register_callback_any(self.onConnectionEvent)
+        self.connection.registerCallback(self.onConnectionEvent)
 
         self.build()
 
@@ -441,4 +441,4 @@ class AddDomainDialog:
                 self.dialog.close()
 
     def onDialogClosed(self, *args):
-        self.connection.unregister_callback(self.onConnectionEvent)
+        self.connection.unregisterCallback(self.onConnectionEvent)

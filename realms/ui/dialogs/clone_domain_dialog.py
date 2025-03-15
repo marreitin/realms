@@ -111,7 +111,7 @@ class CloneDomainDialog:
 
         self.volumes_page = None
 
-        self.domain.register_callback_any(self.onConnectionEvent)
+        self.domain.registerCallback(self.onConnectionEvent)
 
         self.build()
 
@@ -247,4 +247,4 @@ class CloneDomainDialog:
                 self.dialog.close()
 
     def onDialogClosed(self, *_):
-        self.domain.unregister_callback(self.onConnectionEvent)
+        self.domain.unregisterCallback(self.onConnectionEvent)

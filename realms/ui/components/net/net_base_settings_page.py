@@ -36,4 +36,5 @@ class BaseNetSettingsPage(Adw.NavigationPage):
         raise NotImplementedError
 
     def updateData(self, xml_tree: ET.Element):
+        """Update this page from fresh network xml."""
         raise NotImplementedError

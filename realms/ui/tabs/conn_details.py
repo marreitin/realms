@@ -34,7 +34,7 @@ class ConnectionDetailsTab(BaseDetailsTab):
         super().__init__(window)
 
         self.connection = connection
-        self.connection.register_callback_any(self.onConnectionEvent)
+        self.connection.registerCallback(self.onConnectionEvent)
 
         self.disconnect_btn = None
         self.connect_btn = None
@@ -143,7 +143,7 @@ class ConnectionDetailsTab(BaseDetailsTab):
 
     def end(self):
         # Unsubscribe from events
-        self.connection.unregister_callback(self.onConnectionEvent)
+        self.connection.unregisterCallback(self.onConnectionEvent)
 
         # Stop pages
         self.perf_page.end()

@@ -30,7 +30,7 @@ class AddNetDialog:
         self.window = window
         self.connection = connection
 
-        self.connection.register_callback_any(self.onConnectionEvent)
+        self.connection.registerCallback(self.onConnectionEvent)
 
         # Create a Builder
         self.builder = Gtk.Builder.new_from_resource(
@@ -101,4 +101,4 @@ class AddNetDialog:
         return self.window
 
     def onDialogClosed(self, *args):
-        self.connection.unregister_callback(self.onConnectionEvent)
+        self.connection.unregisterCallback(self.onConnectionEvent)

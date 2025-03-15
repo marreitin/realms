@@ -22,7 +22,7 @@ def prettyTime(unix: str | int):
     Args:
         unix (str|int): Unix timestamp
     """
-    if type(unix) is str:
+    if isinstance(unix, str):
         unix = int(unix)
 
     time = GLib.DateTime.new_from_unix_utc(unix)

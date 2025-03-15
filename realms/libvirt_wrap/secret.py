@@ -19,9 +19,9 @@ import libvirt
 
 from realms.helpers import *
 
-from .connection import *
+from .connection import Connection
 from .constants import *
-from .event_manager import *
+from .event_manager import EventManager
 
 
 class Secret(EventManager):
@@ -29,7 +29,7 @@ class Secret(EventManager):
         super().__init__()
         self.connection = connection
         self.connection.isAlive()
-        self.connection.register_callback_any(self.onConnectionEvent)
+        self.connection.registerCallback(self.onConnectionEvent)
         self.secret = secret
 
     ############################################
@@ -55,7 +55,7 @@ class Secret(EventManager):
             # Only unsubscribe for connection event multiplexer, other objects
             # unsubscribe by themselves
             if event_id in [CONNECTION_EVENT_DISCONNECTED, CONNECTION_EVENT_DELETED]:
-                self.connection.unregister_callback(self.onConnectionEvent)
+                self.connection.unregisterCallback(self.onConnectionEvent)
 
         self.sendEvent(conn, obj, type_id, event_id, detail_id)
 
@@ -120,18 +120,17 @@ class Secret(EventManager):
         usage_type = self.secret.usageType()
         if usage_type == libvirt.VIR_SECRET_USAGE_TYPE_NONE:
             return "unused"
-        elif usage_type == libvirt.VIR_SECRET_USAGE_TYPE_VOLUME:
+        if usage_type == libvirt.VIR_SECRET_USAGE_TYPE_VOLUME:
             return "volume"
-        elif usage_type == libvirt.VIR_SECRET_USAGE_TYPE_CEPH:
+        if usage_type == libvirt.VIR_SECRET_USAGE_TYPE_CEPH:
             return "ceph"
-        elif usage_type == libvirt.VIR_SECRET_USAGE_TYPE_ISCSI:
+        if usage_type == libvirt.VIR_SECRET_USAGE_TYPE_ISCSI:
             return "iscsi"
-        elif usage_type == libvirt.VIR_SECRET_USAGE_TYPE_TLS:
+        if usage_type == libvirt.VIR_SECRET_USAGE_TYPE_TLS:
             return "tls"
-        elif usage_type == libvirt.VIR_SECRET_USAGE_TYPE_VTPM:
+        if usage_type == libvirt.VIR_SECRET_USAGE_TYPE_VTPM:
             return "vtpm"
-        else:
-            return "unknown"
+        return "unknown"
 
     def getUUID(self) -> str:
         self.connection.isAlive()

@@ -29,7 +29,7 @@ class DownloadVolumeDialog:
     def __init__(self, window: Adw.ApplicationWindow, volume: Volume):
         self.window = window
         self.volume = volume
-        self.volume.pool.register_callback_any(self.onConnectionEvent)
+        self.volume.pool.registerCallback(self.onConnectionEvent)
         self.tree = None
         self.cancel_event = Event()
 
@@ -134,4 +134,4 @@ class DownloadVolumeDialog:
 
     def onDialogClosed(self, *_):
         self.cancel_event.set()
-        self.volume.pool.unregister_callback(self.onConnectionEvent)
+        self.volume.pool.unregisterCallback(self.onConnectionEvent)

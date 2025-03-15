@@ -101,7 +101,7 @@ class HostdevPage(BaseDevicePage):
             onDevsListed,
         )
 
-    def onDeviceChanged(self, combo_row, *_):
+    def onDeviceChanged(self, *_):
         if not self.devices:
             return
         device = self.devices[self.dev_row.get_selected()]

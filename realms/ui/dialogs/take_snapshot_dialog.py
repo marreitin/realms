@@ -30,7 +30,7 @@ class TakeSnapshotDialog:
         self.window = window
         self.domain = domain
 
-        self.domain.register_callback_any(self.onConnectionEvent)
+        self.domain.registerCallback(self.onConnectionEvent)
 
         # Create a Builder
         self.builder = Gtk.Builder.new_from_resource(
@@ -97,4 +97,4 @@ class TakeSnapshotDialog:
                 self.dialog.close()
 
     def onDialogClosed(self, *_):
-        self.domain.unregister_callback(self.onConnectionEvent)
+        self.domain.unregisterCallback(self.onConnectionEvent)

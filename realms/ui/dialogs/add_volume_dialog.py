@@ -45,7 +45,7 @@ class AddVolumeDialog:
         self.window = window
         self.pool = pool
         self.create_cb = create_cb
-        self.pool.register_callback_any(self.__onConnectionEvent__)
+        self.pool.registerCallback(self.__onConnectionEvent__)
         self.tree = None
 
         # Create a Builder
@@ -252,4 +252,4 @@ class AddVolumeDialog:
                 self.dialog.close()
 
     def __onDialogClosed__(self, *args):
-        self.pool.unregister_callback(self.__onConnectionEvent__)
+        self.pool.unregisterCallback(self.__onConnectionEvent__)

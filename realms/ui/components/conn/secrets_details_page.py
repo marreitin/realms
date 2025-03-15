@@ -71,8 +71,8 @@ class SecretsPage(Gtk.Box):
 
         self.parent = parent
 
-        self.connection = self.parent.connection
-        self.connection.register_callback_any(self.onConnectionEvent)
+        self.connection: Connection = self.parent.connection
+        self.connection.registerCallback(self.onConnectionEvent)
 
         self.secret_rows = []
 
@@ -158,9 +158,9 @@ class SecretsPage(Gtk.Box):
             if event_id == CONNECTION_EVENT_CONNECTED:
                 self.refreshSecrets()
             elif event_id == CONNECTION_EVENT_DISCONNECTED:
-                self.connection.unregister_callback(self.onConnectionEvent)
+                self.connection.unregisterCallback(self.onConnectionEvent)
             elif event_id == CONNECTION_EVENT_DELETED:
-                self.connection.unregister_callback(self.onConnectionEvent)
+                self.connection.unregisterCallback(self.onConnectionEvent)
 
     def onSecretDefined(self, vir_secret: libvirt.virSecret):
         """A new secret was defined."""

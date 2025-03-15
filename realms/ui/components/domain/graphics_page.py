@@ -70,7 +70,7 @@ class GLRow(Adw.ExpanderRow):
             else:
                 self.rendernode_row.unbind()
 
-    def __onEnableChanged__(self, switch, *_):
+    def __onEnableChanged__(self, *_):
         if self.xml_tree is None:
             return
         gl = self.xml_tree.find("gl")

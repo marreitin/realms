@@ -26,7 +26,7 @@ class EventManager:
     def __init__(self):
         self.event_callbacks = []
 
-    def register_callback_any(self, _cb: callable):
+    def registerCallback(self, _cb: callable):
         """Register a callback to the wrappers callback multiplexer.
         It will be called on any lifecycle event of *any* domain.
 
@@ -45,7 +45,7 @@ class EventManager:
             raise ValueError("Callback already registered")
         self.event_callbacks.append(_cb)
 
-    def unregister_callback(self, _cb: callable):
+    def unregisterCallback(self, _cb: callable):
         """Unregister event callback
 
         Args:
@@ -67,6 +67,6 @@ class EventManager:
 
     def sendEvent(self, conn, obj, type_id, event_id, detail_id):
         """Send out event to all subscribed callbacks"""
-        printEvent(conn, obj, type_id, event_id, detail_id)
+        # printEvent(conn, obj, type_id, event_id, detail_id)
         for cb in self.event_callbacks.copy():
             cb(conn, obj, type_id, event_id, detail_id)

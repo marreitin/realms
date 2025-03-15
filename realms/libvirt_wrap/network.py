@@ -17,9 +17,11 @@ import xml.etree.ElementTree as ET
 
 import libvirt
 
-from .connection import *
+from realms.helpers.async_jobs import asyncJob
+
+from .connection import Connection
 from .constants import *
-from .event_manager import *
+from .event_manager import EventManager
 
 
 class Network(EventManager):
@@ -29,7 +31,7 @@ class Network(EventManager):
 
         self.connection = connection
         self.connection.isAlive()
-        self.connection.register_callback_any(self.onConnectionEvent)
+        self.connection.registerCallback(self.onConnectionEvent)
         self.network = network
 
     ############################################
@@ -43,7 +45,7 @@ class Network(EventManager):
             and obj.UUIDString() != self.network.UUIDString()
         ):
             return
-        elif type_id not in [
+        if type_id not in [
             CALLBACK_TYPE_CONNECTION_GENERIC,
             CALLBACK_TYPE_NETWORK_GENERIC,
             CALLBACK_TYPE_NETWORK_LIFECYCLE,
@@ -55,7 +57,7 @@ class Network(EventManager):
             # Only unsubscribe for connection event multiplexer, other objects
             # unsubscribe by themselves
             if event_id in [CONNECTION_EVENT_DISCONNECTED, CONNECTION_EVENT_DELETED]:
-                self.connection.unregister_callback(self.onConnectionEvent)
+                self.connection.unregisterCallback(self.onConnectionEvent)
 
         self.sendEvent(conn, obj, type_id, event_id, detail_id)
 

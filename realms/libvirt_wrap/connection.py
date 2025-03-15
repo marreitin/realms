@@ -21,6 +21,7 @@ import libvirt
 from gi.repository import GLib
 
 from realms.helpers import Settings, asyncJob
+from realms.libvirt_wrap.common import libvirtVersionToString
 
 from .constants import *
 from .domain_capabilities import DomainCapabilities
@@ -61,6 +62,7 @@ class Connection(EventManager):
         atexit.register(self.onExit)
 
     def onExit(self):
+        """Exit handler, should close the connection automatically."""
         if self.connection is not None:
             self.connection.close()
 
@@ -69,15 +71,19 @@ class Connection(EventManager):
     ############################################
 
     def onDomainEvent(self, conn, dom: libvirt.virDomain, event, detail, _):
+        """Top Level handler for domain events."""
         self.sendEvent(conn, dom, CALLBACK_TYPE_DOMAIN_LIFECYCLE, event, detail)
 
     def onStorageEvent(self, conn, pool, event, detail, _):
+        """Top Level handler for pool events."""
         self.sendEvent(conn, pool, CALLBACK_TYPE_POOL_LIFECYCLE, event, detail)
 
     def onNetworkEvent(self, conn, network, event, detail, _):
+        """Top Level handler for network events."""
         self.sendEvent(conn, network, CALLBACK_TYPE_NETWORK_LIFECYCLE, event, detail)
 
     def onSecretEvent(self, conn, secret, event, detail, _):
+        """Top Level handler for secret events. (Connection secrets)"""
         self.sendEvent(conn, secret, CALLBACK_TYPE_SECRET_LIFECYCLE, event, detail)
 
     ############################################
@@ -171,7 +177,7 @@ class Connection(EventManager):
                 except:
                     self.supports_secrets = False
 
-                self.loadCapabilities()
+                self.__loadCapabilities__()
 
                 # We're ready
                 print(f"Connected to { self.url }")
@@ -232,9 +238,9 @@ class Connection(EventManager):
         self.name = self.settings["name"]
         self.description = self.settings["desc"]
 
-        self.findIsLocal()
+        self.isLocalConnection()
 
-    def findIsLocal(self):
+    def isLocalConnection(self):
         """Find out wheter the URL is to a local hypervisor
         or not."""
         self.is_local = True
@@ -244,7 +250,12 @@ class Connection(EventManager):
         if "+" in self.url.split(":")[0]:
             self.is_local = False
 
-    def listDomains(self, ready_cb) -> None:
+    def listDomains(self, ready_cb: callable) -> None:
+        """List all domains on that connection asynchronously.
+
+        Args:
+            ready_cb (callable): Callback with list of virDomain.
+        """
         self.isAlive()
 
         def getDomains() -> list[libvirt.virDomain]:
@@ -254,7 +265,12 @@ class Connection(EventManager):
 
         asyncJob(getDomains, [], ready_cb)
 
-    def listStoragePools(self, ready_cb) -> None:
+    def listStoragePools(self, ready_cb: callable) -> None:
+        """List all pools on that connection asynchronously.
+
+        Args:
+            ready_cb (callable): Callback with list of virStoragePool.
+        """
         self.isAlive()
 
         def getPools() -> list[libvirt.virStoragePool]:
@@ -265,6 +281,11 @@ class Connection(EventManager):
         asyncJob(getPools, [], ready_cb)
 
     def listNetworks(self, ready_cb) -> None:
+        """List all network on that connection asynchronously.
+
+        Args:
+            ready_cb (callable): Callback with list of virNetwork.
+        """
         self.isAlive()
 
         def getNetworks() -> list[libvirt.virNetwork]:
@@ -274,6 +295,11 @@ class Connection(EventManager):
         asyncJob(getNetworks, [], ready_cb)
 
     def listSecrets(self, ready_cb) -> None:
+        """List all connection secrets on that connection asynchronously.
+
+        Args:
+            ready_cb (callable): Callback with list of virSecret.
+        """
         self.isAlive()
         if not self.supports_secrets:
             return
@@ -285,12 +311,14 @@ class Connection(EventManager):
         asyncJob(getSecrets, [], ready_cb)
 
     def addNetworkTree(self, tree: ET.Element, autostart: bool):
+        """Add a network given its xml tree."""
         self.isAlive()
 
         xml = ET.tostring(tree, encoding="unicode")
         self.addNetwork(xml, autostart)
 
     def addNetwork(self, xml: str, autostart: bool):
+        """Add a network given its xml description."""
         self.isAlive()
         network = self.connection.networkDefineXML(xml)
         network.setAutostart(autostart)
@@ -303,12 +331,14 @@ class Connection(EventManager):
         )
 
     def addPoolTree(self, tree: ET.Element, autostart: bool):
+        """Add a pool given its xml tree."""
         self.connection.isAlive()
 
         xml = ET.tostring(tree, encoding="unicode")
         self.addPool(xml, autostart)
 
     def addPool(self, xml: str, autostart: bool):
+        """Add a pool given its xml description."""
         self.isAlive()
         pool = self.connection.storagePoolDefineXML(xml)
         pool.setAutostart(autostart)
@@ -321,6 +351,7 @@ class Connection(EventManager):
         )
 
     def addDomain(self, xml: str):
+        """Add a domain given its xml description."""
         self.isAlive()
         domain = self.connection.defineXML(xml)
         # Make sure the event is on the main thread.
@@ -335,6 +366,7 @@ class Connection(EventManager):
         )
 
     def addSecret(self, xml: str, value: str):
+        """Add a secret given its xml and a string secret value."""
         self.isAlive()
         if not self.supports_secrets:
             raise OperationUnsupportedException
@@ -346,6 +378,8 @@ class Connection(EventManager):
         )
 
     def deleteConnection(self):
+        """Delete this connection. Handles removing it from the
+        persistent settings."""
         # First notify all other widgets of this event
         # so they can destroy themselves
         if self.isConnected():
@@ -372,7 +406,8 @@ class Connection(EventManager):
 
         # Now this connection can be safely deleted
 
-    def loadCapabilities(self):
+    def __loadCapabilities__(self):
+        """Load this connections capabilities after connecting."""
         try:
             xml = self.connection.getCapabilities()
             xml_tree = ET.fromstring(xml)
@@ -396,19 +431,23 @@ class Connection(EventManager):
             self.domain_capabilities = DomainCapabilities(None)
 
     def isConnected(self) -> bool:
+        """If it is connected."""
         return (
             self.__state__ == CONNECTION_STATE_CONNECTED and self.connection is not None
         )
 
     def isSecure(self) -> bool:
+        """If it is securely connected."""
         self.isAlive()
         return self.connection.isSecure()
 
     def isEncrypted(self) -> bool:
+        """If the connection is encrypted."""
         self.isAlive()
         return self.connection.isEncrypted()
 
     def maxVCPUs(self) -> int:
+        """Maximum number of running VCPUS."""
         self.isAlive()
         return self.connection.getMaxVcpus(None)
 
@@ -422,6 +461,7 @@ class Connection(EventManager):
         return self.connection.getInfo()[1] * 1024**2
 
     def hostname(self) -> str:
+        """Hostname of hypervisor."""
         self.isAlive()
         return self.connection.getHostname()
 
@@ -429,32 +469,31 @@ class Connection(EventManager):
         """Return either the URL of the running connection or the one from the settings"""
         if self.isConnected():
             return self.connection.getURI()
-        else:
-            return self.url
+        return self.url
 
     def getDriverCapabilities(self) -> DriverCapabilities:
+        """Retrieve the hypervisors capabilities."""
         self.isAlive()
         return self.driver_capabilities
 
     def getPoolCapabilities(self) -> PoolCapabilities:
+        """Get the hypervisors pool capabilities."""
         self.isAlive()
         return self.pool_capabilities
 
     def getDomainCapabilities(self) -> DomainCapabilities:
+        """Get the hypervisors domain capabilities."""
         self.isAlive()
         return self.domain_capabilities
 
-    def getLibvirtVersion(self):
+    def getLibvirtVersion(self) -> str:
+        """Get the libvirt version as major.minor.release"""
         self.isAlive()
         version = libvirt.getVersion()
-        if version == -1:
-            return "unknown"
-        release = int(version % 1000)
-        minor = int(((version - release) % 1000000) / 1000)
-        major = int((version - minor * 1000 - release) / 1000000)
-        return f"{major}.{minor}.{release}"
+        return libvirtVersionToString(version)
 
     def setSettings(self, new_settings: dict) -> None:
+        """Update the settings."""
         conn_settings = Settings.get("connections")
         conn_settings[conn_settings.index(self.settings)] = new_settings
         Settings.put("connections", conn_settings)
@@ -470,6 +509,7 @@ class Connection(EventManager):
         )
 
     def getState(self) -> int:
+        """Get the current state."""
         return self.__state__
 
     ############################################
@@ -477,14 +517,11 @@ class Connection(EventManager):
     ############################################
 
     def getHypervisorVersion(self):
+        """Get the libvirt version on the hypervisor
+        as major.minor.release"""
         self.isAlive()
         version = self.connection.getVersion()
-        if version == -1:
-            return "unknown"
-        release = int(version % 1000)
-        minor = int(((version - release) % 1000000) / 1000)
-        major = int((version - minor * 1000 - release) / 1000000)
-        return f"{major}.{minor}.{release}"
+        return libvirtVersionToString(version)
 
     def getHostCPUTime(self) -> int:
         """Get the hosts used CPU time in ns

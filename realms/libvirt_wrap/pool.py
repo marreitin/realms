@@ -47,10 +47,9 @@ class Pool(EventManager):
         self.pool = pool
 
         self.connection.isAlive()
-        self.isAlive = self.connection.isAlive
         self.pool_capabilities = self.connection.getPoolCapabilities()
 
-        self.connection.register_callback_any(self.onConnectionEvent)
+        self.connection.registerCallback(self.onConnectionEvent)
 
     ############################################
     # Callbacks
@@ -64,7 +63,7 @@ class Pool(EventManager):
             and obj.UUIDString() != self.pool.UUIDString()
         ):
             return
-        elif type_id not in [
+        if type_id not in [
             CALLBACK_TYPE_CONNECTION_GENERIC,
             CALLBACK_TYPE_POOL_LIFECYCLE,
             CALLBACK_TYPE_POOL_GENERIC,
@@ -76,7 +75,7 @@ class Pool(EventManager):
             # Only unsubscribe for connection event multiplexer, other objects
             # unsubscribe by themselves
             if event_id in [CONNECTION_EVENT_DISCONNECTED, CONNECTION_EVENT_DELETED]:
-                self.connection.unregister_callback(self.onConnectionEvent)
+                self.connection.unregisterCallback(self.onConnectionEvent)
 
         self.sendEvent(conn, obj, type_id, event_id, detail_id)
 

@@ -110,7 +110,7 @@ class NetworkDetailsTab(BaseDetailsTab):
         self.__build__()
 
         # Only follow the events interesting for this network
-        self.network.register_callback_any(self.onConnectionEvent)
+        self.network.registerCallback(self.onConnectionEvent)
 
     def __build__(self):
         self.set_hexpand(True)
@@ -380,7 +380,7 @@ class NetworkDetailsTab(BaseDetailsTab):
     def end(self):
         """Implement BaseDetailsTab."""
         # Unsubscribe from events
-        self.network.unregister_callback(self.onConnectionEvent)
+        self.network.unregisterCallback(self.onConnectionEvent)
 
     def getUniqueIdentifier(self) -> str:
         """Implement BaseDetailsTab."""

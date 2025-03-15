@@ -109,24 +109,24 @@ class AddConnDialog:
             self.setVisibleRows()
 
     def buildURL(self):
-        url = ""
         hypervisor_type = self.hypervisor_types[
             self.obj("type").get_selected_item().get_string()
         ]
         if hypervisor_type == "manual":
             return self.obj("custom-url").get_text()
-        else:
-            transport = ""
-            if self.obj("remote").get_enable_expansion():
-                transport = "+ssh"
-            url += f"{ hypervisor_type }{ transport }://"
 
-            if self.obj("remote").get_enable_expansion():
-                url += self.obj("ruser").get_text()
-                url += "@"
-                url += self.obj("rhost").get_text()
+        url = ""
+        transport = ""
+        if self.obj("remote").get_enable_expansion():
+            transport = "+ssh"
+        url += f"{ hypervisor_type }{ transport }://"
 
-            url += f"/{ self.default_paths[hypervisor_type] }"
+        if self.obj("remote").get_enable_expansion():
+            url += self.obj("ruser").get_text()
+            url += "@"
+            url += self.obj("rhost").get_text()
+
+        url += f"/{ self.default_paths[hypervisor_type] }"
         return url
 
     def updateGeneratedURL(self, *args):

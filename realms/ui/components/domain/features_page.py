@@ -17,7 +17,6 @@ import xml.etree.ElementTree as ET
 
 from gi.repository import Adw
 
-from realms.ui.components import iconButton
 from realms.ui.components.bindable_entries import (
     ExistentialComboRow,
     ExistentialSwitchRow,

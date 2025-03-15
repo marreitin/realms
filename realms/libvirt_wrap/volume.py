@@ -83,17 +83,17 @@ class Volume:
         Returns:
             ET.Element: XML tree
         """
-        self.pool.isAlive()
+        self.pool.connection.isAlive()
         xml = self.volume.XMLDesc()
         xml_tree = ET.fromstring(xml)
         return xml_tree
 
     def getName(self) -> str:
-        self.pool.isAlive()
+        self.pool.connection.isAlive()
         return self.volume.name()
 
     def getUUID(self) -> str:
-        self.pool.isAlive()
+        self.pool.connection.isAlive()
         return self.volume.UUIDString()
 
     def getType(self) -> str:
@@ -102,7 +102,7 @@ class Volume:
         Returns:
             str: Name of the type
         """
-        self.pool.isAlive()
+        self.pool.connection.isAlive()
         info = self.volume.info()
         vol_type = info[0]
 
@@ -116,7 +116,7 @@ class Volume:
         Returns:
             int: Capacity in bytes
         """
-        self.pool.isAlive()
+        self.pool.connection.isAlive()
         info = self.volume.info()
         return info[1]
 
@@ -126,7 +126,7 @@ class Volume:
         Returns:
             int: Allocated bytes
         """
-        self.pool.isAlive()
+        self.pool.connection.isAlive()
         info = self.volume.info()
         return info[2]
 
@@ -136,7 +136,7 @@ class Volume:
         Returns:
             str: description
         """
-        self.pool.isAlive()
+        self.pool.connection.isAlive()
         return self.volume.XMLDesc()
 
     ############################################

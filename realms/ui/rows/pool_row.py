@@ -37,7 +37,7 @@ class PoolRow(BaseRow):
 
         self.build()
 
-        self.pool.register_callback_any(self.onConnectionEvent)
+        self.pool.registerCallback(self.onConnectionEvent)
 
     def build(self):
         hbox = Gtk.Box(spacing=6)
@@ -101,12 +101,12 @@ class PoolRow(BaseRow):
         if type_id == CALLBACK_TYPE_CONNECTION_GENERIC:
             if event_id in [CONNECTION_EVENT_DISCONNECTED, CONNECTION_EVENT_DELETED]:
                 self.usage_task.stopTask()
-                self.pool.unregister_callback(self.onConnectionEvent)
+                self.pool.unregisterCallback(self.onConnectionEvent)
                 return
         elif type_id == CALLBACK_TYPE_POOL_GENERIC:
             if event_id == POOL_EVENT_DELETED:
                 self.usage_task.stopTask()
-                self.pool.unregister_callback(self.onConnectionEvent)
+                self.pool.unregisterCallback(self.onConnectionEvent)
 
         self.setStatus()
 

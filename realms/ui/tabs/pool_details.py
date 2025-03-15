@@ -60,7 +60,7 @@ class PoolDetailsTab(BaseDetailsTab):
         self.build()
 
         # Only follow the events interesting for this pool
-        self.pool.register_callback_any(self.onConnectionEvent)
+        self.pool.registerCallback(self.onConnectionEvent)
 
     def build(self):
         self.set_hexpand(True)
@@ -274,7 +274,7 @@ class PoolDetailsTab(BaseDetailsTab):
 
     def end(self):
         # Unsubscribe from events
-        self.pool.unregister_callback(self.onConnectionEvent)
+        self.pool.unregisterCallback(self.onConnectionEvent)
         if self.usage_task is not None:
             self.usage_task.stopTask()
 

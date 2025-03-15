@@ -156,7 +156,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         self.build()
 
         # Only follow the events interesting for this domain
-        self.domain.register_callback_any(self.onConnectionEvent)
+        self.domain.registerCallback(self.onConnectionEvent)
 
     def build(self):
         self.set_hexpand(True)
@@ -693,7 +693,7 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         # Unsubscribe from events
         self.perf_box.end()
         self.snapshots_box.end()
-        self.domain.unregister_callback(self.onConnectionEvent)
+        self.domain.unregisterCallback(self.onConnectionEvent)
 
     def getUniqueIdentifier(self) -> str:
         """Implement BaseDetailsTab."""

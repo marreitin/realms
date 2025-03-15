@@ -104,7 +104,7 @@ class ConnectionRow(Gtk.ListBoxRow):
 
         self.window = window
         self.connection = Connection(conn_settings)
-        self.connection.register_callback_any(self.onConnectionEvent)
+        self.connection.registerCallback(self.onConnectionEvent)
 
         self.build()
 
@@ -237,7 +237,7 @@ class ConnectionRow(Gtk.ListBoxRow):
             if event_id == CONNECTION_EVENT_SETTINGS_CHANGED:
                 pass
             elif event_id == CONNECTION_EVENT_DELETED:
-                self.connection.unregister_callback(self.onConnectionEvent)
+                self.connection.unregisterCallback(self.onConnectionEvent)
                 self.window.removeConnection(self.connection.url)
             elif event_id == CONNECTION_EVENT_ATTEMPT_CONNECT:
                 self.quick_actions["connect"].set_sensitive(False)

@@ -143,7 +143,7 @@ class AuthBox(Gtk.Box):
 
         self.set_visible(visible)
 
-        if visible == True:
+        if visible:
             self.auth_type.get_buffer().set_text(
                 "ceph" if pool_type == "rbd" else "chap", -1
             )

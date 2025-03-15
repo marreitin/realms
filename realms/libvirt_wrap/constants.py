@@ -15,6 +15,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # All libvirt related custom constants
 
+"""Definitions for custom event ids."""
+
 (
     CALLBACK_TYPE_CONNECTION_GENERIC,
     CALLBACK_TYPE_DOMAIN_LIFECYCLE,

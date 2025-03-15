@@ -150,7 +150,7 @@ class SnapshotBox(Gtk.Box):
 
         self.build()
 
-        self.domain.register_callback_any(self.onConnectionEvent)
+        self.domain.registerCallback(self.onConnectionEvent)
 
     def build(self):
         self.snapshot_overlay = Gtk.Overlay(vexpand=True)
@@ -236,4 +236,4 @@ class SnapshotBox(Gtk.Box):
         TakeSnapshotDialog(self.window_ref.window, self.domain)
 
     def end(self):
-        self.domain.unregister_callback(self.onConnectionEvent)
+        self.domain.unregisterCallback(self.onConnectionEvent)

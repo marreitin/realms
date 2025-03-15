@@ -16,6 +16,6 @@
 import ipaddress
 
 
-def ip_and_netmask_to_cidr(ip: str, netmask: str) -> str:
+def ipNetmaskToCIDR(ip: str, netmask: str) -> str:
     network = ipaddress.IPv4Network(f"{ip}/{netmask}", strict=False)
     return str(network)

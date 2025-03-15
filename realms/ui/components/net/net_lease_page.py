@@ -50,7 +50,8 @@ class NetLeasePage(BaseNetSettingsPage):
 
         self.build()
 
-    def listLeases(self, vir_leases):
+    def __listLeases__(self, vir_leases):
+        """List the current leases."""
         if vir_leases is None:
             self.prefs_group.set_description(
                 "This action is not supported by the driver"
@@ -70,16 +71,21 @@ class NetLeasePage(BaseNetSettingsPage):
         self.refresh_btn = iconButton(
             "",
             "update-symbolic",
-            self.onRefresh,
+            self.__onRefresh__,
             tooltip_text="Refresh",
             css_classes=["flat"],
         )
         self.prefs_group.set_header_suffix(self.refresh_btn)
 
-        self.onRefresh()
+        self.__onRefresh__()
 
-    def onRefresh(self, *args):
+    def __onRefresh__(self, *_):
+        """Refresh was clicked."""
         for row in self.lease_rows:
             self.prefs_group.remove(row)
         self.lease_rows.clear()
-        self.network.getDHCPLeases(self.listLeases)
+        self.network.getDHCPLeases(self.__listLeases__)
+
+    def updateData(self, _):
+        """Not used."""
+        return
