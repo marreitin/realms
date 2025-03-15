@@ -49,7 +49,7 @@ def buildSubExpander(title: str, expanded=False) -> Gtk.Expander:
         label=title,
         css_classes=["heading"],
         margin_top=6,
-        margin_bottom=3,
+        margin_bottom=0,
         margin_start=6,
         margin_end=6,
     )
