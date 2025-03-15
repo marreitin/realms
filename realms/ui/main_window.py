@@ -371,7 +371,7 @@ class MainWindow(Adw.ApplicationWindow):
             application_name="Realms",
             comments="An incomplete libvirt client for the modern GNOME desktop",
             developers=["marreitin"],
-            version="20240228",
+            version="20240315",
             license_type=Gtk.License.GPL_3_0,
             website="https://github.com/marreitin/realms",
             issue_url="https://github.com/marreitin/realms/issues",
