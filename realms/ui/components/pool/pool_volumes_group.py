@@ -13,7 +13,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from gi.repository import Adw, GLib, Gtk
+from gi.repository import Adw, Gtk
 
 from realms.libvirt_wrap import Pool, Volume
 from realms.ui.components.common import iconButton
@@ -38,16 +38,16 @@ class VolumesGroup(Adw.PreferencesGroup):
 
         self.rows = []
 
-        self.build()
+        self.__build__()
 
-    def build(self):
+    def __build__(self):
         self.set_title("Volumes")
 
         box = Gtk.Box(spacing=6)
         add_vol_btn = iconButton(
             "",
             "list-add-symbolic",
-            self.onAddClicked,
+            self.__onAddClicked__,
             css_classes=["flat"],
             tooltip_text="Add Volume",
         )
@@ -56,7 +56,7 @@ class VolumesGroup(Adw.PreferencesGroup):
         self.vol_refresh_btn = iconButton(
             "",
             "update-symbolic",
-            self.onRefreshClicked,
+            lambda *_: self.onRefreshClicked(),
             css_classes=["flat"],
             tooltip_text="Refresh Volume List",
         )
@@ -64,10 +64,10 @@ class VolumesGroup(Adw.PreferencesGroup):
 
         self.set_header_suffix(box)
 
-    def onAddClicked(self, *args):
+    def __onAddClicked__(self, *_):
         AddVolumeDialog(self.window_ref.window, self.pool)
 
-    def onRefreshClicked(self, *args, refresh=True):
+    def onRefreshClicked(self, refresh=True):
         """Refresh the list of volumes and display it."""
         for row in self.rows:
             self.remove(row)
