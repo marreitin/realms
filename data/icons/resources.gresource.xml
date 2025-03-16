@@ -7,13 +7,15 @@
   <file preprocess="xml-stripblanks" alias="arrow-pointing-at-line-up-symbolic.svg">hicolor/scalable/actions/arrow-pointing-at-line-up-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="brush-monitor-symbolic.svg">hicolor/scalable/actions/brush-monitor-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="cd-symbolic.svg">hicolor/scalable/actions/cd-symbolic.svg</file>
-  <file preprocess="xml-stripblanks" alias="copy-symbolic.svg">hicolor/scalable/actions/copy-symbolic.svg</file>
+  <file preprocess="xml-stripblanks" alias="check-round-outline-symbolic.svg">hicolor/scalable/actions/check-round-outline-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="clock-alt-symbolic.svg">hicolor/scalable/actions/clock-alt-symbolic.svg</file>
+  <file preprocess="xml-stripblanks" alias="copy-symbolic.svg">hicolor/scalable/actions/copy-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="computer-chip-symbolic.svg">hicolor/scalable/actions/computer-chip-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="computer.svg">hicolor/scalable/actions/computer.svg</file>
   <file preprocess="xml-stripblanks" alias="computer-grey.svg">hicolor/scalable/actions/computer-grey.svg</file>
   <file preprocess="xml-stripblanks" alias="computer-red.svg">hicolor/scalable/actions/computer-red.svg</file>
   <file preprocess="xml-stripblanks" alias="computer-symbolic.svg">hicolor/scalable/actions/computer-symbolic.svg</file>
+  <file preprocess="xml-stripblanks" alias="cross-large-circle-outline-symbolic.svg">hicolor/scalable/actions/cross-large-circle-outline-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="dice3-symbolic.svg">hicolor/scalable/actions/dice3-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="display-symbolic.svg">hicolor/scalable/actions/display-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="display-with-window-symbolic.svg">hicolor/scalable/actions/display-with-window-symbolic.svg</file>

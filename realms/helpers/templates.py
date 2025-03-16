@@ -18,19 +18,24 @@ There are two template locations:
     - Default templates somewhere hidden inside flatpak
     - User templates anywhere
 """
-from dataclasses import dataclass
 from os import listdir, path
 
 import yaml
 from config import *  # pylint: disable=import-error
 
-from realms.helpers.settings import Settings  # pylint: disable=import-error
+from realms.helpers.settings import Settings
 
 
-@dataclass
 class TemplateFile:
-    path: str
-    exists: bool
+    def __init__(self, path: str, exists: bool, is_default: bool):
+        self.path = path
+        self.exists = exists
+        self.is_default = is_default
+
+    def getName(self) -> str:
+        if self.is_default:
+            return path.basename(self.path)
+        return self.path
 
 
 class TemplateManager:
@@ -50,7 +55,9 @@ class TemplateManager:
         if template_paths is None:
             template_paths = []
 
-        template_files = [TemplateFile(p, path.exists(p.path)) for p in template_paths]
+        template_files = [
+            TemplateFile(p, path.exists(p), False) for p in template_paths
+        ]
 
         if not list_nonexistent:
             template_files = filter(lambda t: t.exists, template_files)
@@ -69,7 +76,7 @@ class TemplateManager:
         )
 
         template_files = [
-            TemplateFile(path.join(templates_dir, p), True)
+            TemplateFile(path.join(templates_dir, p), True, True)
             for p in listdir(templates_dir)
         ]
 
