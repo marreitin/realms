@@ -48,9 +48,9 @@ class PoolVolumeRow(Adw.ExpanderRow):
         self.capacity_row = None
         self.action_row = None
 
-        self.build()
+        self.__build__()
 
-    def build(self):
+    def __build__(self):
         self.volume_tree = self.volume.getETree()
         self.usage_progress = Gtk.ProgressBar(
             vexpand=True,
@@ -60,7 +60,7 @@ class PoolVolumeRow(Adw.ExpanderRow):
         self.add_suffix(self.usage_progress)
 
         self.capacity_row = Adw.EntryRow(title="Capacity", show_apply_button=True)
-        self.capacity_row.connect("apply", self.applyCapacityChanged)
+        self.capacity_row.connect("apply", self.__applyCapacityChange__)
         self.add_row(self.capacity_row)
 
         type_row = propertyRow("Type")
@@ -86,24 +86,24 @@ class PoolVolumeRow(Adw.ExpanderRow):
         self.action_row = Adw.ActionRow()
         self.add_row(self.action_row)
 
-        wipe = iconButton(
-            "Wipe", "eraser-symbolic", self.onWipeClicked, css_classes=["flat"]
+        wipe_btn = iconButton(
+            "Wipe", "eraser-symbolic", self.__onWipeClicked__, css_classes=["flat"]
         )
-        self.action_row.add_prefix(wipe)
+        self.action_row.add_prefix(wipe_btn)
 
-        self.action_row.add_prefix(deleteButton(self.onDeleteClicked))
+        self.action_row.add_prefix(deleteButton(self.__onDeleteClicked__))
 
-        download = iconButton(
+        download_btn = iconButton(
             "Download",
             "folder-download-symbolic",
-            self.onDownloadClicked,
+            self.__onDownloadClicked__,
             css_classes=["flat"],
         )
-        self.action_row.add_suffix(download)
+        self.action_row.add_suffix(download_btn)
 
-        self.loadUsageStats()
+        self.__loadUsageStats__()
 
-    def loadUsageStats(self):
+    def __loadUsageStats__(self):
         def loadStats():
             capacity = self.volume.getCapacity()
             allocated = self.volume.getAllocation()
@@ -123,7 +123,7 @@ class PoolVolumeRow(Adw.ExpanderRow):
 
         asyncJob(loadStats, [], showStats)
 
-    def applyCapacityChanged(self, *args):
+    def __applyCapacityChange__(self, *_):
         """As the capacity is the only parameter to be changed for a volume,
         this handler handles the entry changing directly.
         """
@@ -138,16 +138,20 @@ class PoolVolumeRow(Adw.ExpanderRow):
         self.capacity_row.set_show_apply_button(False)
         self.capacity_row.set_show_apply_button(True)
 
-        self.loadUsageStats()
+        self.__loadUsageStats__()
 
-    def onDeleteClicked(self, btn):
+    def __onDeleteClicked__(self, btn):
         """Delete this volume."""
 
         def finish(res: ResultWrapper):
+            btn.set_sensitive(True)
+
             if not res.failed:
                 self.window_ref.window.pushToastText("Volume was deleted")
 
         def delete():
+            btn.set_sensitive(False)
+
             failableAsyncJob(
                 self.volume.delete,
                 [],
@@ -168,17 +172,23 @@ class PoolVolumeRow(Adw.ExpanderRow):
         )
         dialog.present(self.window_ref.window)
 
-    def onWipeClicked(self, btn):
+    def __onWipeClicked__(self, btn):
         """Erase this volume."""
 
+        def finish(res: ResultWrapper):
+            btn.set_sensitive(True)
+
+            self.window_ref.window.pushToastText(
+                "Volume was wiped" if not res.failed else "Wiping volume failed"
+            )
+
         def wipe():
+            btn.set_sensitive(False)
             failableAsyncJob(
                 self.volume.wipe,
                 [],
                 lambda e: self.window_ref.window.pushToastText(str(e)),
-                lambda r: self.window_ref.window.pushToastText(
-                    "Volume was wiped" if not r.failed else "Wiping volume failed"
-                ),
+                finish,
             )
 
         dialog = selectDialog(
@@ -194,6 +204,6 @@ class PoolVolumeRow(Adw.ExpanderRow):
         )
         dialog.present(self.window_ref.window)
 
-    def onDownloadClicked(self, btn):
+    def __onDownloadClicked__(self, _):
         """Download this volume."""
         DownloadVolumeDialog(self.window_ref.window, self.volume)
