@@ -14,15 +14,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import traceback
-from os import listdir
-from os.path import join
 
-import yaml
-from config import *  # pylint: disable=import-error
 from gi.repository import Adw, Gio, Gtk
 from jinja2 import Environment
 
 from realms.helpers import stringToBytes
+from realms.helpers.templates import TemplateManager
 from realms.libvirt_wrap import Connection
 from realms.libvirt_wrap.constants import *
 from realms.ui.components import (
@@ -334,29 +331,9 @@ class AddDomainDialog:
         self.setControlButtonStates()
         self.onTemplateSelected()
 
-    def listTemplates(self) -> list:
-        """List all yaml files present in the templates directory."""
-        import os
-
-        templates_dir = os.path.join(
-            pkgdatadir, "realms", "templates"  # pylint: disable=undefined-variable
-        )
-        return [
-            join(templates_dir, f)
-            for f in listdir(templates_dir)
-            if ".yml" in f or ".yaml" in f
-        ]
-
     def loadTemplates(self):
         """Load all templates."""
-        for file in self.listTemplates():
-            with open(file, "r") as f:
-                data = yaml.safe_load(f)
-            if data is not None and "templates" in data:
-                for template in data["templates"]:
-                    self.templates.append(template)
-
-        self.templates.sort(key=lambda x: x["name"])
+        self.templates = TemplateManager.listTemplatesAll()
 
     def setControlButtonStates(self):
         """Set the control buttons in the header bar, depending
