@@ -160,7 +160,7 @@ class PoolDetailsTab(BaseDetailsTab):
 
             self.fill_progress.set_fraction(min(1, fill_fraction))
             self.fill_progress.set_text(
-                f"{ bytesToString(allocated) } / { bytesToString(capacity) } - { int(fill_fraction*100) }%"
+                f"{ bytesToString(allocated) } / { bytesToString(capacity) }  –  { int(fill_fraction*100) }%"
             )
 
         if self.usage_task is None:

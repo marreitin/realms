@@ -24,6 +24,8 @@ from .base_row import BaseRow
 
 
 class PoolRow(BaseRow):
+    """Sidebar Row for storage pools."""
+
     def __init__(self, pool: Pool, window: Adw.ApplicationWindow):
         super().__init__()
         self.pool = pool
@@ -35,11 +37,11 @@ class PoolRow(BaseRow):
         self.subtitle = None
         self.status_label = None
 
-        self.build()
+        self.__build__()
 
-        self.pool.registerCallback(self.onConnectionEvent)
+        self.pool.registerCallback(self.__onConnectionEvent__)
 
-    def build(self):
+    def __build__(self):
         hbox = Gtk.Box(spacing=6)
         self.set_child(hbox)
 
@@ -55,18 +57,19 @@ class PoolRow(BaseRow):
         )
         vbox.append(self.title)
 
-        self.subtitle = Gtk.Label(label="unknown state", halign=Gtk.Align.START)
-        self.subtitle.set_css_classes(["caption", "dim-label"])
+        self.subtitle = Gtk.Label(
+            label="unknown state",
+            halign=Gtk.Align.START,
+            css_classes=["caption", "dim-label"],
+        )
         vbox.append(self.subtitle)
 
-        self.status_label = Gtk.Label(
-            label="50%", width_request=32, css_classes=["caption"]
-        )
+        self.status_label = Gtk.Label(label="50%", justify=Gtk.Justification.RIGHT)
         hbox.append(self.status_label)
 
-        self.setStatus()
+        self.__setStatus__()
 
-    def setStatus(self):
+    def __setStatus__(self):
         self.status_label.set_css_classes([])
 
         def gatherUsage():
@@ -76,10 +79,12 @@ class PoolRow(BaseRow):
         def showUsage(filled):
             self.status_label.set_label(str(int(filled)) + "%")
 
-            if filled > 70:
-                self.status_label.set_css_classes(["warning"])
             if filled > 90:
-                self.status_label.set_css_classes(["error"])
+                self.status_label.set_css_classes(["numeric", "error"])
+            elif filled > 70:
+                self.status_label.set_css_classes(["numeric", "warning"])
+            else:
+                self.status_label.set_css_classes(["numeric"])
 
         if self.usage_task is None:
             self.usage_task = RepeatJob(gatherUsage, [], showUsage, 30)
@@ -89,6 +94,20 @@ class PoolRow(BaseRow):
         else:
             self.subtitle.set_label("inactive")
 
+    def __onConnectionEvent__(self, conn, obj, type_id, event_id, detail_id):
+        if type_id == CALLBACK_TYPE_CONNECTION_GENERIC:
+            if event_id in [CONNECTION_EVENT_DISCONNECTED, CONNECTION_EVENT_DELETED]:
+                self.usage_task.stopTask()
+                self.pool.unregisterCallback(self.__onConnectionEvent__)
+                return
+        elif type_id == CALLBACK_TYPE_POOL_GENERIC:
+            if event_id == POOL_EVENT_DELETED:
+                self.usage_task.stopTask()
+                self.pool.unregisterCallback(self.__onConnectionEvent__)
+
+        self.__setStatus__()
+
+    # Implement BaseRow
     def onActivate(self):
         uuid = self.pool.getUUID()
         if not self.window.tabExists(uuid):
@@ -97,18 +116,6 @@ class PoolRow(BaseRow):
                 tab_page_content, self.pool.getDisplayName(), "drive-multidisk-symbolic"
             )
 
-    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id):
-        if type_id == CALLBACK_TYPE_CONNECTION_GENERIC:
-            if event_id in [CONNECTION_EVENT_DISCONNECTED, CONNECTION_EVENT_DELETED]:
-                self.usage_task.stopTask()
-                self.pool.unregisterCallback(self.onConnectionEvent)
-                return
-        elif type_id == CALLBACK_TYPE_POOL_GENERIC:
-            if event_id == POOL_EVENT_DELETED:
-                self.usage_task.stopTask()
-                self.pool.unregisterCallback(self.onConnectionEvent)
-
-        self.setStatus()
-
+    # Implement BaseRow
     def getSortingTitle(self):
         return self.pool.getDisplayName()
