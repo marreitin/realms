@@ -13,6 +13,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+from dataclasses import dataclass
 import xml.etree.ElementTree as ET
 
 import libvirt
@@ -27,6 +28,8 @@ from realms.ui.components.preference_widgets import RealmsPreferencesPage
 
 
 class CloneVolumeBox(GenericPreferencesRow):
+    """Simple box for a specific storage volume offering the options
+    to (not) clone this volume and setting the new name."""
     def __init__(self, volume: Volume):
         super().__init__()
         self.volume = volume
@@ -34,9 +37,9 @@ class CloneVolumeBox(GenericPreferencesRow):
         self.switch = None
         self.entry = None
 
-        self.build()
+        self.__build__()
 
-    def build(self):
+    def __build__(self):
         box = Gtk.Box(spacing=6)
         box.append(
             Gtk.Label(
@@ -50,7 +53,7 @@ class CloneVolumeBox(GenericPreferencesRow):
         self.addChild(box)
 
         self.entry = Gtk.Entry(
-            placeholder_text="New name", text=f"{ self.volume.getName() }-clone"
+            placeholder_text="New Name", text=f"{ self.volume.getName() }-clone"
         )
         self.addChild(self.entry)
 
@@ -61,22 +64,24 @@ class CloneVolumeBox(GenericPreferencesRow):
         return self.entry.get_text()
 
 
+@dataclass
 class CloneParam:
-    def __init__(self, volume: Volume, new_name: str):
-        self.volume = volume
-        self.new_name = new_name
+    """Cloning parameters for a volume."""
+    volume: Volume
+    new_name: str
 
 
 class CloneVolumesPage(Adw.NavigationPage):
+    """Navigation page that allows to choose which volumes to clone."""
     def __init__(self, window: Adw.ApplicationWindow, domain: Domain):
         super().__init__(title="post-actions")
 
         self.domain = domain
         self.volume_boxes = []
 
-        self.build()
+        self.__build__()
 
-    def build(self):
+    def __build__(self):
         self.prefs_page = RealmsPreferencesPage(clamp=False)
         self.set_child(self.prefs_page)
 
@@ -100,6 +105,7 @@ class CloneVolumesPage(Adw.NavigationPage):
 
 
 class CloneDomainDialog:
+    """Dialog to clone a volume."""
     def __init__(self, window: Adw.ApplicationWindow, domain: Domain):
         super().__init__()
 
@@ -111,70 +117,70 @@ class CloneDomainDialog:
 
         self.volumes_page = None
 
-        self.domain.registerCallback(self.onConnectionEvent)
+        self.domain.registerCallback(self.__onConnectionEvent__)
 
-        self.build()
+        self.__build__()
 
-    def build(self):
+    def __build__(self):
         # Create a Builder
         self.builder = Gtk.Builder.new_from_resource(
             "/com/github/marreitin/realms/gtk/clonedom.ui"
         )
 
         # Obtain and show the main window
-        self.dialog = self.obj("main-dialog")
-        self.dialog.connect("closed", self.onDialogClosed)
+        self.dialog = self.__obj__("main-dialog")
+        self.dialog.connect("closed", self.__onDialogClosed__)
         self.dialog.present(self.window)
 
-        self.obj("btn-next").connect("clicked", self.onNextClicked)
-        self.obj("btn-back").connect("clicked", self.onBackClicked)
-        self.obj("btn-finish").connect("clicked", self.onApplyClicked)
+        self.__obj__("btn-next").connect("clicked", self.__onNextClicked__)
+        self.__obj__("btn-back").connect("clicked", self.__onBackClicked__)
+        self.__obj__("btn-finish").connect("clicked", self.__onApplyClicked__)
 
-        self.obj("nav-view").connect("popped", self.onNavPopped)
+        self.__obj__("nav-view").connect("popped", self.__onNavPopped__)
 
-        self.setControlButtonStates()
+        self.__setControlButtonStates__()
 
-        self.obj("new_name").grab_focus()
+        self.__obj__("new_name").grab_focus()
 
-    def setControlButtonStates(self):
-        self.obj("btn-back").set_visible(False)
-        self.obj("btn-finish").set_visible(False)
-        self.obj("btn-next").set_visible(False)
+    def __setControlButtonStates__(self):
+        self.__obj__("btn-back").set_visible(False)
+        self.__obj__("btn-finish").set_visible(False)
+        self.__obj__("btn-next").set_visible(False)
 
         if self.current_page == 0:
-            self.obj("btn-next").set_visible(True)
+            self.__obj__("btn-next").set_visible(True)
         elif self.current_page == 1:
-            self.obj("btn-back").set_visible(True)
-            self.obj("btn-finish").set_visible(True)
+            self.__obj__("btn-back").set_visible(True)
+            self.__obj__("btn-finish").set_visible(True)
 
-    def onNextClicked(self, _):
-        visible_page = self.obj("nav-view").get_visible_page()
+    def __onNextClicked__(self, _):
+        visible_page = self.__obj__("nav-view").get_visible_page()
 
         self.current_page += 1
-        if visible_page == self.obj("template-nav-page"):
+        if visible_page == self.__obj__("template-nav-page"):
             # Showing volume options
             if self.volumes_page is None:
                 self.volumes_page = CloneVolumesPage(self.window, self.domain)
 
-            self.obj("nav-view").push(self.volumes_page)
+            self.__obj__("nav-view").push(self.volumes_page)
         else:
             raise Exception("this should not be reached")
-        self.setControlButtonStates()
+        self.__setControlButtonStates__()
 
-    def onBackClicked(self, *_):
-        self.obj("nav-view").pop()
+    def __onBackClicked__(self, *_):
+        self.__obj__("nav-view").pop()
 
-    def onNavPopped(self, *_):
+    def __onNavPopped__(self, *_):
         self.current_page -= 1
-        self.setControlButtonStates()
+        self.__setControlButtonStates__()
 
-    def cloneDomain(self):
+    def __cloneDomain__(self):
         # Prepare domain xml
         domain_xml = self.domain.getETree()
-        domain_xml.find("name").text = self.obj("new_name").get_text()
+        domain_xml.find("name").text = self.__obj__("new_name").get_text()
         title = domain_xml.find("title")
         if title is not None:
-            title.text = self.obj("new_name").get_text()
+            title.text = self.__obj__("new_name").get_text()
         domain_xml.find("uuid").text = ""
 
         # Clone volumes.
@@ -207,35 +213,32 @@ class CloneDomainDialog:
         print(new_xml)
         self.domain.connection.addDomain(new_xml)
 
-    def onApplyClicked(self, _):
+    def __onApplyClicked__(self, _):
+        """Handle the UI while running the cloning in the background."""
         def onFail(e: Exception):
             simpleErrorDialog("Invalid settings", str(e), self.window)
 
         def onDone(res: ResultWrapper):
             self.dialog.set_can_close(True)
-            self.obj("main-stack").set_visible_child_name("main-page")
+            self.__obj__("main-stack").set_visible_child_name("main-page")
 
             if not res.failed:
                 self.dialog.close()
 
-        spinner = Adw.SpinnerPaintable(widget=self.obj("cloning-status"))
-        self.obj("cloning-status").set_paintable(spinner)
-        self.obj("main-stack").set_visible_child_name("spinner-page")
+        spinner = Adw.SpinnerPaintable(widget=self.__obj__("cloning-status"))
+        self.__obj__("cloning-status").set_paintable(spinner)
+        self.__obj__("main-stack").set_visible_child_name("spinner-page")
 
         self.dialog.set_can_close(False)
-        failableAsyncJob(self.cloneDomain, [], onFail, onDone)
+        failableAsyncJob(self.__cloneDomain__, [], onFail, onDone)
 
-    def onStackChanged(self, *_):
-        # XML preview is not really possible
-        self.setControlButtonStates()
-
-    def obj(self, name: str):
+    def __obj__(self, name: str):
         o = self.builder.get_object(name)
         if o is None:
             raise NotImplementedError(f"Object { name } could not be found!")
         return o
 
-    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id):
+    def __onConnectionEvent__(self, conn, obj, type_id, event_id, detail_id):
         if type_id == CALLBACK_TYPE_CONNECTION_GENERIC:
             if event_id in [CONNECTION_EVENT_DISCONNECTED, CONNECTION_EVENT_DELETED]:
                 self.dialog.close()
@@ -246,5 +249,5 @@ class CloneDomainDialog:
             if event_id == libvirt.VIR_DOMAIN_EVENT_DEFINED:
                 self.dialog.close()
 
-    def onDialogClosed(self, *_):
-        self.domain.unregisterCallback(self.onConnectionEvent)
+    def __onDialogClosed__(self, *_):
+        self.domain.unregisterCallback(self.__onConnectionEvent__)

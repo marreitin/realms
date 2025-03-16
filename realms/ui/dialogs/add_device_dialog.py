@@ -29,6 +29,7 @@ from realms.ui.window_reference import WindowReference
 
 
 class AddDeviceDialog(DomainPageHost):
+    """Dialog to add a virtual device to a domain."""
     # List of device names
     device_names = [
         "",
@@ -101,7 +102,7 @@ class AddDeviceDialog(DomainPageHost):
         self.device_tree = None
         self.device_settings = None
 
-        self.domain.registerCallback(self.onConnectionEvent)
+        self.domain.registerCallback(self.__onConnectionEvent__)
 
         # Create a Builder
         self.builder = Gtk.Builder.new_from_resource(
@@ -109,53 +110,56 @@ class AddDeviceDialog(DomainPageHost):
         )
 
         # Obtain and show the main window
-        self.dialog = self.obj("main-dialog")
-        self.dialog.connect("closed", self.onDialogClosed)
+        self.dialog = self.__obj__("main-dialog")
+        self.dialog.connect("closed", self.__onDialogClosed__)
         self.dialog.present(self.window)
 
         group = Adw.PreferencesGroup()
-        self.obj("edit-box").append(group)
+        self.__obj__("edit-box").append(group)
         self.type_row = Adw.ComboRow(
             title="Device type",
             model=Gtk.StringList(strings=self.descriptive_titles),
         )
         group.add(self.type_row)
-        self.type_row.connect("notify::selected", self.onTypeSelected)
+        self.type_row.connect("notify::selected", self.__onTypeSelected__)
 
-        self.obj("btn-finish").connect("clicked", self.onApplyClicked)
+        self.__obj__("btn-finish").connect("clicked", self.__onApplyClicked__)
 
         self.xml_view = xmlSourceView()
-        self.obj("xml-box").append(self.xml_view)
+        self.__obj__("xml-box").append(self.xml_view)
 
-        self.obj("main-stack").connect("notify::visible-child", self.onStackChanged)
+        self.__obj__("main-stack").connect("notify::visible-child", self.__onStackChanged__)
 
-    def onTypeSelected(self, *args):
+    def __onTypeSelected__(self, *args):
+        """A device type was selected."""
         if self.type_row.get_selected() == 0:
+            # Empty default was chosen.
             if self.device_settings is not None:
-                self.obj("edit-box").remove(self.device_settings.prefs_page)
-            self.obj("btn-finish").set_sensitive(False)
+                self.__obj__("edit-box").remove(self.device_settings.prefs_page)
+            self.__obj__("btn-finish").set_sensitive(False)
             return
 
-        self.obj("btn-finish").set_sensitive(True)
+        self.__obj__("btn-finish").set_sensitive(True)
         tag = self.device_names[self.type_row.get_selected()]
         self.device_tree = ET.Element(tag)
 
-        self.updateDevicePage()
+        self.__updateDevicePage__()
 
-    def updateDevicePage(self):
+    def __updateDevicePage__(self):
+        """Show the correct device page."""
         if self.device_settings is not None:
-            self.obj("edit-box").remove(self.device_settings.prefs_page)
+            self.__obj__("edit-box").remove(self.device_settings.prefs_page)
 
         tag = self.device_tree.tag
         page_type = tagToPage(tag)
 
         self.device_settings = page_type(self, self.device_tree, True)
         self.device_settings.buildFull()
-        self.obj("edit-box").append(self.device_settings.prefs_page)
+        self.__obj__("edit-box").append(self.device_settings.prefs_page)
 
-    def onApplyClicked(self, btn):
+    def __onApplyClicked__(self, _):
         try:
-            if self.obj("main-stack").get_visible_child_name() == "xml":
+            if self.__obj__("main-stack").get_visible_child_name() == "xml":
                 xml = sourceViewGetText(self.xml_view)
                 self.device_tree = ET.fromstring(xml)
             self.device_added_cb(self.device_tree)
@@ -164,13 +168,13 @@ class AddDeviceDialog(DomainPageHost):
             traceback.print_exc()
             simpleErrorDialog("Invalid settings", str(e), self.window)
 
-    def onStackChanged(self, *args):
-        name = self.obj("main-stack").get_visible_child_name()
+    def __onStackChanged__(self, *_):
+        name = self.__obj__("main-stack").get_visible_child_name()
         if name == "settings":
             xml = sourceViewGetText(self.xml_view)
             if xml != "":
                 self.device_tree = ET.fromstring(xml)
-                self.updateDevicePage()
+                self.__updateDevicePage__()
         else:
             xml = ""
             if self.device_tree is not None:
@@ -178,13 +182,13 @@ class AddDeviceDialog(DomainPageHost):
                 xml = ET.tostring(self.device_tree, encoding="unicode")
             sourceViewSetText(self.xml_view, xml)
 
-    def obj(self, name: str):
+    def __obj__(self, name: str):
         o = self.builder.get_object(name)
         if o is None:
             raise NotImplementedError(f"Object { name } could not be found!")
         return o
 
-    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id):
+    def __onConnectionEvent__(self, conn, obj, type_id, event_id, detail_id):
         if type_id == CALLBACK_TYPE_CONNECTION_GENERIC:
             if event_id in [CONNECTION_EVENT_DISCONNECTED, CONNECTION_EVENT_DELETED]:
                 self.dialog.close()
@@ -195,8 +199,8 @@ class AddDeviceDialog(DomainPageHost):
             if event_id == libvirt.VIR_DOMAIN_EVENT_DEFINED:
                 self.dialog.close()
 
-    def onDialogClosed(self, *args):
-        self.domain.unregisterCallback(self.onConnectionEvent)
+    def __onDialogClosed__(self, *args):
+        self.domain.unregisterCallback(self.__onConnectionEvent__)
 
     # Implement DomainPageHost
     def getWindow(self):

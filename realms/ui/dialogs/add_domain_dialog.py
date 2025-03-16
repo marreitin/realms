@@ -38,7 +38,8 @@ from realms.ui.components.volume_chooser import VolumeChooser
 
 class SettingsField:
     def __init__(self, parent, settings_dict: dict):
-        raise NotImplementedError
+        self.parent = parent
+        self.settings_dict = settings_dict
 
     def getWidget(self):
         """Return the widget for this setting."""
@@ -51,7 +52,7 @@ class SettingsField:
 
 class StrRow(SettingsField):
     def __init__(self, parent, settings_dict: dict):
-        self.settings_dict = settings_dict
+        super().__init__(parent, settings_dict)
 
         self.row = Adw.EntryRow(title=self.settings_dict["name"])
 
@@ -64,7 +65,7 @@ class StrRow(SettingsField):
 
 class IntRow(SettingsField):
     def __init__(self, parent, settings_dict: dict):
-        self.settings_dict = settings_dict
+        super().__init__(parent, settings_dict)
 
         min_val = self.settings_dict["params"]["min"]
         max_val = self.settings_dict["params"]["max"]
@@ -84,7 +85,7 @@ class IntRow(SettingsField):
 
 class ListRow(SettingsField):
     def __init__(self, parent, settings_dict: dict):
-        self.settings_dict = settings_dict
+        super().__init__(parent, settings_dict)
 
         self.row = Adw.ComboRow(
             title=self.settings_dict["name"],
@@ -104,21 +105,21 @@ class ListRow(SettingsField):
 
 class DataRow(SettingsField):
     def __init__(self, parent, settings_dict: dict):
-        self.settings_dict = settings_dict
+        super().__init__(parent, settings_dict)
 
         self.row = Adw.EntryRow(title=self.settings_dict["name"])
 
-        self.row.connect("changed", self.onChanged)
+        self.row.connect("changed", self.__onChanged__)
 
-    def getWidget(self):
-        return self.row
-
-    def onChanged(self, *args):
+    def __onChanged__(self, *_):
         self.row.set_css_classes([])
         try:
             stringToBytes(self.row.get_text())
         except:
             self.row.set_css_classes(["error"])
+
+    def getWidget(self):
+        return self.row
 
     def submit(self):
         return {
@@ -128,7 +129,7 @@ class DataRow(SettingsField):
 
 class FileRow(SettingsField):
     def __init__(self, parent, settings_dict: dict):
-        self.settings_dict = settings_dict
+        super().__init__(parent, settings_dict)
 
         self.row = Adw.EntryRow(title=self.settings_dict["name"])
 
@@ -137,19 +138,21 @@ class FileRow(SettingsField):
             self.open_dialog = Gtk.FileDialog.new()
             self.open_dialog.set_title("Select a File")
 
-            browse_btn = iconButton(
+            self.browse_btn = iconButton(
                 "",
                 "inode-directory-symbolic",
-                self.onBrowseClicked,
+                self.__onBrowseClicked__,
                 css_classes=["flat"],
                 tooltip_text="Browse local paths",
             )
-            self.row.add_suffix(browse_btn)
+            self.row.add_suffix(self.browse_btn)
 
-    def onBrowseClicked(self, btn):
-        self.open_dialog.open(None, None, self.onFileDialogCB)
+    def __onBrowseClicked__(self, _):
+        self.browse_btn.set_sensitive(False)
+        self.open_dialog.open(None, None, self.__onFileDialogCB__)
 
-    def onFileDialogCB(self, dialog, result):
+    def __onFileDialogCB__(self, dialog, result):
+        self.browse_btn.set_sensitive(True)
         try:
             file = dialog.open_finish(result)
             if file is not None:
@@ -169,8 +172,7 @@ class CreateVolRow(SettingsField):
     a domain."""
 
     def __init__(self, parent, settings_dict: dict):
-        self.parent = parent
-        self.settings_dict = settings_dict
+        super().__init__(parent, settings_dict)
 
         self.row = GenericPreferencesRow()
 
@@ -201,8 +203,7 @@ class NetworkRow(SettingsField):
     a domain."""
 
     def __init__(self, parent, settings_dict: dict):
-        self.parent = parent
-        self.settings_dict = settings_dict
+        super().__init__(parent, settings_dict)
 
         self.row = NetworkChooserRow(
             self.parent.connection, lambda: None, title=self.settings_dict["name"]
@@ -221,7 +222,7 @@ class SettingsPage(Adw.NavigationPage):
     def __init__(self, parent, template_data: dict):
         super().__init__(title="fields-page")
 
-        self.parent = parent
+        self.parent: AddDomainDialog = parent
         self.template_data = template_data
         self.rows = []
 
@@ -231,9 +232,9 @@ class SettingsPage(Adw.NavigationPage):
         self.group = Adw.PreferencesGroup(title="Template settings")
         page.add(self.group)
 
-        self.buildFields()
+        self.__buildFields__()
 
-    def buildFields(self):
+    def __buildFields__(self):
         if "settings" not in self.template_data:
             return
 
@@ -280,33 +281,32 @@ class AddDomainDialog:
         self.window = window
         self.connection = connection
 
-        self.templates = []
-        self.loadTemplates()
+        self.templates = TemplateManager.listTemplatesAll()
 
         self.settings_page = None
 
-        self.connection.registerCallback(self.onConnectionEvent)
+        self.connection.registerCallback(self.__onConnectionEvent__)
 
-        self.build()
+        self.__build__()
 
-    def build(self):
+    def __build__(self):
         # Create a Builder
         self.builder = Gtk.Builder.new_from_resource(
             "/com/github/marreitin/realms/gtk/adddom.ui"
         )
 
         # Obtain and show the main window
-        self.dialog = self.obj("main-dialog")
-        self.dialog.connect("closed", self.onDialogClosed)
+        self.dialog = self.__obj__("main-dialog")
+        self.dialog.connect("closed", self.__onDialogClosed__)
         self.dialog.present(self.window)
 
         group = Adw.PreferencesGroup()
-        self.obj("status-page").set_child(group)
+        self.__obj__("status-page").set_child(group)
         self.template_row = Adw.ComboRow(
             title="Pick a template",
             model=Gtk.StringList(strings=[t["name"] for t in self.templates]),
         )
-        self.template_row.connect("notify::selected", self.onTemplateSelected)
+        self.template_row.connect("notify::selected", self.__onTemplateSelected__)
         group.add(self.template_row)
 
         self.template_desc_row = propertyRow("Template description")
@@ -320,43 +320,39 @@ class AddDomainDialog:
         if len(self.templates) == 0:
             self.template_desc_row.set_subtitle("No templates found")
 
-        self.obj("btn-next").connect("clicked", self.onNextClicked)
-        self.obj("btn-back").connect("clicked", self.onBackClicked)
-        self.obj("btn-finish").connect("clicked", self.onApplyClicked)
+        self.__obj__("btn-next").connect("clicked", self.__onNextClicked__)
+        self.__obj__("btn-back").connect("clicked", self.__onBackClicked__)
+        self.__obj__("btn-finish").connect("clicked", self.__onApplyClicked__)
 
-        self.obj("nav-view").connect("popped", self.onNavPopped)
+        self.__obj__("nav-view").connect("popped", self.__onNavPopped__)
 
         self.xml_view = xmlSourceView()
-        self.obj("xml-box").append(self.xml_view)
+        self.__obj__("xml-box").append(self.xml_view)
 
-        self.obj("main-stack").connect("notify::visible-child", self.onStackChanged)
+        self.__obj__("main-stack").connect("notify::visible-child", self.__onStackChanged__)
 
-        self.setControlButtonStates()
-        self.onTemplateSelected()
+        self.__setControlButtonStates__()
+        self.__onTemplateSelected__()
 
-    def loadTemplates(self):
-        """Load all templates."""
-        self.templates = TemplateManager.listTemplatesAll()
-
-    def setControlButtonStates(self):
+    def __setControlButtonStates__(self):
         """Set the control buttons in the header bar, depending
         on the current state."""
-        name = self.obj("main-stack").get_visible_child_name()
+        name = self.__obj__("main-stack").get_visible_child_name()
         if name == "guided":
             if self.settings_page is None:
-                self.obj("btn-back").set_visible(False)
-                self.obj("btn-next").set_visible(True)
-                self.obj("btn-finish").set_visible(False)
+                self.__obj__("btn-back").set_visible(False)
+                self.__obj__("btn-next").set_visible(True)
+                self.__obj__("btn-finish").set_visible(False)
             else:
-                self.obj("btn-back").set_visible(True)
-                self.obj("btn-next").set_visible(False)
-                self.obj("btn-finish").set_visible(True)
+                self.__obj__("btn-back").set_visible(True)
+                self.__obj__("btn-next").set_visible(False)
+                self.__obj__("btn-finish").set_visible(True)
         else:
-            self.obj("btn-back").set_visible(False)
-            self.obj("btn-next").set_visible(False)
-            self.obj("btn-finish").set_visible(True)
+            self.__obj__("btn-back").set_visible(False)
+            self.__obj__("btn-next").set_visible(False)
+            self.__obj__("btn-finish").set_visible(True)
 
-    def onTemplateSelected(self, *_):
+    def __onTemplateSelected__(self, *_):
         """A template was selected, show it's description."""
         if len(self.templates) == 0:
             return
@@ -367,28 +363,28 @@ class AddDomainDialog:
         else:
             self.template_desc_row.set_visible(False)
 
-    def onNextClicked(self, _):
+    def __onNextClicked__(self, _):
         """Show the settings for the selected template."""
         selected_template = self.templates[self.template_row.get_selected()]
 
         self.settings_page = SettingsPage(self, selected_template)
-        self.obj("nav-view").push(self.settings_page)
-        self.setControlButtonStates()
+        self.__obj__("nav-view").push(self.settings_page)
+        self.__setControlButtonStates__()
 
-    def onBackClicked(self, *_):
-        self.obj("nav-view").pop()
+    def __onBackClicked__(self, *_):
+        self.__obj__("nav-view").pop()
 
-    def onNavPopped(self, *_):
+    def __onNavPopped__(self, *_):
         self.settings_page = None
-        self.setControlButtonStates()
+        self.__setControlButtonStates__()
 
-    def onApplyClicked(self, _):
+    def __onApplyClicked__(self, _):
         """Either directly try to define the domain from the given XML
         when the XML editor was used, otherwise collect all settings,
         run jinja and then try to define the domain."""
         try:
             xml = ""
-            if self.obj("main-stack").get_visible_child_name() == "xml":
+            if self.__obj__("main-stack").get_visible_child_name() == "xml":
                 xml = sourceViewGetText(self.xml_view)
             else:
                 variables = self.settings_page.submit()
@@ -407,20 +403,20 @@ class AddDomainDialog:
             traceback.print_exc()
             simpleErrorDialog("Invalid settings", str(e), self.window)
 
-    def onStackChanged(self, *_):
+    def __onStackChanged__(self, *_):
         # XML preview is not really possible
-        self.setControlButtonStates()
+        self.__setControlButtonStates__()
 
-    def obj(self, name: str):
+    def __obj__(self, name: str):
         o = self.builder.get_object(name)
         if o is None:
             raise NotImplementedError(f"Object { name } could not be found!")
         return o
 
-    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id):
+    def __onConnectionEvent__(self, conn, obj, type_id, event_id, detail_id):
         if type_id == CALLBACK_TYPE_CONNECTION_GENERIC:
             if event_id in [CONNECTION_EVENT_DISCONNECTED, CONNECTION_EVENT_DELETED]:
                 self.dialog.close()
 
-    def onDialogClosed(self, *args):
-        self.connection.unregisterCallback(self.onConnectionEvent)
+    def __onDialogClosed__(self, *_):
+        self.connection.unregisterCallback(self.__onConnectionEvent__)

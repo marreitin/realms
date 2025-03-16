@@ -26,11 +26,12 @@ from realms.ui.components.preference_widgets import RealmsPreferencesPage
 
 
 class AddNetDialog:
+    """Dialog to add a virtual network."""
     def __init__(self, window: Adw.ApplicationWindow, connection: Connection):
         self.window = window
         self.connection = connection
 
-        self.connection.registerCallback(self.onConnectionEvent)
+        self.connection.registerCallback(self.__onConnectionEvent__)
 
         # Create a Builder
         self.builder = Gtk.Builder.new_from_resource(
@@ -38,12 +39,12 @@ class AddNetDialog:
         )
 
         # Obtain and show the main window
-        self.dialog = self.obj("main-dialog")
-        self.dialog.connect("closed", self.onDialogClosed)
+        self.dialog = self.__obj__("main-dialog")
+        self.dialog.connect("closed", self.__onDialogClosed__)
         self.dialog.present(self.window)
 
         prefs_page = RealmsPreferencesPage(clamp=False)
-        self.obj("prefs-box").append(prefs_page)
+        self.__obj__("prefs-box").append(prefs_page)
 
         self.prefs_group = NetGeneralGroup(True, self.window, lambda *x: [], None)
         prefs_page.add(self.prefs_group)
@@ -55,16 +56,16 @@ class AddNetDialog:
         self.prefs_group.updateData(self.tree, True)
         self.ip_group.updateData(self.tree)
 
-        self.obj("btn-finish").connect("clicked", self.onApplyClicked)
+        self.__obj__("btn-finish").connect("clicked", self.__onApplyClicked__)
 
         self.xml_view = xmlSourceView()
-        self.obj("xml-box").append(self.xml_view)
+        self.__obj__("xml-box").append(self.xml_view)
 
-        self.obj("main-stack").connect("notify::visible-child", self.onStackChanged)
+        self.__obj__("main-stack").connect("notify::visible-child", self.__onStackChanged__)
 
-    def onApplyClicked(self, btn):
+    def __onApplyClicked__(self, _):
         try:
-            if self.obj("main-stack").get_visible_child_name() != "XML":
+            if self.__obj__("main-stack").get_visible_child_name() != "XML":
                 self.connection.addNetworkTree(
                     self.tree, self.prefs_group.getAutostart()
                 )
@@ -75,8 +76,8 @@ class AddNetDialog:
         except Exception as e:
             simpleErrorDialog("Invalid settings", str(e), self.window)
 
-    def onStackChanged(self, *args):
-        name = self.obj("main-stack").get_visible_child_name()
+    def __onStackChanged__(self, *_):
+        name = self.__obj__("main-stack").get_visible_child_name()
         if name == "settings":
             xml = sourceViewGetText(self.xml_view)
             self.tree = ET.fromstring(xml)
@@ -86,19 +87,20 @@ class AddNetDialog:
             xml = ET.tostring(self.tree, encoding="unicode")
             sourceViewSetText(self.xml_view, xml)
 
-    def obj(self, name: str):
+    def __obj__(self, name: str):
         o = self.builder.get_object(name)
         if o is None:
             raise NotImplementedError(f"Object { name } could not be found!")
         return o
 
-    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id):
+    def __onConnectionEvent__(self, conn, obj, type_id, event_id, detail_id):
         if type_id == CALLBACK_TYPE_CONNECTION_GENERIC:
             if event_id in [CONNECTION_EVENT_DISCONNECTED, CONNECTION_EVENT_DELETED]:
                 self.dialog.close()
 
     def getWindow(self):
+        """Return window, used for hosting the IP page."""
         return self.window
 
-    def onDialogClosed(self, *args):
-        self.connection.unregisterCallback(self.onConnectionEvent)
+    def __onDialogClosed__(self, *args):
+        self.connection.unregisterCallback(self.__onConnectionEvent__)
