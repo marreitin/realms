@@ -15,7 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 templates:
   - name: Linux (Secure boot)
-    description: x86 Linux machine with secure boot and gl-accelerated graphics with support for remote graphics.
+    description: x86 Linux machine with secure boot.
     settings:
       - name: Domain name
         type: str
@@ -40,7 +40,7 @@ templates:
         type: file
         output:
           value: iso
-      - name: Use local socket for graphics
+      - name: Use UNIX socket for graphics
         type: list
         output: 
           value: local_graphics
@@ -184,7 +184,7 @@ templates:
       </domain>
 
   - name: Linux
-    description: x86 Linux machine with gl-accelerated graphics with support for remote graphics.
+    description: x86 Linux machine.
     settings:
       - name: Domain name
         type: str
@@ -209,7 +209,7 @@ templates:
         type: file
         output:
           value: iso
-      - name: Use local socket for graphics
+      - name: Use UNIX socket for graphics
         type: list
         output: 
           value: local_graphics
@@ -347,7 +347,7 @@ templates:
       </domain>
 
   - name: Linux (existing)
-    description: x86 Linux machine from existing disk.
+    description: x86 Linux machine bootstrapped from existing image.
     settings:
       - name: Domain name
         type: str
@@ -368,7 +368,7 @@ templates:
         type: data
         output:
           value: memory
-      - name: Use local socket for graphics
+      - name: Use UNIX socket for graphics
         type: list
         output: 
           value: local_graphics
