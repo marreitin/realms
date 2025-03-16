@@ -34,10 +34,11 @@ class VolumesGroup(Adw.PreferencesGroup):
         self.pool = pool
         self.show_apply_cb = show_apply_cb
         self.window_ref = window_ref
+        self.vol_refresh_btn = None
 
         self.rows = []
 
-        GLib.idle_add(lambda *x: self.build())
+        self.build()
 
     def build(self):
         self.set_title("Volumes")
@@ -52,14 +53,14 @@ class VolumesGroup(Adw.PreferencesGroup):
         )
         box.append(add_vol_btn)
 
-        vol_refresh_btn = iconButton(
+        self.vol_refresh_btn = iconButton(
             "",
             "update-symbolic",
             self.onRefreshClicked,
             css_classes=["flat"],
             tooltip_text="Refresh Volume List",
         )
-        box.append(vol_refresh_btn)
+        box.append(self.vol_refresh_btn)
 
         self.set_header_suffix(box)
 
@@ -79,5 +80,9 @@ class VolumesGroup(Adw.PreferencesGroup):
                 row = PoolVolumeRow(vol, self.window_ref)
                 self.add(row)
                 self.rows.append(row)
+
+            self.vol_refresh_btn.set_sensitive(True)
+
+        self.vol_refresh_btn.set_sensitive(False)
 
         self.pool.listVolumes(finish, refresh=refresh)

@@ -16,6 +16,7 @@
 from gi.repository import Adw, Gtk
 
 from realms.helpers import asyncJob, bytesToString, failableAsyncJob, stringToBytes
+from realms.helpers.async_jobs import ResultWrapper
 from realms.libvirt_wrap import Volume
 from realms.ui.components import ActionOption, selectDialog
 
@@ -142,12 +143,16 @@ class PoolVolumeRow(Adw.ExpanderRow):
     def onDeleteClicked(self, btn):
         """Delete this volume."""
 
+        def finish(res: ResultWrapper):
+            if not res.failed:
+                self.window_ref.window.pushToastText("Volume was deleted")
+
         def delete():
             failableAsyncJob(
                 self.volume.delete,
                 [],
                 lambda e: self.window_ref.window.pushToastText(str(e)),
-                lambda r: self.window_ref.window.pushToastText("Volume was deleted"),
+                finish,
             )
 
         dialog = selectDialog(
