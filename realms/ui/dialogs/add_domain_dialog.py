@@ -234,6 +234,9 @@ class SettingsPage(Adw.NavigationPage):
         self.buildFields()
 
     def buildFields(self):
+        if "settings" not in self.template_data:
+            return
+
         settings = self.template_data["settings"]
         for s in settings:
             row = None

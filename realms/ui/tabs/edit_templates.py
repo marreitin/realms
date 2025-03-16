@@ -47,6 +47,10 @@ class TemplateFileRow(Adw.ExpanderRow):
             self.__set_status__(False, "File doesn't exist")
             return
 
+        if not self.file.is_valid:
+            self.__set_status__(False, self.file.invalid_error)
+            return
+
         try:
             for t in TemplateManager.listTemplatesInFile(self.file):
                 name = t["name"]
@@ -109,7 +113,7 @@ class EditTemplatesTab(BaseDetailsTab):
         self.title_widget = Adw.WindowTitle(title="Templates")
 
         self.update_btn = iconButton(
-            "", "update-symbolic", self.__update__, tooltip_text="Scan again"
+            "", "update-symbolic", self.__update__, tooltip_text="Refresh"
         )
 
         self.toolbar_view = Adw.ToolbarView(hexpand=True, vexpand=True)

@@ -32,21 +32,55 @@ class TemplateFile:
         self.exists = exists
         self.is_default = is_default
 
+        self.is_valid = True
+        self.invalid_error = None
+        self.__validate__()
+
     def getName(self) -> str:
+        """Retrieve the display name for this file.
+
+        Returns:
+            str: Name
+        """
         if self.is_default:
             return path.basename(self.path)
         return self.path
 
+    def __validate__(self):
+        try:
+            for t in TemplateManager.listTemplatesInFile(self):
+                if "name" not in t:
+                    raise ValueError("Template is missing a name")
+                if "template" not in t:
+                    raise ValueError("Template is missing a template")
+
+                self.__validate_settings__(t)
+
+        except ValueError as e:
+            self.is_valid = False
+            self.invalid_error = f"Template error: { e }"
+        except Exception as e:
+            self.is_valid = False
+            self.invalid_error = f"Template file error: { e }"
+
+    def __validate_settings__(self, t: dict):
+        if "settings" not in t:
+            return
+
+        for s in t["settings"]:
+            if "name" not in s:
+                raise ValueError("Setting is missing a name")
+            if "type" not in s:
+                raise ValueError("Setting is missing a type")
+
 
 class TemplateManager:
     @classmethod
-    def listTemplateFilesCustom(
-        cls, list_nonexistent: bool = False
-    ) -> list[TemplateFile]:
+    def listTemplateFilesCustom(cls, list_invalid: bool = False) -> list[TemplateFile]:
         """List all registered paths to custom template files
 
         Args:
-            list_nonexistent (bool, optional): List files that do not exist. Defaults to False.
+            list_invalid (bool, optional): List files that do not exist or are not valid. Defaults to False.
 
         Returns:
             list[TemplateFile]: Return list of templates
@@ -59,8 +93,8 @@ class TemplateManager:
             TemplateFile(p, path.exists(p), False) for p in template_paths
         ]
 
-        if not list_nonexistent:
-            template_files = filter(lambda t: t.exists, template_files)
+        if not list_invalid:
+            template_files = filter(lambda t: t.exists and t.is_valid, template_files)
 
         return template_files
 
@@ -97,6 +131,9 @@ class TemplateManager:
         """
         if not file.exists:
             raise ValueError("File doesn't exist")
+
+        if not file.is_valid:
+            raise ValueError("File is marked invalid")
 
         templates = []
         with open(file.path, "r") as f:
