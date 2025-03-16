@@ -15,17 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """Entrypoint for realms"""
 
-import gi
-
-gi.require_version("Gtk", "4.0")
-gi.require_version("Adw", "1")
-gi.require_version("Gio", "2.0")
-gi.require_version("GLib", "2.0")
-gi.require_version("GtkSource", "5")
-gi.require_version("LibvirtGLib", "1.0")
-gi.require_version("GtkSource", "5")
-
-from gi.repository import Adw, Gio, LibvirtGLib
+from gi.repository import Adw, Gio, GLib, LibvirtGLib
 
 from realms.ui.main_window import MainWindow
 
@@ -82,7 +72,7 @@ class MainApp(Adw.Application):
         conns = Settings.get("connections")
         if conns is not None:
             for conn in conns:
-                self.app_windows[0].addConnection(conn)
+                GLib.idle_add(self.app_windows[0].addConnection, conn)
         if conns is None or len(conns) == 0:
             self.app_windows[0].nav_view.set_show_sidebar(False)
 

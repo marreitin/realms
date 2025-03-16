@@ -21,6 +21,15 @@ import signal
 import locale
 import gettext
 
+import gi
+gi.require_version("Gtk", "4.0")
+gi.require_version("Adw", "1")
+gi.require_version("Gio", "2.0")
+gi.require_version("GLib", "2.0")
+gi.require_version("GtkSource", "5")
+gi.require_version("LibvirtGLib", "1.0")
+gi.require_version("GtkSource", "5")
+
 VERSION = '@VERSION@'
 pkgdatadir = '@pkgdatadir@'
 localedir = '@localedir@'
@@ -32,8 +41,6 @@ locale.textdomain('realms')
 gettext.install('realms', localedir)
 
 if __name__ == '__main__':
-    import gi
-
     from gi.repository import Gio, Gtk, Gdk
     resource = Gio.Resource.load(os.path.join(pkgdatadir, 'realms.gresource'))
     resource._register()
