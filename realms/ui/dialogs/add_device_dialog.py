@@ -30,6 +30,7 @@ from realms.ui.window_reference import WindowReference
 
 class AddDeviceDialog(DomainPageHost):
     """Dialog to add a virtual device to a domain."""
+
     # List of device names
     device_names = [
         "",
@@ -128,7 +129,9 @@ class AddDeviceDialog(DomainPageHost):
         self.xml_view = xmlSourceView()
         self.__obj__("xml-box").append(self.xml_view)
 
-        self.__obj__("main-stack").connect("notify::visible-child", self.__onStackChanged__)
+        self.__obj__("main-stack").connect(
+            "notify::visible-child", self.__onStackChanged__
+        )
 
     def __onTypeSelected__(self, *args):
         """A device type was selected."""

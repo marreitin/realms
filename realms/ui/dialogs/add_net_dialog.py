@@ -27,6 +27,7 @@ from realms.ui.components.preference_widgets import RealmsPreferencesPage
 
 class AddNetDialog:
     """Dialog to add a virtual network."""
+
     def __init__(self, window: Adw.ApplicationWindow, connection: Connection):
         self.window = window
         self.connection = connection
@@ -61,7 +62,9 @@ class AddNetDialog:
         self.xml_view = xmlSourceView()
         self.__obj__("xml-box").append(self.xml_view)
 
-        self.__obj__("main-stack").connect("notify::visible-child", self.__onStackChanged__)
+        self.__obj__("main-stack").connect(
+            "notify::visible-child", self.__onStackChanged__
+        )
 
     def __onApplyClicked__(self, _):
         try:

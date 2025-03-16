@@ -329,7 +329,9 @@ class AddDomainDialog:
         self.xml_view = xmlSourceView()
         self.__obj__("xml-box").append(self.xml_view)
 
-        self.__obj__("main-stack").connect("notify::visible-child", self.__onStackChanged__)
+        self.__obj__("main-stack").connect(
+            "notify::visible-child", self.__onStackChanged__
+        )
 
         self.__setControlButtonStates__()
         self.__onTemplateSelected__()

@@ -13,8 +13,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from dataclasses import dataclass
 import xml.etree.ElementTree as ET
+from dataclasses import dataclass
 
 import libvirt
 from gi.repository import Adw, Gtk
@@ -30,6 +30,7 @@ from realms.ui.components.preference_widgets import RealmsPreferencesPage
 class CloneVolumeBox(GenericPreferencesRow):
     """Simple box for a specific storage volume offering the options
     to (not) clone this volume and setting the new name."""
+
     def __init__(self, volume: Volume):
         super().__init__()
         self.volume = volume
@@ -67,12 +68,14 @@ class CloneVolumeBox(GenericPreferencesRow):
 @dataclass
 class CloneParam:
     """Cloning parameters for a volume."""
+
     volume: Volume
     new_name: str
 
 
 class CloneVolumesPage(Adw.NavigationPage):
     """Navigation page that allows to choose which volumes to clone."""
+
     def __init__(self, window: Adw.ApplicationWindow, domain: Domain):
         super().__init__(title="post-actions")
 
@@ -106,6 +109,7 @@ class CloneVolumesPage(Adw.NavigationPage):
 
 class CloneDomainDialog:
     """Dialog to clone a volume."""
+
     def __init__(self, window: Adw.ApplicationWindow, domain: Domain):
         super().__init__()
 
@@ -215,6 +219,7 @@ class CloneDomainDialog:
 
     def __onApplyClicked__(self, _):
         """Handle the UI while running the cloning in the background."""
+
         def onFail(e: Exception):
             simpleErrorDialog("Invalid settings", str(e), self.window)
 

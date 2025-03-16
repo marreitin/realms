@@ -40,6 +40,7 @@ from realms.ui.components.pool.pool_permissions_box import PoolPermissionsBox
 
 class AddVolumeDialog:
     """Dialog to add a storage volume."""
+
     def __init__(
         self, window: Adw.ApplicationWindow, pool: Pool, create_cb: callable = None
     ):
