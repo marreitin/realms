@@ -41,55 +41,8 @@ class FeaturesPage(BaseDevicePage):
         self.prefs_page.add(self.general_group)
 
         self.basic_rows = [
-            ExistentialSwitchRow("pae", {}, title="Physical address extension mode"),
             ExistentialSwitchRow("acpi", {}, title="ACPI"),
             ExistentialSwitchRow("apic", {}, title="APIC"),
-            ExistentialComboRow(
-                "hap", "state", ["on", "off"], "", title="Hardware assisted paging"
-            ),
-            ExistentialSwitchRow("viridian", {}, title="Viridian"),
-            ExistentialSwitchRow(
-                "privnet", {}, title="Create private network namespace"
-            ),
-            ExistentialComboRow(
-                "pvspinlock", "state", ["on", "off"], "", title="Paravirtual spinlock"
-            ),
-            ExistentialComboRow(
-                "pmu", "state", ["on", "off"], "", title="Performance monitoring unit"
-            ),
-            ExistentialComboRow(
-                "vmport", "state", ["on", "off"], "", title="VMware IO port emulation"
-            ),
-            ExistentialSwitchRow("gic", {}, title="General interrupt controller"),
-            ExistentialComboRow(
-                "smm", "state", ["on", "off"], "", title="System management mode"
-            ),
-            ExistentialComboRow(
-                "ioapic", "driver", ["kvm", "qemu"], "", title="IO Apic"
-            ),
-            ExistentialComboRow(
-                "hpt",
-                "resizing",
-                ["enabled", "disabled", "required"],
-                "",
-                title="Hash page table",
-            ),
-            ExistentialComboRow(
-                "vmcoreinfo", "state", ["on", "off"], "", title="QEMU vmcoreinfo"
-            ),
-            ExistentialComboRow(
-                "htm", "state", ["on", "off"], "", title="Hardware transactional memory"
-            ),
-            ExistentialComboRow(
-                "nested-hv", "state", ["on", "off"], "", title="Nested virtualization"
-            ),
-            ExistentialComboRow(
-                "msrs",
-                "unknown",
-                ["ignore", "fault"],
-                "",
-                title="Model specific registers",
-            ),
             ExistentialComboRow(
                 "ccf-assist",
                 "state",
@@ -104,12 +57,19 @@ class FeaturesPage(BaseDevicePage):
                 "",
                 title="Cache flush on privilege change",
             ),
+            ExistentialSwitchRow("gic", {}, title="General interrupt controller"),
             ExistentialComboRow(
-                "sbbc",
-                "value",
-                ["broken", "workaround", "fixed"],
+                "hap", "state", ["on", "off"], "", title="Hardware assisted paging"
+            ),
+            ExistentialComboRow(
+                "hpt",
+                "resizing",
+                ["enabled", "disabled", "required"],
                 "",
-                title="Speculation barrier bounds checking",
+                title="Hash page table",
+            ),
+            ExistentialComboRow(
+                "htm", "state", ["on", "off"], "", title="Hardware transactional memory"
             ),
             ExistentialComboRow(
                 "ibs",
@@ -119,6 +79,32 @@ class FeaturesPage(BaseDevicePage):
                 title="Indirect branch speculation",
             ),
             ExistentialComboRow(
+                "ioapic", "driver", ["kvm", "qemu"], "", title="IO Apic"
+            ),
+            ExistentialComboRow(
+                "msrs",
+                "unknown",
+                ["ignore", "fault"],
+                "",
+                title="Model specific registers",
+            ),
+            ExistentialComboRow(
+                "nested-hv", "state", ["on", "off"], "", title="Nested virtualization"
+            ),
+            ExistentialSwitchRow("pae", {}, title="Physical address extension mode"),
+            ExistentialSwitchRow(
+                "privnet", {}, title="Create private network namespace"
+            ),
+            ExistentialComboRow(
+                "pvspinlock", "state", ["on", "off"], "", title="Paravirtual spinlock"
+            ),
+            ExistentialComboRow(
+                "pmu", "state", ["on", "off"], "", title="Performance monitoring unit"
+            ),
+            ExistentialComboRow(
+                "ps2", "state", ["on", "off"], "", title="Emulate PS/2 controller"
+            ),
+            ExistentialComboRow(
                 "async-teardown",
                 "enabled",
                 ["yes", "no"],
@@ -126,12 +112,28 @@ class FeaturesPage(BaseDevicePage):
                 title="QEMU asynchronous teardown",
             ),
             ExistentialComboRow(
+                "vmcoreinfo", "state", ["on", "off"], "", title="QEMU vmcoreinfo"
+            ),
+            ExistentialComboRow(
                 "ras", "enabled", ["yes", "no"], "", title="Report host memory errors"
             ),
             ExistentialComboRow(
-                "ps2", "state", ["on", "off"], "", title="Emulate PS/2 controller"
+                "sbbc",
+                "value",
+                ["broken", "workaround", "fixed"],
+                "",
+                title="Speculation barrier bounds checking",
+            ),
+            ExistentialComboRow(
+                "smm", "state", ["on", "off"], "", title="System management mode"
+            ),
+            ExistentialSwitchRow("viridian", {}, title="Viridian"),
+            ExistentialComboRow(
+                "vmport", "state", ["on", "off"], "", title="VMware IO port emulation"
             ),
         ]
+
+        self.basic_rows.sort(key=lambda r: r.getWidget().get_title().lower())
 
         for row in self.basic_rows:
             self.general_group.add(row.getWidget())

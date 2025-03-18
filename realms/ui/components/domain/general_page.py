@@ -57,19 +57,12 @@ class GeneralPage(BaseDevicePage):
 
         self.general_group.add(deleteRow(self.parent.onDeleteClicked))
 
-        hypervisor_group = Adw.PreferencesGroup(
-            title="General domain options",
-            description="Available options depend on the host",
-        )
+        hypervisor_group = Adw.PreferencesGroup(title="General domain options")
         self.prefs_page.add(hypervisor_group)
 
         self.driver_caps = self.parent.domain.connection.getDriverCapabilities()
 
-        self.type_row = BindableComboRow(
-            self.driver_caps.os_types,
-            title="OS Type",
-            subtitle="How the domain is run, i.e. full virtualization",
-        )
+        self.type_row = BindableComboRow(self.driver_caps.os_types, title="OS Type")
         hypervisor_group.add(self.type_row)
 
         os_type = self.xml_tree.find("os").find("type")
@@ -104,9 +97,7 @@ class GeneralPage(BaseDevicePage):
         self.emulator_row.set_subtitle(getETText(emulator))
         hypervisor_group.add(self.emulator_row)
 
-        events_group = Adw.PreferencesGroup(
-            title="Events", description="Choose automatic action on domain event"
-        )
+        events_group = Adw.PreferencesGroup(title="Events")
         self.prefs_page.add(events_group)
 
         self.on_poweroff_row = BindableComboRow(

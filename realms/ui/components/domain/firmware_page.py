@@ -132,10 +132,7 @@ class FirmwarePage(BaseDevicePage):
         domain_caps = self.parent.domain.connection.getDomainCapabilities()
 
         self.firmware_row = BindableComboRow(
-            domain_caps.os["firmware"],
-            "",
-            title="Firmware template",
-            subtitle="Select firmware template to use",
+            domain_caps.os["firmware"], "", title="Firmware template"
         )
         os = self.xml_tree.find("os")
         prefs_group.add(self.firmware_row)
@@ -158,9 +155,7 @@ class FirmwarePage(BaseDevicePage):
 
         if self.xml_tree.find(".//boot") is None:
             prefs_group.add(
-                warningLabelRow(
-                    "You have not defined any bootable devices", "error", margin=12
-                )
+                warningLabelRow("No bootable devices defined", "error", margin=12)
             )
 
         self.features_group = Adw.PreferencesGroup(title="Firmware features")
