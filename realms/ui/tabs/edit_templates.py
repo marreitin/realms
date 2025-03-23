@@ -24,7 +24,7 @@ from .base_details import *
 
 class TemplateFileRow(Adw.ExpanderRow):
     def __init__(self, parent, file: TemplateFile):
-        super().__init__(title=file.getName())
+        super().__init__(title=file.getName(), title_lines=1, subtitle_lines=1)
 
         self.parent = parent
         self.file = file

@@ -48,7 +48,12 @@ class TemplateFile:
 
     def __validate__(self):
         try:
-            for t in TemplateManager.listTemplatesInFile(self):
+            templates = TemplateManager.listTemplatesInFile(self)
+
+            if len(templates) == 0:
+                raise ValueError("No templates found")
+
+            for t in templates:
                 if "name" not in t:
                     raise ValueError("Template is missing a name")
                 if "template" not in t:
