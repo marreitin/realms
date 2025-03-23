@@ -59,7 +59,10 @@ class PoolVolumeRow(Adw.ExpanderRow):
         )
         self.add_suffix(self.usage_progress)
 
-        self.capacity_row = Adw.EntryRow(title="Capacity", show_apply_button=True)
+        self.capacity_row = Adw.EntryRow(title="Capacity", show_apply_button=False)
+        self.capacity_row.connect(
+            "changed", lambda *_: self.capacity_row.set_show_apply_button(True)
+        )
         self.capacity_row.connect("apply", self.__applyCapacityChange__)
         self.add_row(self.capacity_row)
 
@@ -104,6 +107,8 @@ class PoolVolumeRow(Adw.ExpanderRow):
         self.__loadUsageStats__()
 
     def __loadUsageStats__(self):
+        """Show the usage of the volume."""
+
         def loadStats():
             capacity = self.volume.getCapacity()
             allocated = self.volume.getAllocation()
@@ -120,6 +125,7 @@ class PoolVolumeRow(Adw.ExpanderRow):
             self.usage_progress.set_text(res[1])
 
             self.capacity_row.set_text(bytesToString(res[2]))
+            self.capacity_row.set_show_apply_button(False)
 
         asyncJob(loadStats, [], showStats)
 
@@ -136,7 +142,6 @@ class PoolVolumeRow(Adw.ExpanderRow):
 
         self.capacity_row.set_text(bytesToString(self.volume.getCapacity()))
         self.capacity_row.set_show_apply_button(False)
-        self.capacity_row.set_show_apply_button(True)
 
         self.__loadUsageStats__()
 
