@@ -375,7 +375,11 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
         # can be applied regularly.
         domain_is_active = self.domain.isActive()
 
-        for device_xml in self.xml_tree.find("devices"):
+        device_trees = self.xml_tree.find("devices")
+
+        self.devices_listbox.set_visible(len(device_trees) > 0)
+
+        for device_xml in device_trees:
             page_type = tagToPage(device_xml.tag)
             if page_type is None:
                 continue
