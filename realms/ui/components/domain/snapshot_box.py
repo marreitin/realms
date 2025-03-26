@@ -37,6 +37,7 @@ class SnapshotRow(Adw.ActionRow):
         self.parent = parent
         self.domain = domain
         self.snapshot = snapshot
+        self.created_timestamp = 0
         self.set_title(self.snapshot.getName())
 
         self.is_current_icon = Gtk.Image.new_from_icon_name("play-symbolic")
@@ -50,7 +51,7 @@ class SnapshotRow(Adw.ActionRow):
             iconButton(
                 "",
                 "step-back-symbolic",
-                self.onPlayClicked,
+                self.__onPlayClicked__,
                 css_classes=["flat"],
                 tooltip_text="Revert to snapshot",
             )
@@ -60,7 +61,7 @@ class SnapshotRow(Adw.ActionRow):
             iconButton(
                 "",
                 "folder-code-legacy-symbolic",
-                self.onXMLClicked,
+                self.__onXMLClicked__,
                 css_classes=["flat"],
                 tooltip_text="Inspect xml",
             )
@@ -70,26 +71,26 @@ class SnapshotRow(Adw.ActionRow):
             iconButton(
                 "",
                 "user-trash-symbolic",
-                self.onDeleteClicked,
+                self.__onDeleteClicked__,
                 css_classes=["flat"],
                 tooltip_text="Delete",
             )
         )
 
-        self.update()
+        self.__update__()
 
-    def update(self):
+    def __update__(self):
         self.is_current_icon.set_visible(self.snapshot.isCurrent())
 
         xml = self.snapshot.getXMLDesc()
         self.xml_tree = ET.fromstring(xml)
 
-        created = self.xml_tree.find("creationTime")
-        self.created_label.set_label(prettyTime(getETText(created)))
+        self.created_timestamp = int(getETText(self.xml_tree.find("creationTime")))
+        self.created_label.set_label(prettyTime(self.created_timestamp))
 
         self.set_subtitle(getETText(self.xml_tree.find("state")))
 
-    def onPlayClicked(self, btn):
+    def __onPlayClicked__(self, btn):
         def onRevert():
             btn.set_sensitive(False)
 
@@ -118,10 +119,10 @@ class SnapshotRow(Adw.ActionRow):
         )
         dialog.present(self.parent.window_ref.window)
 
-    def onXMLClicked(self, btn):
+    def __onXMLClicked__(self, btn):
         InspectSnapshotDialog(self.parent.window_ref.window, self.domain, self.snapshot)
 
-    def onDeleteClicked(self, btn):
+    def __onDeleteClicked__(self, btn):
         def onDeleteSelected():
             self.set_sensitive(False)
             self.parent.onDeleteSnapshot(self)
@@ -148,11 +149,11 @@ class SnapshotBox(Gtk.Box):
         self.window_ref = window_ref
         self.snapshot_rows = []
 
-        self.build()
+        self.__build__()
 
-        self.domain.registerCallback(self.onConnectionEvent)
+        self.domain.registerCallback(self.__onConnectionEvent__)
 
-    def build(self):
+    def __build__(self):
         self.snapshot_overlay = Gtk.Overlay(vexpand=True)
         self.append(self.snapshot_overlay)
 
@@ -163,7 +164,7 @@ class SnapshotBox(Gtk.Box):
             child=iconButton(
                 "Take snapshot",
                 "",
-                self.onTakeClicked,
+                self.__onTakeClicked__,
                 halign=Gtk.Align.CENTER,
                 css_classes=["pill", "suggested-action"],
             ),
@@ -179,16 +180,16 @@ class SnapshotBox(Gtk.Box):
         self.snapshot_btn = iconButton(
             "Take snapshot",
             "",
-            self.onTakeClicked,
+            self.__onTakeClicked__,
             halign=Gtk.Align.CENTER,
             css_classes=["pill", "suggested-action"],
             margin_top=12,
         )
         self.group.add(self.snapshot_btn)
 
-        self.updateData()
+        self.__updateData__()
 
-    def updateData(self):
+    def __updateData__(self):
         for row in self.snapshot_rows:
             self.group.remove(row)
         self.snapshot_rows.clear()
@@ -199,8 +200,16 @@ class SnapshotBox(Gtk.Box):
 
                 self.prefs_page.set_visible(True)
                 self.no_snapshots_status.set_visible(False)
+
+                # Sort rows by creation time.
                 for s in vir_snapshots:
-                    self.addSnapshot(s)
+                    row = SnapshotRow(self, self.domain, s)
+                    self.snapshot_rows.append(row)
+
+                self.snapshot_rows.sort(key=lambda s: s.created_timestamp)
+
+                for row in self.snapshot_rows:
+                    self.group.add(row)
 
                 self.group.add(self.snapshot_btn)
             else:
@@ -209,7 +218,7 @@ class SnapshotBox(Gtk.Box):
 
         self.domain.listSnapshots(addSnapshots)
 
-    def onDeleteSnapshot(self, row: SnapshotRow):
+    def __onDeleteSnapshot__(self, row: SnapshotRow):
         # Handling the deleted row is not necessary anymore, since the
         # event is being broadcasted by the domain.
         failableAsyncJob(
@@ -219,21 +228,15 @@ class SnapshotBox(Gtk.Box):
             lambda *x: None,
         )
 
-    def addSnapshot(self, vir_snapshot: libvirt.virDomainSnapshot):
-        row = SnapshotRow(self, self.domain, vir_snapshot)
-        self.group.add(row)
-        self.snapshot_rows.append(row)
-
-    def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id):
+    def __onConnectionEvent__(self, conn, obj, type_id, event_id, _):
         if type_id == CALLBACK_TYPE_DOMAIN_GENERIC:
             if event_id in [DOMAIN_EVENT_SNAPSHOT_TAKEN, DOMAIN_EVENT_SNAPSHOT_DELETED]:
-                self.updateData()
+                self.__updateData__()
         elif type_id == CALLBACK_TYPE_DOMAIN_LIFECYCLE:
-            if event_id == libvirt.VIR_DOMAIN_EVENT_DEFINED:
-                self.updateData()
+            self.__updateData__()
 
-    def onTakeClicked(self, *args):
+    def __onTakeClicked__(self, *args):
         TakeSnapshotDialog(self.window_ref.window, self.domain)
 
     def end(self):
-        self.domain.unregisterCallback(self.onConnectionEvent)
+        self.domain.unregisterCallback(self.__onConnectionEvent__)
