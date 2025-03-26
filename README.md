@@ -1,11 +1,9 @@
 # Realms
 
-![Screenshot](screenshot.png)
-
 **Realms** attempts to bring more of libvirt's features to the GNOME desktop.
 
 > [!CAUTION]
-> Absolutely nothing is stable yet. Use it at your own risk.
+> While trying to handle libvirt-XML rather conservatively, accidental changes may happen.
 
 ## Installation
 
@@ -19,5 +17,7 @@
 ## Flatpak
 
 ```sh
-flatpak run org.flatpak.Builder --install ~/Projects/builddir com.github.marreitin.realms.yaml --user --install-deps-from=flathub repo=~/Projects/repo  --force-clean && flatpak run com.github.marreitin.realms
+flatpak run org.flatpak.Builder --install ~/Projects/builddir com.github.marreitin.realms.yaml --user --install-deps-from=gnome-nightly repo=~/Projects/repo  --force-clean && flatpak run com.github.marreitin.realms
 ```
+
+>The gnome-nightly flatpak repo has to be set up.
