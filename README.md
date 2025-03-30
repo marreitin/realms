@@ -2,7 +2,7 @@
 
 **Realms** attempts to bring more of libvirt's features to the GNOME desktop.
 
-> [!INFO]
+> [!CAUTION]
 > While trying to handle libvirt-XML rather conservatively, accidental changes may happen.
 
 ## Local Installation
