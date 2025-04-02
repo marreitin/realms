@@ -318,10 +318,16 @@ modules:
           # Patch to switch the installation prefix to /app
           - cd rdw4 && sed -i '/--library=rdw4/i\ \ \ \ \ \ \ \ -L/app/lib \\' Makefile
           - cd rdw4 && sed -i 's|$(PREFIX)|/app|g'  Makefile
+          - cd rdw4 && sed -i 's|$(LIB)|lib|g'  Makefile
+          - cd rdw4 && sed -i '18d' Makefile
+          - cd rdw4 && sed -i '/--library=rdw4/i\ \ \ \ \ \ \ \ -L/app/lib64 \\' Makefile
           - cd rdw4 && make install
 
-          - cd rdw4-rdp && sed -i '28d' Makefile
+          - cd rdw4-rdp && sed -i '27d' Makefile
+          - cd rdw4-rdp && sed -i '27d' Makefile
           - cd rdw4-rdp && sed -i 's|$(PREFIX)|/app|g'  Makefile
+          - cd rdw4-rdp && sed -i 's|$(LIB)|lib|g'  Makefile
+          - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -L/app/lib64 \\' Makefile
           - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/app/include/rdw4 \\' Makefile
           - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/app/include/freerdp2 \\' Makefile
           - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/app/include/winpr2 \\' Makefile
@@ -336,8 +342,11 @@ modules:
           - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/usr/lib/x86_64-linux-gnu/graphene-1.0/include \\' Makefile
           - cd rdw4-rdp && PKG_CONFIG_PATH=/app/lib64/pkgconfig:$PKG_CONFIG_PATH make install
 
-          - cd rdw4-vnc && sed -i '28d' Makefile
+          - cd rdw4-vnc && sed -i '27d' Makefile
+          - cd rdw4-vnc && sed -i '27d' Makefile
           - cd rdw4-vnc && sed -i 's|$(PREFIX)|/app|g'  Makefile
+          - cd rdw4-vnc && sed -i 's|$(LIB)|/lib|g'  Makefile
+          - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -L/app/lib64 \\' Makefile
           - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/app/include/rdw4 \\' Makefile
           - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/app/include/freerdp2 \\' Makefile
           - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/app/include/winpr2 \\' Makefile
@@ -352,8 +361,11 @@ modules:
           - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/usr/lib/x86_64-linux-gnu/graphene-1.0/include \\' Makefile
           - cd rdw4-vnc && PKG_CONFIG_PATH=/app/lib64/pkgconfig:$PKG_CONFIG_PATH make install
 
+          - cd rdw4-spice && sed -i '27d' Makefile
+          - cd rdw4-spice && sed -i '27d' Makefile
           - cd rdw4-spice && sed -i 's|$(PREFIX)|/app|g'  Makefile
-          - cd rdw4-spice && sed -i '28d' Makefile
+          - cd rdw4-spice && sed -i 's|$(LIB)|/lib|g'  Makefile
+          - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -L/app/lib64 \\' Makefile
           - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/app/include/rdw4 \\' Makefile
           - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/app/include/freerdp2 \\' Makefile
           - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/app/include/winpr2 \\' Makefile
