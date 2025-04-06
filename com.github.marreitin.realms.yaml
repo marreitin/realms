@@ -21,11 +21,11 @@ finish-args:
   - --filesystem=/run/libvirt
   - --filesystem=xdg-run/libvirt
   - --filesystem=/var/lib/libvirt
-sdk-extensions:
-  - org.freedesktop.Sdk.Extension.rust-stable:
-      version: "24.08"
-build-options:
-  append-path: '/usr/lib/sdk/rust-stable/bin'
+# sdk-extensions:
+#   - org.freedesktop.Sdk.Extension.rust-stable:
+#       version: "24.08"
+# build-options:
+#   append-path: '/usr/lib/sdk/rust-stable/bin'
 
 modules:
   - name: realms
