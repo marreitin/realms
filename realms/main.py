@@ -25,8 +25,9 @@ from .helpers.settings import Settings
 class MainApp(Adw.Application):
     """Main app instance."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, version, **kwargs):
         super().__init__(**kwargs)
+        self.version = version
         self.app_windows = []
         self.connect("activate", self.onActivate)
 
@@ -76,17 +77,14 @@ class MainApp(Adw.Application):
         if conns is None or len(conns) == 0:
             self.app_windows[0].nav_view.set_show_sidebar(False)
 
-
-def main(*_):
+# TODO: Use version
+def main(version):
     """Main function for realms."""
     Settings.prepare()
 
     app = MainApp(
         application_id="com.github.marreitin.realms",
         flags=Gio.ApplicationFlags.NON_UNIQUE,
+        version=version,
     )
     app.run()
-
-
-if __name__ == "__main__":
-    main()
