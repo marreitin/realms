@@ -312,121 +312,121 @@ modules:
                       https://www.spice-space.org/download/releases/spice-protocol-0.14.4.tar.xz
                     sha256: 04ffba610d9fd441cfc47dfaa135d70096e60b1046d2119d8db2f8ea0d17d912
 
-      - name: RDW4
-        buildsystem: simple
-        build-commands:
-          # Patch to switch the installation prefix to /app
-          - cd rdw4 && sed -i '/--library=rdw4/i\ \ \ \ \ \ \ \ -L/app/lib \\' Makefile
-          - cd rdw4 && sed -i 's|$(PREFIX)|/app|g'  Makefile
-          - cd rdw4 && sed -i 's|$(LIB)|lib|g'  Makefile
-          - cd rdw4 && sed -i '18d' Makefile
-          - cd rdw4 && sed -i '/--library=rdw4/i\ \ \ \ \ \ \ \ -L/app/lib64 \\' Makefile
-          - cd rdw4 && make install
+      # - name: RDW4
+      #   buildsystem: simple
+      #   build-commands:
+      #     # Patch to switch the installation prefix to /app
+      #     - cd rdw4 && sed -i '/--library=rdw4/i\ \ \ \ \ \ \ \ -L/app/lib \\' Makefile
+      #     - cd rdw4 && sed -i 's|$(PREFIX)|/app|g'  Makefile
+      #     - cd rdw4 && sed -i 's|$(LIB)|lib|g'  Makefile
+      #     - cd rdw4 && sed -i '18d' Makefile
+      #     - cd rdw4 && sed -i '/--library=rdw4/i\ \ \ \ \ \ \ \ -L/app/lib64 \\' Makefile
+      #     - cd rdw4 && make install
 
-          - cd rdw4-rdp && sed -i '27d' Makefile
-          - cd rdw4-rdp && sed -i '27d' Makefile
-          - cd rdw4-rdp && sed -i 's|$(PREFIX)|/app|g'  Makefile
-          - cd rdw4-rdp && sed -i 's|$(LIB)|lib|g'  Makefile
-          - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -L/app/lib64 \\' Makefile
-          - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/app/include/rdw4 \\' Makefile
-          - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/app/include/freerdp2 \\' Makefile
-          - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/app/include/winpr2 \\' Makefile
-          - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/usr/include/gtk-4.0 \\' Makefile
-          - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/usr/include/cairo \\' Makefile
-          - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/usr/include/pango-1.0 \\' Makefile
-          - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/usr/include/harfbuzz \\' Makefile
-          - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/usr/include/gdk-pixbuf-2.0 \\' Makefile
-          - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/usr/include/graphene-1.0 \\' Makefile
-          - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/usr/include/glib-2.0 \\' Makefile
-          - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/usr/lib/x86_64-linux-gnu/glib-2.0/include \\' Makefile
-          - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/usr/lib/x86_64-linux-gnu/graphene-1.0/include \\' Makefile
-          - cd rdw4-rdp && PKG_CONFIG_PATH=/app/lib64/pkgconfig:$PKG_CONFIG_PATH make install
+      #     - cd rdw4-rdp && sed -i '27d' Makefile
+      #     - cd rdw4-rdp && sed -i '27d' Makefile
+      #     - cd rdw4-rdp && sed -i 's|$(PREFIX)|/app|g'  Makefile
+      #     - cd rdw4-rdp && sed -i 's|$(LIB)|lib|g'  Makefile
+      #     - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -L/app/lib64 \\' Makefile
+      #     - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/app/include/rdw4 \\' Makefile
+      #     - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/app/include/freerdp2 \\' Makefile
+      #     - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/app/include/winpr2 \\' Makefile
+      #     - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/usr/include/gtk-4.0 \\' Makefile
+      #     - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/usr/include/cairo \\' Makefile
+      #     - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/usr/include/pango-1.0 \\' Makefile
+      #     - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/usr/include/harfbuzz \\' Makefile
+      #     - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/usr/include/gdk-pixbuf-2.0 \\' Makefile
+      #     - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/usr/include/graphene-1.0 \\' Makefile
+      #     - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/usr/include/glib-2.0 \\' Makefile
+      #     - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/usr/lib/x86_64-linux-gnu/glib-2.0/include \\' Makefile
+      #     - cd rdw4-rdp && sed -i '/--library=rdw4-rdp/i\ \ \ \ \ \ \ \ -I/usr/lib/x86_64-linux-gnu/graphene-1.0/include \\' Makefile
+      #     - cd rdw4-rdp && PKG_CONFIG_PATH=/app/lib64/pkgconfig:$PKG_CONFIG_PATH make install
 
-          - cd rdw4-vnc && sed -i '27d' Makefile
-          - cd rdw4-vnc && sed -i '27d' Makefile
-          - cd rdw4-vnc && sed -i 's|$(PREFIX)|/app|g'  Makefile
-          - cd rdw4-vnc && sed -i 's|$(LIB)|/lib|g'  Makefile
-          - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -L/app/lib64 \\' Makefile
-          - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/app/include/rdw4 \\' Makefile
-          - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/app/include/freerdp2 \\' Makefile
-          - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/app/include/winpr2 \\' Makefile
-          - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/usr/include/gtk-4.0 \\' Makefile
-          - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/usr/include/cairo \\' Makefile
-          - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/usr/include/pango-1.0 \\' Makefile
-          - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/usr/include/harfbuzz \\' Makefile
-          - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/usr/include/gdk-pixbuf-2.0 \\' Makefile
-          - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/usr/include/graphene-1.0 \\' Makefile
-          - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/usr/include/glib-2.0 \\' Makefile
-          - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/usr/lib/x86_64-linux-gnu/glib-2.0/include \\' Makefile
-          - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/usr/lib/x86_64-linux-gnu/graphene-1.0/include \\' Makefile
-          - cd rdw4-vnc && PKG_CONFIG_PATH=/app/lib64/pkgconfig:$PKG_CONFIG_PATH make install
+      #     - cd rdw4-vnc && sed -i '27d' Makefile
+      #     - cd rdw4-vnc && sed -i '27d' Makefile
+      #     - cd rdw4-vnc && sed -i 's|$(PREFIX)|/app|g'  Makefile
+      #     - cd rdw4-vnc && sed -i 's|$(LIB)|/lib|g'  Makefile
+      #     - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -L/app/lib64 \\' Makefile
+      #     - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/app/include/rdw4 \\' Makefile
+      #     - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/app/include/freerdp2 \\' Makefile
+      #     - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/app/include/winpr2 \\' Makefile
+      #     - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/usr/include/gtk-4.0 \\' Makefile
+      #     - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/usr/include/cairo \\' Makefile
+      #     - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/usr/include/pango-1.0 \\' Makefile
+      #     - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/usr/include/harfbuzz \\' Makefile
+      #     - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/usr/include/gdk-pixbuf-2.0 \\' Makefile
+      #     - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/usr/include/graphene-1.0 \\' Makefile
+      #     - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/usr/include/glib-2.0 \\' Makefile
+      #     - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/usr/lib/x86_64-linux-gnu/glib-2.0/include \\' Makefile
+      #     - cd rdw4-vnc && sed -i '/--library=rdw4-vnc/i\ \ \ \ \ \ \ \ -I/usr/lib/x86_64-linux-gnu/graphene-1.0/include \\' Makefile
+      #     - cd rdw4-vnc && PKG_CONFIG_PATH=/app/lib64/pkgconfig:$PKG_CONFIG_PATH make install
 
-          - cd rdw4-spice && sed -i '27d' Makefile
-          - cd rdw4-spice && sed -i '27d' Makefile
-          - cd rdw4-spice && sed -i 's|$(PREFIX)|/app|g'  Makefile
-          - cd rdw4-spice && sed -i 's|$(LIB)|/lib|g'  Makefile
-          - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -L/app/lib64 \\' Makefile
-          - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/app/include/rdw4 \\' Makefile
-          - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/app/include/freerdp2 \\' Makefile
-          - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/app/include/winpr2 \\' Makefile
-          - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/usr/include/gtk-4.0 \\' Makefile
-          - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/usr/include/cairo \\' Makefile
-          - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/usr/include/pango-1.0 \\' Makefile
-          - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/usr/include/harfbuzz \\' Makefile
-          - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/usr/include/gdk-pixbuf-2.0 \\' Makefile
-          - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/usr/include/graphene-1.0 \\' Makefile
-          - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/usr/include/glib-2.0 \\' Makefile
-          - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/usr/lib/x86_64-linux-gnu/glib-2.0/include \\' Makefile
-          - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/usr/lib/x86_64-linux-gnu/graphene-1.0/include \\' Makefile
-          - cd rdw4-spice && PKG_CONFIG_PATH=/app/lib64/pkgconfig:$PKG_CONFIG_PATH make install
-        build-options:
-          env:
-            CARGO_HOME: /run/build/RDW4/cargo
-            LIBRARY_PATH: /app/lib/
-            LD_LIBRARY_PATH: /app/lib/
-          build-args:
-            - --share=network
-        sources:
-          - type: git
-            url: https://gitlab.gnome.org/malureau/rdw.git
-            commit: bd8658f67fc6d6831565bbcbedb7a0c44d9778c0
-        modules:
-          - name: libusb
-            config-opts:
-              - --disable-udev
-            buildsystem: simple
-            build-commands:
-              - ./configure --prefix=/usr/lib64
-            sources:
-              - type: archive
-                url: https://github.com/libusb/libusb/releases/download/v1.0.27/libusb-1.0.27.tar.bz2
-                sha256: ffaa41d741a8a3bee244ac8e54a72ea05bf2879663c098c82fc5757853441575
-          - name: freerdp
-            buildsystem: cmake-ninja
-            builddir: true
-            build-options:
-              cflags: '-Wno-incompatible-pointer-types -Wno-int-conversion'
-            config-opts:
-              - '-DCMAKE_VERBOSE_MAKEFILE=ON'
-              - '-DCMAKE_BUILD_TYPE:STRING=Release'
-              - '-DWITH_WAYLAND:BOOL=ON'
-              - '-DCHANNEL_TSMF:BOOL=OFF'
-              - '-DCHANNEL_URBDRC:BOOL=ON'
-              - '-DBUILD_TESTING:BOOL=OFF'
-              - '-DWITH_MANPAGES:BOOL=OFF'
-              - '-DWITH_GSSAPI:BOOL=OFF'
-              - '-DWITH_PCSC:BOOL=ON'
-              - '-DWITH_SWSCALE:BOOL=ON'
-              - '-DWITH_SERVER:BOOL=OFF'
-              - '-DWITH_SAMPLE:BOOL=OFF'
-              - '-DWITH_CUPS:BOOL=ON'
-              - '-DWITH_FFMPEG:BOOL=ON'
-              - '-DWITH_OSS:BOOL=OFF'
-              - '-DWITH_PULSE:BOOL=ON'
-              - '-DWITH_LIBSYSTEMD:BOOL=OFF'
-              - '-DALLOW_IN_SOURCE_BUILD=ON'
-            sources:
-              - type: archive
-                url: 'https://pub.freerdp.com/releases/freerdp-2.11.7.tar.gz'
-                sha256: 5a2d54e1ca0f1facd1632bcc94c73b9f071a80c5fdbbb3f26e79f02aaa586ca3
+      #     - cd rdw4-spice && sed -i '27d' Makefile
+      #     - cd rdw4-spice && sed -i '27d' Makefile
+      #     - cd rdw4-spice && sed -i 's|$(PREFIX)|/app|g'  Makefile
+      #     - cd rdw4-spice && sed -i 's|$(LIB)|/lib|g'  Makefile
+      #     - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -L/app/lib64 \\' Makefile
+      #     - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/app/include/rdw4 \\' Makefile
+      #     - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/app/include/freerdp2 \\' Makefile
+      #     - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/app/include/winpr2 \\' Makefile
+      #     - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/usr/include/gtk-4.0 \\' Makefile
+      #     - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/usr/include/cairo \\' Makefile
+      #     - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/usr/include/pango-1.0 \\' Makefile
+      #     - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/usr/include/harfbuzz \\' Makefile
+      #     - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/usr/include/gdk-pixbuf-2.0 \\' Makefile
+      #     - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/usr/include/graphene-1.0 \\' Makefile
+      #     - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/usr/include/glib-2.0 \\' Makefile
+      #     - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/usr/lib/x86_64-linux-gnu/glib-2.0/include \\' Makefile
+      #     - cd rdw4-spice && sed -i '/--library=rdw4-spice/i\ \ \ \ \ \ \ \ -I/usr/lib/x86_64-linux-gnu/graphene-1.0/include \\' Makefile
+      #     - cd rdw4-spice && PKG_CONFIG_PATH=/app/lib64/pkgconfig:$PKG_CONFIG_PATH make install
+      #   build-options:
+      #     env:
+      #       CARGO_HOME: /run/build/RDW4/cargo
+      #       LIBRARY_PATH: /app/lib/
+      #       LD_LIBRARY_PATH: /app/lib/
+      #     build-args:
+      #       - --share=network
+      #   sources:
+      #     - type: git
+      #       url: https://gitlab.gnome.org/malureau/rdw.git
+      #       commit: b12871eeb629d9fc469068b7ec926f56d5d89afa
+      #   modules:
+      #     - name: libusb
+      #       config-opts:
+      #         - --disable-udev
+      #       buildsystem: simple
+      #       build-commands:
+      #         - ./configure --prefix=/usr/lib64
+      #       sources:
+      #         - type: archive
+      #           url: https://github.com/libusb/libusb/releases/download/v1.0.27/libusb-1.0.27.tar.bz2
+      #           sha256: ffaa41d741a8a3bee244ac8e54a72ea05bf2879663c098c82fc5757853441575
+      #     - name: freerdp
+      #       buildsystem: cmake-ninja
+      #       builddir: true
+      #       build-options:
+      #         cflags: '-Wno-incompatible-pointer-types -Wno-int-conversion'
+      #       config-opts:
+      #         - '-DCMAKE_VERBOSE_MAKEFILE=ON'
+      #         - '-DCMAKE_BUILD_TYPE:STRING=Release'
+      #         - '-DWITH_WAYLAND:BOOL=ON'
+      #         - '-DCHANNEL_TSMF:BOOL=OFF'
+      #         - '-DCHANNEL_URBDRC:BOOL=ON'
+      #         - '-DBUILD_TESTING:BOOL=OFF'
+      #         - '-DWITH_MANPAGES:BOOL=OFF'
+      #         - '-DWITH_GSSAPI:BOOL=OFF'
+      #         - '-DWITH_PCSC:BOOL=ON'
+      #         - '-DWITH_SWSCALE:BOOL=ON'
+      #         - '-DWITH_SERVER:BOOL=OFF'
+      #         - '-DWITH_SAMPLE:BOOL=OFF'
+      #         - '-DWITH_CUPS:BOOL=ON'
+      #         - '-DWITH_FFMPEG:BOOL=ON'
+      #         - '-DWITH_OSS:BOOL=OFF'
+      #         - '-DWITH_PULSE:BOOL=ON'
+      #         - '-DWITH_LIBSYSTEMD:BOOL=OFF'
+      #         - '-DALLOW_IN_SOURCE_BUILD=ON'
+      #       sources:
+      #         - type: archive
+      #           url: 'https://pub.freerdp.com/releases/freerdp-2.11.7.tar.gz'
+      #           sha256: 5a2d54e1ca0f1facd1632bcc94c73b9f071a80c5fdbbb3f26e79f02aaa586ca3
 

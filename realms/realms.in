@@ -29,10 +29,10 @@ gi.require_version("GLib", "2.0")
 gi.require_version("GtkSource", "5")
 gi.require_version("LibvirtGLib", "1.0")
 gi.require_version("GtkSource", "5")
-gi.require_version("Rdw", "4.0")
-gi.require_version("RdwRdp", "4.0")
-gi.require_version("RdwSpice", "4.0")
-gi.require_version("RdwVnc", "4.0")
+# gi.require_version("Rdw", "4.0")
+# gi.require_version("RdwRdp", "4.0")
+# gi.require_version("RdwVnc", "4.0")
+# gi.require_version("RdwSpice", "4.0")
 
 VERSION = '@VERSION@'
 pkgdatadir = '@pkgdatadir@'

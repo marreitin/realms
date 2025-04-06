@@ -31,6 +31,7 @@ from realms.ui.components import (
 )
 from realms.ui.components.common import hspacer
 from realms.ui.components.domain import PerformanceBox, SnapshotBox
+# from realms.ui.components.domain.display_box import DisplayBox
 from realms.ui.components.domain.domain_page_host import DomainPageHost
 from realms.ui.components.domain.pages import (
     BaseDevicePage,
@@ -242,6 +243,10 @@ class DomainDetailsTab(BaseDetailsTab, DomainPageHost):
             margin_bottom=12,
         )
         self.devices_group.add(add_btn)
+
+        # Display
+        # self.display_box = DisplayBox(self.domain, self.window_ref)
+        # self.stack.add_titled_with_icon(self.display_box, "display", "Display", "preferences-desktop-display-symbolic")
 
         # XML
         self.xml_box = XMLView(self.onDefinitionChanged)
