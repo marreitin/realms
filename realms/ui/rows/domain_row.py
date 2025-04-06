@@ -30,7 +30,7 @@ def __onContextStartClicked__(domainRow: any, *_):
         domainRow.domain.start,
         [],
         lambda e: domainRow.window.pushToastText(str(e)),
-        lambda r: r,
+        lambda r_: None,
     )
 
 
@@ -39,7 +39,7 @@ def __onContextStopClicked__(domainRow: any, *_):
         domainRow.domain.shutdown,
         [],
         lambda e: domainRow.window.pushToastText(str(e)),
-        lambda r: r,
+        lambda r_: None,
     )
 
 
