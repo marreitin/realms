@@ -57,3 +57,6 @@ if __name__ == '__main__':
 
     from realms import main
     sys.exit(main.main(VERSION))
+    # Use this instead to profile the app
+    # import cProfile
+    # cProfile.run('main.main("-1")')
