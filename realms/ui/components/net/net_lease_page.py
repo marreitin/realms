@@ -22,7 +22,8 @@ from .net_base_settings_page import BaseNetSettingsPage
 
 
 class LeaseRow(Adw.ExpanderRow):
-    def __init__(self, lease: dict, window: Adw.ApplicationWindow):
+    """Single row for a DHCP lease."""
+    def __init__(self, lease: dict):
         title = f"{ lease['ipaddr'] }/{ lease['prefix'] }"
         if "hostname" in lease and lease["hostname"] is not None:
             title += f" ({ lease['hostname'] })"
@@ -30,14 +31,18 @@ class LeaseRow(Adw.ExpanderRow):
 
         if "hostname" in lease and lease["hostname"] is not None:
             self.add_row(propertyRow("Hostname", subtitle=lease["hostname"]))
+
         self.add_row(propertyRow("Interface", subtitle=lease["iface"]))
         self.add_row(propertyRow("MAC-address", subtitle=lease["mac"]))
+
         if "clientid" in lease and lease["clientid"] is not None:
             self.add_row(propertyRow("Client ID", subtitle=lease["clientid"]))
+
         self.add_row(propertyRow("Expires", subtitle=prettyTime(lease["expirytime"])))
 
 
 class NetLeasePage(BaseNetSettingsPage):
+    """Show current DHCP client leases for a network."""
     def __init__(self, parent):
         super().__init__(parent)
 
@@ -60,7 +65,7 @@ class NetLeasePage(BaseNetSettingsPage):
 
         self.prefs_group.set_description("")
         for lease in vir_leases:
-            row = LeaseRow(lease, self.parent.window_ref.window)
+            row = LeaseRow(lease)
             self.lease_rows.append(row)
             self.prefs_group.add(row)
 
@@ -88,4 +93,4 @@ class NetLeasePage(BaseNetSettingsPage):
 
     def updateData(self, _):
         """Not used."""
-        return
+        self.__onRefresh__()
