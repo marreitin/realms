@@ -31,6 +31,7 @@ from realms.ui.components import (
 )
 from realms.ui.components.common import hspacer
 from realms.ui.components.domain import PerformanceBox, SnapshotBox
+
 # from realms.ui.components.domain.display_box import DisplayBox
 from realms.ui.components.domain.domain_page_host import DomainPageHost
 from realms.ui.components.domain.pages import (

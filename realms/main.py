@@ -77,6 +77,7 @@ class MainApp(Adw.Application):
         if conns is None or len(conns) == 0:
             self.app_windows[0].nav_view.set_show_sidebar(False)
 
+
 # TODO: Use version
 def main(version):
     """Main function for realms."""

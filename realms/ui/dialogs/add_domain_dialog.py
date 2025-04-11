@@ -33,6 +33,7 @@ from realms.ui.components import (
 from realms.ui.components.common import simpleErrorDialog
 from realms.ui.components.network_chooser import NetworkChooserRow
 from realms.ui.components.preference_widgets import RealmsPreferencesPage
+from realms.ui.components.select_dialog import ActionOption, selectDialog
 from realms.ui.components.volume_chooser import VolumeChooser
 
 
@@ -398,12 +399,27 @@ class AddDomainDialog:
                 temp = env.from_string(template)
                 xml = temp.render(**variables)
             print(xml)
+        except Exception as e:
+            simpleErrorDialog("Invalid Settings", str(e), self.window)
+            return
 
+        try:
             self.connection.addDomain(xml)
             self.dialog.close()
         except Exception as e:
             traceback.print_exc()
-            simpleErrorDialog("Invalid settings", str(e), self.window)
+            dialog = selectDialog(
+                "Domain creation failed",
+                str(e),
+                [
+                    ActionOption(
+                        "Copy XML",
+                        lambda: self.window.get_clipboard().set(xml),
+                        appearance=Adw.ResponseAppearance.SUGGESTED,
+                    )
+                ],
+            )
+            dialog.present(self.window)
 
     def __onStackChanged__(self, *_):
         # XML preview is not really possible

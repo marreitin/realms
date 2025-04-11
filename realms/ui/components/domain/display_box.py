@@ -28,7 +28,6 @@
 # from realms.ui.window_reference import WindowReference
 
 
-
 # class DisplayBox(Gtk.Box):
 #     def __init__(self, domain: Domain, window_ref: WindowReference):
 #         super().__init__(orientation=Gtk.Orientation.VERTICAL)
