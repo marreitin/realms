@@ -104,7 +104,8 @@ class NetworkDetailsTab(BaseDetailsTab):
 
         # General settings
         self.prefs_page = None
-
+        self.leases_box = None
+        self.leases_stack_page = None
         self.xml_box = None
 
         self.__build__()
@@ -186,14 +187,6 @@ class NetworkDetailsTab(BaseDetailsTab):
         self.link_group = Adw.PreferencesGroup()
         self.prefs_page.add(self.link_group)
 
-        self.dhcp_leases_row = SubsettingsRow(
-            "DHCP leases",
-            "tag-outline-symbolic",
-            self,
-            NetLeasePage(self),
-        )
-        self.link_group.add(self.dhcp_leases_row)
-
         self.dns_row = SubsettingsRow(
             "DNS",
             "address-book-alt-symbolic",
@@ -225,6 +218,12 @@ class NetworkDetailsTab(BaseDetailsTab):
             NetQOSPage(self, self.showApply),
         )
         self.link_group.add(self.qos_row)
+
+        # DHCP leases
+        self.leases_box = NetLeasePage(self)
+        self.leases_stack_page = self.stack.add_titled_with_icon(
+            self.leases_box, "dhcp", "Clients", "tag-outline-symbolic"
+        )
 
         # XML
         self.xml_box = XMLView(self.showApply)
@@ -268,11 +267,15 @@ class NetworkDetailsTab(BaseDetailsTab):
             self.stop_btn.set_visible(True)
             self.title_widget.set_subtitle("up")
 
+            self.leases_stack_page.set_visible(True)
+
             self.apply_row.setShowWarning(True)
         else:
             self.start_btn.set_visible(True)
             self.stop_btn.set_visible(False)
             self.title_widget.set_subtitle("down")
+
+            self.leases_stack_page.set_visible(False)
 
             self.apply_row.setShowWarning(False)
 
