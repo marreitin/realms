@@ -93,7 +93,7 @@ class TimerRow(Adw.ExpanderRow):
         self.parent.showApply()
 
     def __onRemoveClicked__(self, btn):
-        self.parent.onRemoveTimerRow(self)
+        self.parent.__onRemoveTimerRow__(self)
 
 
 class ClockPage(BaseDevicePage):
