@@ -79,7 +79,7 @@ class ConnectionRow(Gtk.ListBoxRow):
     """Large "row" for the navigation sidebar. Represent an individual connection."""
 
     def __init__(self, conn_settings: dict, window: Adw.ApplicationWindow):
-        super().__init__()
+        super().__init__(focusable=False)
 
         self.connection = None
         self.window = None

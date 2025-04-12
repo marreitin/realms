@@ -192,6 +192,6 @@ def deleteRow(cb: callable) -> Adw.ActionRow:
     Returns:
         Adw.ActionRow: Row
     """
-    delete_row = Adw.ActionRow()
+    delete_row = Adw.ActionRow(focusable=False)
     delete_row.add_prefix(deleteButton(cb))
     return delete_row

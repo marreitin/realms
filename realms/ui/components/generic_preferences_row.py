@@ -22,7 +22,7 @@ class GenericPreferencesRow(Adw.PreferencesRow):
     """
 
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(focusable=False, **kwargs)
 
         self.outer_box = Gtk.Box(
             spacing=6,

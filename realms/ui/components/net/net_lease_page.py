@@ -23,6 +23,7 @@ from .net_base_settings_page import BaseNetSettingsPage
 
 class LeaseRow(Adw.ExpanderRow):
     """Single row for a DHCP lease."""
+
     def __init__(self, lease: dict):
         title = f"{ lease['ipaddr'] }/{ lease['prefix'] }"
         if "hostname" in lease and lease["hostname"] is not None:
@@ -43,6 +44,7 @@ class LeaseRow(Adw.ExpanderRow):
 
 class NetLeasePage(BaseNetSettingsPage):
     """Show current DHCP client leases for a network."""
+
     def __init__(self, parent):
         super().__init__(parent)
 
