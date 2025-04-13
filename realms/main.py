@@ -78,7 +78,6 @@ class MainApp(Adw.Application):
             self.app_windows[0].nav_view.set_show_sidebar(False)
 
 
-# TODO: Use version
 def main(version):
     """Main function for realms."""
     Settings.prepare()
