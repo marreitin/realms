@@ -117,7 +117,7 @@ class PoolVolumeRow(Adw.ExpanderRow):
             if capacity > 0:
                 fill_fraction = allocated / capacity
 
-            text = f"{ bytesToString(allocated)} of { bytesToString(capacity) } used"
+            text = f"{ bytesToString(allocated)} / { bytesToString(capacity) }"
             return (fill_fraction, text, capacity)
 
         def showStats(res):
