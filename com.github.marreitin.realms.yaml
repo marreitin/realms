@@ -54,8 +54,8 @@ modules:
           - -Dsysctl_config=disabled
         sources:
           - type: archive
-            url: https://libvirt.org/sources/libvirt-11.0.0.tar.xz
-            sha256: 01a176ff4042ad58cf83c09fe0925d6bc8eed0ecce1e0ee19b8ef4c1ffa3806e
+            url: https://libvirt.org/sources/libvirt-11.4.0.tar.xz
+            sha256: e10059efc655532b0cfe44d961c87c5a56e45393cc7bd343bd3348b40d73b267
         cleanup:
           - /etc/logrotate.d
           - /share/doc
@@ -94,8 +94,8 @@ modules:
           - name: rpcsvc-proto
             sources:
               - type: archive
-                url: https://github.com/thkukuk/rpcsvc-proto/archive/v1.4.3/rpcsvc-proto-1.4.3.tar.gz
-                sha256: 6906e0f81bb016bd0216460fc879d3d9f2f6d743be7dfb0d8b32d140226d5ef8
+                url: https://github.com/thkukuk/rpcsvc-proto/releases/download/v1.4.4/rpcsvc-proto-1.4.4.tar.xz
+                sha256: 81c3aa27edb5d8a18ef027081ebb984234d5b5860c65bd99d4ac8f03145a558b
               - type: shell
                 commands:
                   - autoreconf -ifv
@@ -122,8 +122,8 @@ modules:
               - --enable-static=no
             sources:
               - type: archive
-                url: https://github.com/stevegrubb/libcap-ng/archive/v0.8.3.tar.gz
-                sha256: e542e9139961f0915ab5878427890cdc7762949fbe216bd0cb4ceedb309bb854
+                url: https://github.com/stevegrubb/libcap-ng/archive/v0.8.5.tar.gz
+                sha256: e4be07fdd234f10b866433f224d183626003c65634ed0552b02e654a380244c2
             cleanup:
               - /bin
               - /share/aclocal
@@ -134,8 +134,8 @@ modules:
           - pip3 install --verbose --exists-action=i --no-index --find-links="file://${PWD}" --prefix=${FLATPAK_DEST} "libvirt-python" --no-build-isolation
         sources:
           - type: file
-            url: https://libvirt.org/sources/python/libvirt-python-11.0.0.tar.gz
-            sha256: cee825a53c6438c5bc84b4250b35493a8e504d5d8075d3d2069ffaf7090846f8
+            url: https://libvirt.org/sources/python/libvirt-python-11.4.0.tar.gz
+            sha256: 7335de498e3fdb2c96f68ee4065d44ab0404b79923d6316819a4b5f963f80125
 
       - name: python-gobject
         buildsystem: meson
@@ -146,15 +146,15 @@ modules:
             - --share=network
         sources:
           - type: archive
-            url: https://gitlab.gnome.org/GNOME/pygobject/-/archive/3.52.2/pygobject-3.52.2.tar
-            sha256: 9f1cd1e28db92adb00397cd1f6200f74dbe923edff1ecb5ce29a7bd91a03bca7
+            url: https://gitlab.gnome.org/GNOME/pygobject/-/archive/3.52.3/pygobject-3.52.3.tar
+            sha256: ec70b8ecc3d0c6cdb1f30f5d7c66dc0a15ceda291adf07e1ee6b0e7cf3c84a4d
         modules:
           - name: python-cairo
             buildsystem: meson
             sources:
               - type: archive
-                url: https://github.com/pygobject/pycairo/releases/download/v1.27.0/pycairo-1.27.0.tar.gz
-                sha256: 5cb21e7a00a2afcafea7f14390235be33497a2cce53a98a19389492a60628430
+                url: https://github.com/pygobject/pycairo/releases/download/v1.28.0/pycairo-1.28.0.tar.gz
+                sha256: 26ec5c6126781eb167089a123919f87baa2740da2cca9098be8b3a6b91cc5fbc
 
       - name: gtksourceview5
         buildsystem: meson
@@ -163,8 +163,8 @@ modules:
           - -Dbuild-testsuite=false
         sources:
           - type: archive
-            url: https://gitlab.gnome.org/GNOME/gtksourceview/-/archive/5.15.1/gtksourceview-5.15.1.tar
-            sha256: df8309264934dd969f97826596ec5b388a8fc7a25643c7d4410cfb6ec38e2396
+            url: https://gitlab.gnome.org/GNOME/gtksourceview/-/archive/5.16.0/gtksourceview-5.16.0.tar
+            sha256: b4f335c2c176e50c2706bc2ba47863683c3c1af7208882f820bbcc4a1fe11255
 
       - name: python3-yaml
         buildsystem: simple
@@ -184,8 +184,8 @@ modules:
             url: https://files.pythonhosted.org/packages/b2/97/5d42485e71dfc078108a86d6de8fa46db44a1a9295e89c5d6d4a06e23a62/markupsafe-3.0.2.tar.gz
             sha256: ee55d3edf80167e48ea11a923c7386f4669df67d7994554387f84e7d8b0a2bf0
           - type: file
-            url: https://files.pythonhosted.org/packages/bd/0f/2ba5fbcd631e3e88689309dbe978c5769e883e4b84ebfe7da30b43275c5a/jinja2-3.1.5-py3-none-any.whl
-            sha256: aba0f4dc9ed8013c424088f68a5c226f7d6097ed89b246d7749c2ec4175c6adb
+            url: https://files.pythonhosted.org/packages/df/bf/f7da0350254c0ed7c72f3e33cef02e048281fec7ecec5f032d4aac52226b/jinja2-3.1.6.tar.gz
+            sha256: 0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d
 
       - name: virt-viewer
         buildsystem: meson
@@ -194,7 +194,7 @@ modules:
         sources:
           - type: git
             url: https://gitlab.com/virt-viewer/virt-viewer
-            commit: b6436a552a434bd6c5962af3302846058a1e57c3
+            commit: 107f60c168c405cf1782b686a65bf4af16ec8c9d
         modules:
           - name: lz4
             build-options:
@@ -217,8 +217,8 @@ modules:
               - /bin
             sources:
               - type: archive
-                url: https://download.gnome.org/sources/gtk-vnc/1.3/gtk-vnc-1.3.1.tar.xz
-                sha256: 512763ac4e0559d0158b6682ca5dd1a3bd633f082f5e4349d7158e6b5f80f1ce
+                url: https://download.gnome.org/sources/gtk-vnc/1.5/gtk-vnc-1.5.0.tar.xz
+                sha256: c0beb4747528ad931da43acc567c6a0190f7fc624465571ed9ccece02c34dd23
 
           - name: spice-gtk
             buildsystem: meson
@@ -259,12 +259,12 @@ modules:
               - name: python-pyparsing
                 buildsystem: simple
                 build-commands:
-                  - pip3 install --prefix=/app pyparsing-3.1.4-py3-none-any.whl
+                  - pip3 install --prefix=/app pyparsing-3.2.3-py3-none-any.whl
                 sources:
                   - type: file
                     url: >-
-                      https://files.pythonhosted.org/packages/e5/0c/0e3c05b1c87bb6a1c76d281b0f35e78d2d80ac91b5f8f524cebf77f51049/pyparsing-3.1.4-py3-none-any.whl
-                    sha256: a6a7ee4235a3f944aa1fa2249307708f893fe5717dc603503c6c7969c070fb7c
+                      https://files.pythonhosted.org/packages/05/e7/df2285f3d08fee213f2d041540fa4fc9ca6c2d44cf36d3a035bf2a8d2bcc/pyparsing-3.2.3-py3-none-any.whl
+                    sha256: a749938e02d6fd0b59b356ca504a24982314bb090c383e3cf201c95ef7e2bfcf
 
               - name: libusb
                 config-opts:
@@ -275,8 +275,8 @@ modules:
                   - /include
                 sources:
                   - type: archive
-                    url: https://github.com/libusb/libusb/releases/download/v1.0.27/libusb-1.0.27.tar.bz2
-                    sha256: ffaa41d741a8a3bee244ac8e54a72ea05bf2879663c098c82fc5757853441575
+                    url: https://github.com/libusb/libusb/releases/download/v1.0.29/libusb-1.0.29.tar.bz2
+                    sha256: 5977fc950f8d1395ccea9bd48c06b3f808fd3c2c961b44b0c2e6e29fc3a70a85
 
               - name: usbredir
                 buildsystem: meson
@@ -309,8 +309,8 @@ modules:
                 sources:
                   - type: archive
                     url: >-
-                      https://www.spice-space.org/download/releases/spice-protocol-0.14.4.tar.xz
-                    sha256: 04ffba610d9fd441cfc47dfaa135d70096e60b1046d2119d8db2f8ea0d17d912
+                      https://www.spice-space.org/download/releases/spice-protocol-0.14.5.tar.xz
+                    sha256: baf58449f6e89d19f475899ad5fb9196fdc46c03cc53233f4e39cf2978f9cff7
 
       # - name: RDW4
       #   buildsystem: simple
@@ -429,4 +429,3 @@ modules:
       #         - type: archive
       #           url: 'https://pub.freerdp.com/releases/freerdp-2.11.7.tar.gz'
       #           sha256: 5a2d54e1ca0f1facd1632bcc94c73b9f071a80c5fdbbb3f26e79f02aaa586ca3
-
