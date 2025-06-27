@@ -332,9 +332,9 @@ class CharacterPage(BaseDevicePage):
             self.source_service_row.set_visible(True)
             self.source_service_row.bindAttr(source, "service", self.showApply)
 
-            protocol = source.find("protocol")
+            protocol = self.xml_tree.find("protocol")
             if protocol is None:
-                protocol = ET.SubElement(source, "protocol")
+                protocol = ET.SubElement(self.xml_tree, "protocol")
 
             self.source_protocol_row.set_visible(True)
             self.source_protocol_row.bindAttr(protocol, "type", self.showApply)
