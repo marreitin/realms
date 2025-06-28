@@ -172,7 +172,11 @@ class ListenRow(Adw.ExpanderRow):
 
         if listen_type == "address":
             self.address_row.set_visible(True)
-            self.address_row.bindAttr(listen, "address", self.show_apply_cb)
+            self.address_row.bindAttr(self.xml_tree, "listen", self.show_apply_cb)
+
+            if "address" in listen.attrib:
+                del listen.attrib["address"]
+
             self.autoport_row.bindAttr(
                 self.xml_tree, "autoport", self.__onAutoportChanged__
             )

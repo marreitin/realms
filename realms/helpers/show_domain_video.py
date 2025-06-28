@@ -49,6 +49,8 @@ def show(domain: Domain, window: Adw.ApplicationWindow):
     parsed_url = urlparse(conn_url)
 
     hostname = parsed_url.hostname
+    if hostname is None:
+        hostname = "localhost"
 
     xml = domain.getETree()
 
@@ -58,35 +60,43 @@ def show(domain: Domain, window: Adw.ApplicationWindow):
         simpleErrorDialog("No Display", "The domain doesn't have any display.", window)
         return
 
-    spice_cmd = []
+    remote_viewer_cmd = []
 
     graphics_type = display.get("type")
-    if graphics_type == "spice":
-        listen_type = display.find("listen")
-        if listen_type is not None and listen_type.get("type") == "socket":
-            path = listen_type.get("socket")
-            spice_cmd = ["remote-viewer", f"spice+unix://{ path }"]
-        elif (
-            listen_type is not None and listen_type.get("type") == "address"
-        ) or listen_type is None:
+
+    if graphics_type in ["spice", "vnc"]:
+        listen = display.find("listen")
+
+        if listen is not None and listen.get("type") == "socket":
+            path = listen.get("socket")
+            remote_viewer_cmd = ["remote-viewer", f"{ graphics_type }+unix://{ path }"]
+        elif (listen is not None and listen.get("type") == "address") or listen is None:
             graphics_port = display.get("port")
 
-            if hostname is not None:
-                display_url = f"{ graphics_type }://{ hostname }:{ graphics_port if graphics_port is not None else '5900' }"
-            else:
-                display_url = f"{ graphics_type }://localhost:{ graphics_port if graphics_port is not None else '5900' }"
+            display_url = f"{ graphics_type }://{ hostname }:{ graphics_port if graphics_port is not None else '5900' }"
 
-            spice_cmd = ["remote-viewer", display_url]
+            remote_viewer_cmd = ["remote-viewer", display_url]
+        elif (listen is not None and listen.get("type") == "network") or listen is None:
+            graphics_port = display.get("port")
+            hostname = listen.get("address", "localhost")
+            display_url = f"{ graphics_type }://{ hostname }:{ graphics_port if graphics_port is not None else '5900' }"
+
+            remote_viewer_cmd = ["remote-viewer", display_url]
         else:
-            simpleErrorDialog("Unknown Display Type", "", window)
+            simpleErrorDialog(
+                "Configuration Unsupported",
+                f"Unknown listen type for { graphics_type } graphics",
+                window,
+            )
             raise NotImplementedError
+
     else:
-        simpleErrorDialog("Unknown Graphics Type", "", window)
+        simpleErrorDialog("Unknown Graphics Type", "Use either VNC or SPICE", window)
         raise NotImplementedError
 
-    print(spice_cmd)
+    print(remote_viewer_cmd)
     try:
-        subprocess.Popen(spice_cmd)
+        subprocess.Popen(remote_viewer_cmd)
     except Exception as e:
-        simpleErrorDialog("Failed to open display", str(e), window)
+        simpleErrorDialog("Failed to Open Remote Viewer", str(e), window)
         return
