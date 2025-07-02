@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import xml.etree.ElementTree as ET
+from threading import Lock
 
 import libvirt
 from gi.repository import Adw, Gtk
@@ -125,7 +126,7 @@ class SnapshotRow(Adw.ActionRow):
     def __onDeleteClicked__(self, btn):
         def onDeleteSelected():
             self.set_sensitive(False)
-            self.parent.onDeleteSnapshot(self)
+            self.parent.__onDeleteSnapshot__(self)
 
         dialog = selectDialog(
             "Delete snapshot?",
@@ -148,6 +149,7 @@ class SnapshotBox(Gtk.Box):
         self.domain = domain
         self.window_ref = window_ref
         self.snapshot_rows = []
+        self.refresh_lock = Lock()
 
         self.__build__()
 
@@ -190,31 +192,32 @@ class SnapshotBox(Gtk.Box):
         self.__updateData__()
 
     def __updateData__(self):
-        for row in self.snapshot_rows:
-            self.group.remove(row)
-        self.snapshot_rows.clear()
-
         def addSnapshots(vir_snapshots: list[libvirt.virDomainSnapshot]):
-            if len(vir_snapshots) != 0:
-                self.group.remove(self.snapshot_btn)
-
-                self.prefs_page.set_visible(True)
-                self.no_snapshots_status.set_visible(False)
-
-                # Sort rows by creation time.
-                for s in vir_snapshots:
-                    row = SnapshotRow(self, self.domain, s)
-                    self.snapshot_rows.append(row)
-
-                self.snapshot_rows.sort(key=lambda s: s.created_timestamp)
-
+            with self.refresh_lock:
                 for row in self.snapshot_rows:
-                    self.group.add(row)
+                    self.group.remove(row)
+                self.snapshot_rows.clear()
 
-                self.group.add(self.snapshot_btn)
-            else:
-                self.prefs_page.set_visible(False)
-                self.no_snapshots_status.set_visible(True)
+                if len(vir_snapshots) != 0:
+                    self.group.remove(self.snapshot_btn)
+
+                    self.prefs_page.set_visible(True)
+                    self.no_snapshots_status.set_visible(False)
+
+                    # Sort rows by creation time.
+                    for s in vir_snapshots:
+                        row = SnapshotRow(self, self.domain, s)
+                        self.snapshot_rows.append(row)
+
+                    self.snapshot_rows.sort(key=lambda s: s.created_timestamp)
+
+                    for row in self.snapshot_rows:
+                        self.group.add(row)
+
+                    self.group.add(self.snapshot_btn)
+                else:
+                    self.prefs_page.set_visible(False)
+                    self.no_snapshots_status.set_visible(True)
 
         self.domain.listSnapshots(addSnapshots)
 
