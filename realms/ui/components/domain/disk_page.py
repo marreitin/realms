@@ -131,13 +131,6 @@ class DiskPage(BaseDevicePage):
         )
         self.group.add(self.device_type_row)
 
-        self.snapshot_row = BindableComboRow(
-            ["internal", "external", "no", "manual"],
-            title="Snapshot mode",
-            subtitle="Set how this disk behaves when taking a snapshot",
-        )
-        self.group.add(self.snapshot_row)
-
         self.source_row = SourceRow(self.xml_tree, self.showApply)
         self.group.add(self.source_row)
 
@@ -147,12 +140,6 @@ class DiskPage(BaseDevicePage):
             title="Driver type",
         )
         self.group.add(self.driver_row)
-
-        self.readonly_switch_row = Adw.SwitchRow(
-            title="Read-only", subtitle="Make disk read-only"
-        )
-        self.readonly_switch_row.connect("notify::active", self.onReadonlyChanged)
-        self.group.add(self.readonly_switch_row)
 
         self.target_device_row = BindableEntryRow(title="Target device name")
         self.group.add(self.target_device_row)
@@ -164,6 +151,16 @@ class DiskPage(BaseDevicePage):
 
         self.boot_order_row = BootOrderRow(self.xml_tree, self.showApply)
         self.group.add(self.boot_order_row)
+
+        self.readonly_switch_row = Adw.SwitchRow(title="Read-only")
+        self.readonly_switch_row.connect("notify::active", self.onReadonlyChanged)
+        self.group.add(self.readonly_switch_row)
+
+        self.snapshot_row = BindableComboRow(
+            ["internal", "external", "no", "manual"],
+            title="Snapshot mode",
+        )
+        self.group.add(self.snapshot_row)
 
         self.address_row = AddressRow(self.xml_tree, self.showApply)
         self.group.add(self.address_row)
@@ -219,6 +216,7 @@ class DiskPage(BaseDevicePage):
         else:
             if driver is None:
                 self.xml_tree.append(self.driver_row.elem)
+                driver = self.driver_row.elem
             if self.driver_row.getSelectedString() in ["raw", "bochs", "qcow2", "qed"]:
                 driver.set("name", "qemu")
             else:
