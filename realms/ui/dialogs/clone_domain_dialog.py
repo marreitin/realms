@@ -144,6 +144,10 @@ class CloneDomainDialog:
         self.dialog.connect("closed", self.__onDialogClosed__)
         self.dialog.present(self.window)
 
+        self.__obj__("new_name").connect(
+            "entry-activated", lambda _: self.__onNextClicked__()
+        )
+
         self.__obj__("btn-next").connect("clicked", self.__onNextClicked__)
         self.__obj__("btn-back").connect("clicked", self.__onBackClicked__)
         self.__obj__("btn-finish").connect("clicked", self.__onApplyClicked__)
@@ -165,7 +169,7 @@ class CloneDomainDialog:
             self.__obj__("btn-back").set_visible(True)
             self.__obj__("btn-finish").set_visible(True)
 
-    def __onNextClicked__(self, _):
+    def __onNextClicked__(self, *_):
         visible_page = self.__obj__("nav-view").get_visible_page()
 
         self.current_page += 1
