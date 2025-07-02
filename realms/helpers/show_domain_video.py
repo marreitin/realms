@@ -43,23 +43,36 @@ def hasDisplay(domain_xml: ET.Element):
     return getDisplay(domain_xml) is not None
 
 
-def show(domain: Domain, window: Adw.ApplicationWindow):
-    "Open a remote viewer window and display the domain"
-    conn_url = domain.connection.getURLCurr()
-    parsed_url = urlparse(conn_url)
+def automaticConnection(conn_url: str, domain_name: str, window: Adw.ApplicationWindow):
+    """Let virt-viewer connect itself automatically to the domain.
 
-    hostname = parsed_url.hostname
-    if hostname is None:
-        hostname = "localhost"
+    Args:
+        conn_url (str): Connection Url
+        domain_name (str): Name of domain to open
+        window (Adw.ApplicationWindow): Main window
 
-    xml = domain.getETree()
+    Returns:
+        bool: True if successful
+    """
+    remote_viewer_cmd = ["virt-viewer", "-c", conn_url, "--domain-name", domain_name]
 
-    display = getDisplay(xml)
+    print(remote_viewer_cmd)
+    try:
+        subprocess.Popen(remote_viewer_cmd)
+        return True
+    except Exception as e:
+        print("Automatic connection failed")
+        return False
 
-    if display is None:
-        simpleErrorDialog("No Display", "The domain doesn't have any display.", window)
-        return
 
+def manualConnection(hostname: str, display: ET.Element, window: Adw.ApplicationWindow):
+    """Guide virt-viewer to the right connection.
+
+    Args:
+        hostname: Hostname
+        display: Graphics element in domain xml
+        window (Adw.ApplicationWindow): Main window
+    """
     remote_viewer_cmd = []
 
     graphics_type = display.get("type")
@@ -81,7 +94,7 @@ def show(domain: Domain, window: Adw.ApplicationWindow):
             hostname = listen.get("address", "localhost")
             display_url = f"{ graphics_type }://{ hostname }:{ graphics_port if graphics_port is not None else '5900' }"
 
-            remote_viewer_cmd = ["remote-viewer", display_url]
+            remote_viewer_cmd = ["virt-viewer", display_url]
         else:
             simpleErrorDialog(
                 "Configuration Unsupported",
@@ -100,3 +113,26 @@ def show(domain: Domain, window: Adw.ApplicationWindow):
     except Exception as e:
         simpleErrorDialog("Failed to Open Remote Viewer", str(e), window)
         return
+
+
+def show(domain: Domain, window: Adw.ApplicationWindow):
+    "Open a remote viewer window and display the domain"
+    conn_url = domain.connection.getURLCurr()
+    parsed_url = urlparse(conn_url)
+
+    hostname = parsed_url.hostname
+    if hostname is None:
+        hostname = "localhost"
+
+    xml = domain.getETree()
+
+    display = getDisplay(xml)
+
+    if display is None:
+        simpleErrorDialog("No Display", "The domain doesn't have any display.", window)
+        return
+
+    if automaticConnection(conn_url, domain.domain.name(), window):
+        return
+
+    manualConnection(hostname, display, window)

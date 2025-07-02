@@ -13,8 +13,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-""""Wraps a window, is used when tabs move across windows
-the dialogs they spawn appear in the right window."""
+"""Wraps a window so tabs always spawn dialogs in the right window."""
 
 from dataclasses import dataclass
 
