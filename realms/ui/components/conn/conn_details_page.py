@@ -46,6 +46,7 @@ class ConnectionDetailsPage(Gtk.Box):
         self.url_row = None
         self.autoconnect_row = None
         self.hostname_row = None
+        self.security_row = None
 
         self.info_group = None
         self.max_vcpus_row = None
@@ -103,9 +104,9 @@ class ConnectionDetailsPage(Gtk.Box):
             title="Autoconnect", subtitle="Connect when opening app"
         )
         self.prefs_group.add(self.autoconnect_row)
-        security_row = Adw.ActionRow(title="Connection Security")
-        security_row.add_suffix(sec_status_box)
-        self.prefs_group.add(security_row)
+        self.security_row = Adw.ActionRow(title="Security Status")
+        self.security_row.add_suffix(sec_status_box)
+        self.prefs_group.add(self.security_row)
 
         self.name_row.connect("changed", self.onSettingsChanged)
         self.desc_row.connect("changed", self.onSettingsChanged)
@@ -163,20 +164,19 @@ class ConnectionDetailsPage(Gtk.Box):
         """Update the status (icons and some buttons)."""
         state = self.parent.connection.getState()
         if state == CONNECTION_STATE_CONNECTED:
+            self.security_row.set_visible(True)
             self.secure_icon.set_visible(self.parent.connection.isSecure())
             self.encrypted_icon.set_visible(self.parent.connection.isEncrypted())
 
             self.apply_row.setShowWarning(True)
             self.apply_row.setShowApply(False)
         elif state == CONNECTION_STATE_CONNECTING:
-            self.secure_icon.set_visible(False)
-            self.encrypted_icon.set_visible(False)
+            self.security_row.set_visible(False)
 
             self.apply_row.setShowWarning(False)
             self.apply_row.setShowApply(True)
         else:
-            self.secure_icon.set_visible(False)
-            self.encrypted_icon.set_visible(False)
+            self.security_row.set_visible(False)
 
             self.apply_row.setShowWarning(False)
             self.apply_row.setShowApply(True)
