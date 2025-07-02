@@ -41,10 +41,12 @@ class CloneVolumeBox(GenericPreferencesRow):
         self.__build__()
 
     def __build__(self):
+        old_name = self.volume.getName()
+
         box = Gtk.Box(spacing=6)
         box.append(
             Gtk.Label(
-                label=f"{ self.volume.pool.getDisplayName() }/{ self.volume.getName() }",
+                label=f"{ self.volume.pool.getDisplayName() }/{ old_name }",
                 css_classes=["heading"],
             )
         )
@@ -53,9 +55,15 @@ class CloneVolumeBox(GenericPreferencesRow):
         box.append(self.switch)
         self.addChild(box)
 
-        self.entry = Gtk.Entry(
-            placeholder_text="New Name", text=f"{ self.volume.getName() }-clone"
-        )
+        new_name = ""
+        if "." in old_name:
+            parts = old_name.split(".")
+            parts[-2] += "-clone"
+            new_name = ".".join(parts)
+        else:
+            new_name = old_name + "-clone"
+
+        self.entry = Gtk.Entry(placeholder_text="New Name", text=f"{ new_name }")
         self.addChild(self.entry)
 
     def shouldClone(self) -> bool:
@@ -89,7 +97,7 @@ class CloneVolumesPage(Adw.NavigationPage):
         self.set_child(self.prefs_page)
 
         self.prefs_group = Adw.PreferencesGroup(
-            title="Cloned volumes", description="Select volumes that will be cloned"
+            title="Clone Volumes", description="Selected volumes will be cloned"
         )
         self.prefs_page.add(self.prefs_group)
 
