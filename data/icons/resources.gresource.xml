@@ -47,6 +47,7 @@
   <file preprocess="xml-stripblanks" alias="offline-globe-symbolic.svg">hicolor/scalable/actions/offline-globe-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="pause-symbolic.svg">hicolor/scalable/actions/pause-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="padlock2-open-symbolic.svg">hicolor/scalable/actions/padlock2-open-symbolic.svg</file>
+  <file preprocess="xml-stripblanks" alias="panel-left-close-symbolic.svg">hicolor/scalable/actions/panel-left-close-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="panel-left-symbolic.svg">hicolor/scalable/actions/panel-left-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="pci-card-symbolic.svg">hicolor/scalable/actions/pci-card-symbolic.svg</file>
   <file preprocess="xml-stripblanks" alias="play-symbolic.svg">hicolor/scalable/actions/play-symbolic.svg</file>

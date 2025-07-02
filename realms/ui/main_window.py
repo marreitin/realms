@@ -60,6 +60,8 @@ class MainWindow(Adw.ApplicationWindow):
 
         self.sidebar_header = None
         self.sidebar_list_box = None
+        self.hide_sidebar_btn = None
+        self.show_sidebar_btn = None
 
         self.overlay_status = OVERLAY_NO_CONN
 
@@ -124,6 +126,15 @@ class MainWindow(Adw.ApplicationWindow):
                 selection_mode=Gtk.SelectionMode.NONE,
             )
             scroll.set_child(self.sidebar_list_box)
+
+            self.hide_sidebar_btn = iconButton(
+                "", "panel-left-close-symbolic", self.__onToggleSidebarVisibility__
+            )
+            self.sidebar_header.pack_start(self.hide_sidebar_btn)
+
+            self.show_sidebar_btn = iconButton(
+                "", "panel-left-symbolic", self.__onToggleSidebarVisibility__
+            )
         else:
             self.nav_view.set_show_sidebar(False)
 
@@ -297,6 +308,17 @@ class MainWindow(Adw.ApplicationWindow):
             tab.get_child().end()
         self.get_application().onWindowClosed(self)
 
+    def __onToggleSidebarVisibility__(self, _):
+        if self.overlay_status == OVERLAY_NONE:
+            self.nav_view.set_show_sidebar(not self.nav_view.get_show_sidebar())
+
+            if self.nav_view.get_show_sidebar():
+                self.show_sidebar_btn.set_visible(False)
+                self.hide_sidebar_btn.set_visible(True)
+            else:
+                self.show_sidebar_btn.set_visible(True)
+                self.hide_sidebar_btn.set_visible(False)
+
     def headerPackStart(self, widget: Gtk.Widget):
         self.header.pack_start(widget)
         self.__header_widgets__.append(widget)
@@ -315,6 +337,10 @@ class MainWindow(Adw.ApplicationWindow):
         self.__header_widgets__.clear()
 
         self.header.set_title_widget(Adw.WindowTitle())
+
+        if self.show_sidebar_btn is not None:
+            self.header.pack_start(self.show_sidebar_btn)
+            self.__header_widgets__.append(self.show_sidebar_btn)
 
         tab_page = tab_view.get_selected_page()
         if tab_page is None:
@@ -437,11 +463,17 @@ class MainWindow(Adw.ApplicationWindow):
             if self.is_primary:
                 self.no_conns_status.set_visible(False)
             self.no_tabs_status.set_visible(False)
+            self.show_sidebar_btn.set_visible(not self.nav_view.get_show_sidebar())
+            self.hide_sidebar_btn.set_visible(self.nav_view.get_show_sidebar())
 
         elif self.overlay_status == OVERLAY_NO_TAB:
+            self.nav_view.set_show_sidebar(True)
+
             if self.is_primary:
                 self.no_conns_status.set_visible(False)
             self.no_tabs_status.set_visible(True)
+            self.show_sidebar_btn.set_visible(False)
+            self.hide_sidebar_btn.set_visible(False)
 
         elif self.overlay_status == OVERLAY_NO_CONN and self.is_primary:
             self.nav_view.set_show_sidebar(False)
@@ -449,6 +481,8 @@ class MainWindow(Adw.ApplicationWindow):
             if self.is_primary:
                 self.no_conns_status.set_visible(True)
             self.no_tabs_status.set_visible(False)
+            self.show_sidebar_btn.set_visible(False)
+            self.hide_sidebar_btn.set_visible(False)
 
         elif self.overlay_status == OVERLAY_NO_CONN:
             pass  # Nothing happens as the window will close anyway.
