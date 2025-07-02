@@ -163,7 +163,7 @@ class PoolDetailsTab(BaseDetailsTab):
             fill_fraction = 0
             if capacity > 0:
                 fill_fraction = allocated / capacity
-            
+
             self.fill_progress.set_fraction(min(1, fill_fraction))
             self.fill_progress.set_text(
                 f"{ bytesToString(allocated) } / { bytesToString(capacity) }  –  { int(fill_fraction*100) }%"
@@ -234,13 +234,25 @@ class PoolDetailsTab(BaseDetailsTab):
         )
 
     def onStopClicked(self, btn):
-        self.stop_btn.set_sensitive(False)
-        failableAsyncJob(
-            self.pool.stop,
-            [],
-            lambda e: self.window_ref.window.pushToastText(str(e)),
-            lambda r: self.stop_btn.set_sensitive(True),
+        def onStop():
+            self.stop_btn.set_sensitive(False)
+            failableAsyncJob(
+                self.pool.stop,
+                [],
+                lambda e: self.window_ref.window.pushToastText(str(e)),
+                lambda r: self.stop_btn.set_sensitive(True),
+            )
+
+        dialog = selectDialog(
+            "Stop Pool?",
+            "Connection to the storage backend may terminate",
+            [
+                ActionOption(
+                    "Stop", onStop, appearance=Adw.ResponseAppearance.DESTRUCTIVE
+                )
+            ],
         )
+        dialog.present(self.window_ref.window)
 
     def onDeleteClicked(self, btn):
         def onDelete():

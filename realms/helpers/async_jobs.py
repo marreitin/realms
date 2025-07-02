@@ -102,8 +102,7 @@ class RepeatJob:
         GLib.idle_add(self.cb, ret)
 
     def trigger(self):
-        """Trigger execution of this job.
-        """
+        """Trigger execution of this job."""
         self.__onTimeout__()
 
     def stopTask(self):
