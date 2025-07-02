@@ -154,10 +154,16 @@ class PoolDetailsTab(BaseDetailsTab):
 
         def showUsage(res):
             allocated, capacity = res
+            if capacity == 0:
+                self.fill_progress.set_visible(False)
+                return
+
+            self.fill_progress.set_visible(True)
+
             fill_fraction = 0
             if capacity > 0:
                 fill_fraction = allocated / capacity
-
+            
             self.fill_progress.set_fraction(min(1, fill_fraction))
             self.fill_progress.set_text(
                 f"{ bytesToString(allocated) } / { bytesToString(capacity) }  –  { int(fill_fraction*100) }%"
@@ -165,6 +171,8 @@ class PoolDetailsTab(BaseDetailsTab):
 
         if self.usage_task is None:
             self.usage_task = RepeatJob(gatherUsage, [], showUsage, 30)
+        else:
+            self.usage_task.trigger()
 
     def updateData(self) -> None:
         """Reload XML tree and update all elements accordingly."""
@@ -178,6 +186,8 @@ class PoolDetailsTab(BaseDetailsTab):
 
     def setStatus(self) -> None:
         """Update the status description."""
+        self.presentUsage()
+
         if self.pool.isActive():
             self.start_btn.set_visible(False)
             self.stop_btn.set_visible(True)

@@ -93,13 +93,18 @@ class RepeatJob:
         if self.stop_flag.is_set():
             self.stop_flag.clear()
             return False  # Cancel timeout
-        thread = threading.Thread(target=self.run, args=[self.args], daemon=True)
+        thread = threading.Thread(target=self.__run__, args=[self.args], daemon=True)
         thread.start()
         return True
 
-    def run(self, args):
+    def __run__(self, args):
         ret = self.f(*args)
         GLib.idle_add(self.cb, ret)
+
+    def trigger(self):
+        """Trigger execution of this job.
+        """
+        self.__onTimeout__()
 
     def stopTask(self):
         """Stop the repeated task, a running task will however not be killed."""

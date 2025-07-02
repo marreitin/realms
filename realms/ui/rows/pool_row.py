@@ -73,11 +73,19 @@ class PoolRow(BaseRow):
         self.status_label.set_css_classes([])
 
         def gatherUsage():
+            allocation = self.pool.getAllocation()
+            capacity = self.pool.getCapacity()
+            if capacity == 0:
+                return -1
+
             filled = self.pool.getAllocation() / self.pool.getCapacity() * 100
             return filled
 
         def showUsage(filled):
-            self.status_label.set_label(str(int(filled)) + "%")
+            if filled == -1:
+                self.status_label.set_label("")
+            else:
+                self.status_label.set_label(str(int(filled)) + "%")
 
             if filled > 90:
                 self.status_label.set_css_classes(["numeric", "error"])
@@ -88,6 +96,8 @@ class PoolRow(BaseRow):
 
         if self.usage_task is None:
             self.usage_task = RepeatJob(gatherUsage, [], showUsage, 30)
+        else:
+            self.usage_task.trigger()
 
         if self.pool.isActive():
             self.subtitle.set_label("active")
@@ -104,8 +114,8 @@ class PoolRow(BaseRow):
             if event_id == POOL_EVENT_DELETED:
                 self.usage_task.stopTask()
                 self.pool.unregisterCallback(self.__onConnectionEvent__)
-
-        self.__setStatus__()
+        elif type_id == CALLBACK_TYPE_POOL_LIFECYCLE:
+            self.__setStatus__()
 
     # Implement BaseRow
     def onActivate(self):
