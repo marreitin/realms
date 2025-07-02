@@ -40,6 +40,12 @@ class TakeSnapshotDialog:
         # Obtain and show the main window
         self.dialog = self.obj("main-dialog")
         self.dialog.connect("closed", self.onDialogClosed)
+        self.obj("name-row").connect(
+            "entry-activated", lambda _: self.onTakeClicked(self.obj("btn-finish"))
+        )
+        self.obj("desc-row").connect(
+            "entry-activated", lambda _: self.onTakeClicked(self.obj("btn-finish"))
+        )
         self.dialog.present(self.window)
 
         self.obj("btn-finish").connect("clicked", self.onTakeClicked)
