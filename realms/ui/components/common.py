@@ -195,3 +195,17 @@ def deleteRow(cb: callable) -> Adw.ActionRow:
     delete_row = Adw.ActionRow(focusable=False)
     delete_row.add_prefix(deleteButton(cb))
     return delete_row
+
+
+def addShortcut(widget: Gtk.Widget, shortcut: str, cb: callable) -> None:
+    """Add a shortcut to a widget.
+
+    Args:
+        widget (Gtk.Widget): Widget to add it to
+        shortcut (str): String describing the shortcut
+        cb (callable): Callback when button was clicked
+    """
+    trigger = Gtk.ShortcutTrigger.parse_string(shortcut)
+    action = Gtk.CallbackAction.new(lambda *_: cb())
+    shortcut = Gtk.Shortcut(trigger=trigger, action=action)
+    widget.add_shortcut(shortcut)
