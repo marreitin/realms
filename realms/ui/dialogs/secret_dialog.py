@@ -79,11 +79,9 @@ class SecretDialog:
         self.group = Adw.PreferencesGroup(hexpand=True)
         self.obj("prefs-box").append(self.group)
 
-        if self.mode == MODE_ADDING:
-            self.uuid_row = BindableEntryRow(title="UUID")
-        else:
+        if self.mode == MODE_EDITING:
             self.uuid_row = propertyRow("UUID")
-        self.group.add(self.uuid_row)
+            self.group.add(self.uuid_row)
 
         self.desc_row = BindableEntryRow(title="Description")
         self.group.add(self.desc_row)
@@ -137,9 +135,7 @@ class SecretDialog:
         uuid = self.xml_tree.find("uuid")
         if uuid is None:
             uuid = ET.SubElement(self.xml_tree, "uuid")
-        if self.mode == MODE_ADDING:
-            self.uuid_row.bindText(uuid, self.showApply)
-        else:
+        if self.mode == MODE_EDITING:
             self.uuid_row.set_subtitle(getETText(uuid))
 
         desc = self.xml_tree.find("description")
