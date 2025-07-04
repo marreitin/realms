@@ -198,17 +198,14 @@ class XMLView(Gtk.Box):
 
     def __onLoad__(self, *_):
         """The button to load xml was clicked."""
-        self.open_btn.set_sensitive(False)
 
         def onOpen(dialog, result):
             try:
                 file = dialog.open_finish(result)
             except Exception:
-                self.open_btn.set_sensitive(True)
                 return
 
             if file is None:
-                self.load_btn.set_sensitive(True)
                 return
 
             try:
@@ -217,19 +214,16 @@ class XMLView(Gtk.Box):
                     sourceViewSetText(self.source_view, f.read())
             except Exception:
                 pass
-            self.open_btn.set_sensitive(True)
 
         dialog = Gtk.FileDialog(title="Load XML")
         dialog.open(None, None, onOpen)
 
     def __onSave__(self, *_):
         """The button to save the XML was clicked."""
-        self.save_btn.set_sensitive(False)
 
         def onWriteDone(stream, result):
             success = stream.write_bytes_finish(result)
             stream.close()
-            self.save_btn.set_sensitive(True)
             if not success:
                 raise Exception("Failed to write file.")
 
@@ -237,11 +231,9 @@ class XMLView(Gtk.Box):
             try:
                 file = dialog.save_finish(result)
             except Exception:
-                self.save_btn.set_sensitive(True)
                 return
 
             if file is None:
-                self.save_btn.set_sensitive(True)
                 return
 
             if file.query_exists():
