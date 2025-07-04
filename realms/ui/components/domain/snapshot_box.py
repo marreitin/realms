@@ -33,7 +33,9 @@ class SnapshotRow(Adw.ActionRow):
     def __init__(
         self, parent, domain: Domain, snapshot: libvirt.virDomainSnapshot, **kwargs
     ):
-        super().__init__(use_markup=False, **kwargs)
+        super().__init__(use_markup=False, activatable=True, selectable=False, **kwargs)
+
+        self.connect("activated", self.__onActivated__)
 
         self.parent = parent
         self.domain = domain
@@ -55,16 +57,6 @@ class SnapshotRow(Adw.ActionRow):
                 self.__onPlayClicked__,
                 css_classes=["flat"],
                 tooltip_text="Revert to snapshot",
-            )
-        )
-
-        self.add_suffix(
-            iconButton(
-                "",
-                "folder-code-legacy-symbolic",
-                self.__onXMLClicked__,
-                css_classes=["flat"],
-                tooltip_text="Inspect xml",
             )
         )
 
@@ -120,10 +112,10 @@ class SnapshotRow(Adw.ActionRow):
         )
         dialog.present(self.parent.window_ref.window)
 
-    def __onXMLClicked__(self, btn):
+    def __onActivated__(self, *_):
         InspectSnapshotDialog(self.parent.window_ref.window, self.domain, self.snapshot)
 
-    def __onDeleteClicked__(self, btn):
+    def __onDeleteClicked__(self, *_):
         def onDeleteSelected():
             self.set_sensitive(False)
             self.parent.__onDeleteSnapshot__(self)

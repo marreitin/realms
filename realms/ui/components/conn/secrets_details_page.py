@@ -37,9 +37,6 @@ class SecretRow(Adw.ActionRow):
         self.type_label = Gtk.Label(css_classes=["dim-label", "caption"], margin_end=12)
         self.add_suffix(self.type_label)
 
-        open_btn = Gtk.Image.new_from_icon_name("external-link-symbolic")
-        self.add_suffix(open_btn)
-
         self.update()
 
         self.connect("activated", self.onActivated)
