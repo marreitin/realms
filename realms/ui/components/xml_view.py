@@ -17,7 +17,7 @@
 
 from gi.repository import Adw, Gio, GLib, Gtk, GtkSource
 
-from realms.ui.components.common import iconButton
+from realms.ui.components.common import addShortcut, iconButton
 
 language_manager = GtkSource.LanguageManager()
 
@@ -83,7 +83,7 @@ def sourceViewSetText(source_view: GtkSource.View, text: str):
 
 class XMLView(Gtk.Box):
     """A complete xml view that additionally offers loading and
-    storing XML files, as well as handling live changes,
+    storing XML files, as well as handling live changes.
     """
 
     def __init__(self, show_apply_cb):
@@ -91,6 +91,12 @@ class XMLView(Gtk.Box):
         self.show_apply_cb = show_apply_cb
 
         self.source_view = None
+        self.save_btn = None
+        self.open_btn = None
+        self.search_revealer = None
+        self.search_entry = None
+        self.search_settings = None
+        self.search_context = None
 
         self.build()
 
@@ -117,7 +123,12 @@ class XMLView(Gtk.Box):
         scrolled.set_child(self.source_view)
 
         buffer = self.source_view.get_buffer()
-        buffer.connect("changed", self.onEntryChanged)
+        buffer.connect("changed", self.__onEntryChanged__)
+
+        self.search_settings = GtkSource.SearchSettings()
+        self.search_context = GtkSource.SearchContext(
+            buffer=buffer, settings=self.search_settings
+        )
 
         controls_box = Gtk.Box(
             halign=Gtk.Align.END,
@@ -128,15 +139,54 @@ class XMLView(Gtk.Box):
         )
         overlay.add_overlay(controls_box)
 
-        open_btn = iconButton(
-            "", "document-open-symbolic", self.onLoad, tooltip_text="Open"
+        self.open_btn = iconButton(
+            "", "document-open-symbolic", self.__onLoad__, tooltip_text="Open"
         )
-        controls_box.append(open_btn)
+        controls_box.append(self.open_btn)
 
-        save_btn = iconButton(
-            "", "document-save-symbolic", self.onSave, tooltip_text="Save"
+        self.save_btn = iconButton(
+            "", "document-save-symbolic", self.__onSave__, tooltip_text="Save"
         )
-        controls_box.append(save_btn)
+        controls_box.append(self.save_btn)
+
+        search_btn = iconButton(
+            "", "edit-find-symbolic", self.__onSearch__, tooltip_text="Search"
+        )
+        controls_box.append(search_btn)
+
+        self.search_revealer = Gtk.Revealer(
+            halign=Gtk.Align.CENTER,
+            valign=Gtk.Align.START,
+            hexpand=False,
+            vexpand=False,
+        )
+        overlay.add_overlay(self.search_revealer)
+        search_box = Gtk.Box(
+            margin_top=18,
+            css_classes=["linked"],
+        )
+        self.search_revealer.set_child(search_box)
+
+        self.search_entry = Gtk.Entry(width_request=120, placeholder_text="Search")
+        self.search_entry.connect("changed", self.__searchEntryChanged__)
+        search_box.append(self.search_entry)
+
+        close_search_btn = iconButton(
+            "",
+            "cross-small-symbolic",
+            self.__hideSearch__,
+            tooltip_text="Close",
+        )
+        search_box.append(close_search_btn)
+
+        addShortcut(self.source_view, "<Control>f", self.__onSearch__)
+        addShortcut(self.source_view, "<Control>s", self.__onSave__)
+        addShortcut(self.source_view, "<Control>o", self.__onLoad__)
+        addShortcut(
+            self.source_view,
+            "Escape",
+            self.__hideSearch__,
+        )
 
     def setText(self, text: str):
         """Set the text content."""
@@ -146,19 +196,19 @@ class XMLView(Gtk.Box):
         """Get the current text content."""
         return sourceViewGetText(self.source_view)
 
-    def onLoad(self, btn):
+    def __onLoad__(self, *_):
         """The button to load xml was clicked."""
-        btn.set_sensitive(False)
+        self.open_btn.set_sensitive(False)
 
         def onOpen(dialog, result):
             try:
                 file = dialog.open_finish(result)
             except Exception:
-                btn.set_sensitive(True)
+                self.open_btn.set_sensitive(True)
                 return
 
             if file is None:
-                btn.set_sensitive(True)
+                self.load_btn.set_sensitive(True)
                 return
 
             try:
@@ -167,19 +217,19 @@ class XMLView(Gtk.Box):
                     sourceViewSetText(self.source_view, f.read())
             except Exception:
                 pass
-            btn.set_sensitive(True)
+            self.open_btn.set_sensitive(True)
 
         dialog = Gtk.FileDialog(title="Load XML")
         dialog.open(None, None, onOpen)
 
-    def onSave(self, btn):
+    def __onSave__(self, *_):
         """The button to save the XML was clicked."""
-        btn.set_sensitive(False)
+        self.save_btn.set_sensitive(False)
 
         def onWriteDone(stream, result):
             success = stream.write_bytes_finish(result)
             stream.close()
-            btn.set_sensitive(True)
+            self.save_btn.set_sensitive(True)
             if not success:
                 raise Exception("Failed to write file.")
 
@@ -187,11 +237,11 @@ class XMLView(Gtk.Box):
             try:
                 file = dialog.save_finish(result)
             except Exception:
-                btn.set_sensitive(True)
+                self.save_btn.set_sensitive(True)
                 return
 
             if file is None:
-                btn.set_sensitive(True)
+                self.save_btn.set_sensitive(True)
                 return
 
             if file.query_exists():
@@ -212,6 +262,21 @@ class XMLView(Gtk.Box):
         )
         dialog.save(None, None, onSaved)
 
-    def onEntryChanged(self, *_):
+    def __onSearch__(self, *_):
+        self.search_revealer.set_reveal_child(True)
+
+        if self.search_revealer.get_reveal_child:
+            self.search_entry.grab_focus()
+
+    def __hideSearch__(self, *_):
+        self.search_revealer.set_reveal_child(False)
+        self.search_entry.set_text("")
+        self.search_settings.set_search_text(None)
+        self.source_view.grab_focus()
+
+    def __searchEntryChanged__(self, *_):
+        self.search_settings.set_search_text(self.search_entry.get_text())
+
+    def __onEntryChanged__(self, *_):
         """The text was edited."""
         self.show_apply_cb()
