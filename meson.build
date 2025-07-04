@@ -1,5 +1,5 @@
 project('realms',
-          version: '20250702',
+          version: '20250704',
     meson_version: '>= 1.0.0',
   default_options: [ 'warning_level=2', 'werror=false', ],
 )
