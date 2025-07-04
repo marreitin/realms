@@ -462,27 +462,27 @@ class MainWindow(Adw.ApplicationWindow):
         if self.overlay_status == OVERLAY_NONE:
             if self.is_primary:
                 self.no_conns_status.set_visible(False)
+                self.show_sidebar_btn.set_visible(not self.nav_view.get_show_sidebar())
+                self.hide_sidebar_btn.set_visible(self.nav_view.get_show_sidebar())
             self.no_tabs_status.set_visible(False)
-            self.show_sidebar_btn.set_visible(not self.nav_view.get_show_sidebar())
-            self.hide_sidebar_btn.set_visible(self.nav_view.get_show_sidebar())
 
         elif self.overlay_status == OVERLAY_NO_TAB:
             self.nav_view.set_show_sidebar(True)
 
             if self.is_primary:
                 self.no_conns_status.set_visible(False)
+                self.show_sidebar_btn.set_visible(False)
+                self.hide_sidebar_btn.set_visible(False)
             self.no_tabs_status.set_visible(True)
-            self.show_sidebar_btn.set_visible(False)
-            self.hide_sidebar_btn.set_visible(False)
 
         elif self.overlay_status == OVERLAY_NO_CONN and self.is_primary:
             self.nav_view.set_show_sidebar(False)
 
             if self.is_primary:
                 self.no_conns_status.set_visible(True)
+                self.show_sidebar_btn.set_visible(False)
+                self.hide_sidebar_btn.set_visible(False)
             self.no_tabs_status.set_visible(False)
-            self.show_sidebar_btn.set_visible(False)
-            self.hide_sidebar_btn.set_visible(False)
 
         elif self.overlay_status == OVERLAY_NO_CONN:
             pass  # Nothing happens as the window will close anyway.
