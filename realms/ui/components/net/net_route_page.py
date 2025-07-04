@@ -139,7 +139,7 @@ class NetRoutePage(BaseNetSettingsPage):
         self.add_button = iconButton(
             "",
             "list-add-symbolic",
-            self.onAddButtonClicked,
+            self.__onAddButtonClicked__,
             css_classes=["flat"],
             tooltip_text="Add static route",
         )
@@ -158,7 +158,7 @@ class NetRoutePage(BaseNetSettingsPage):
             self.prefs_group.add(row)
             self.route_rows.append(row)
 
-    def onAddButtonClicked(self, btn):
+    def __onAddButtonClicked__(self, btn):
         route = ET.SubElement(
             self.xml_tree, "route", attrib={"address": "0.0.0.0", "prefix": "0"}
         )

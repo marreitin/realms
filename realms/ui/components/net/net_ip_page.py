@@ -55,12 +55,12 @@ class IPRow(Adw.ExpanderRow):
 
         self.cancel_btn = None
 
-        self.build()
+        self.__build__()
 
-        self.onUpdateState()
+        self.__onUpdateState__()
 
-    def build(self):
-        prefix = self.getIPPrefix()
+    def __build__(self):
+        prefix = self.__getIPPrefix__()
 
         self.set_title(prefix)
 
@@ -70,7 +70,7 @@ class IPRow(Adw.ExpanderRow):
         self.add_suffix(self.tftp_label)
 
         self.ip_addr_row = Adw.EntryRow(title="Network address", text=prefix)
-        self.ip_addr_row.connect("changed", self.onIPChanged)
+        self.ip_addr_row.connect("changed", self.__onIPChanged__)
         self.add_row(self.ip_addr_row)
 
         # DHCP
@@ -148,7 +148,7 @@ class IPRow(Adw.ExpanderRow):
         open_icon = Gtk.Image.new_from_icon_name("right-symbolic")
         self.dhcphosts_row.add_suffix(open_icon)
 
-        self.dhcphosts_row.connect("activated", self.onDHCPHostsActivated)
+        self.dhcphosts_row.connect("activated", self.__onDHCPHostsActivated__)
 
         # TFTP
         self.tftp_row = Adw.PreferencesRow()
@@ -194,13 +194,13 @@ class IPRow(Adw.ExpanderRow):
             self.serv_dir.set_text(tftp.get("root", ""))
 
         # Lower action row
-        self.add_row(deleteRow(self.onDeleteClicked))
+        self.add_row(deleteRow(self.__onDeleteClicked__))
 
         # Event handlers
-        self.dhcp_switch.connect("notify::active", self.onUpdateState)
-        self.tftp_switch.connect("notify::active", self.onUpdateState)
+        self.dhcp_switch.connect("notify::active", self.__onUpdateState__)
+        self.tftp_switch.connect("notify::active", self.__onUpdateState__)
 
-    def onIPChanged(self, *args):
+    def __onIPChanged__(self, *args):
         if "netmask" in self.xml_elem.attrib:
             del self.xml_elem.attrib["netmask"]
 
@@ -209,14 +209,14 @@ class IPRow(Adw.ExpanderRow):
             self.xml_elem.set("address", data[0])
             self.xml_elem.set("prefix", data[1])
             self.xml_elem.set("family", "ipv4" if "." in data[0] else "ipv6")
-            prefix = self.getIPPrefix()
+            prefix = self.__getIPPrefix__()
             self.set_title(prefix)
 
             self.parent.show_apply_cb()
         except:
             self.ip_addr_row.set_css_classes(["error"])
 
-    def onUpdateState(self, *args):
+    def __onUpdateState__(self, *args):
         if self.dhcp_switch.get_active():
             self.dhcp_label.set_visible(True)
             self.dhcphosts_row.set_visible(True)
@@ -235,7 +235,7 @@ class IPRow(Adw.ExpanderRow):
             bootp = dhcp.find("bootp")
             if bootp is None:
                 bootp = ET.Element("bootp", attrib={"file": ""})
-            self.bootp_file.bindAttr(bootp, "file", self.onBootPChanged)
+            self.bootp_file.bindAttr(bootp, "file", self.__onBootPChanged__)
         else:
             self.dhcp_label.set_visible(False)
             self.dhcphosts_row.set_visible(False)
@@ -264,7 +264,7 @@ class IPRow(Adw.ExpanderRow):
 
         self.parent.show_apply_cb()
 
-    def getIPPrefix(self) -> str:
+    def __getIPPrefix__(self) -> str:
         if "prefix" not in self.xml_elem.attrib:
             if "netmask" not in self.xml_elem.attrib:
                 self.xml_elem.attrib["netmask"] = "255.255.255.255"
@@ -277,7 +277,7 @@ class IPRow(Adw.ExpanderRow):
             )
         return prefix
 
-    def onBootPChanged(self):
+    def __onBootPChanged__(self):
         dhcp = self.xml_elem.find("dhcp")
         bootp = dhcp.find("bootp")
         if self.bootp_file.get_text() == "":
@@ -288,10 +288,10 @@ class IPRow(Adw.ExpanderRow):
                 dhcp.append(self.bootp_file.elem)
         self.parent.show_apply_cb()
 
-    def onDeleteClicked(self, button):
+    def __onDeleteClicked__(self, button):
         self.parent.delete(self)
 
-    def onDHCPHostsActivated(self, *_):
+    def __onDHCPHostsActivated__(self, *_):
         self.dhcphosts_dialog = DHCPHostsDialog(
             self.parent.parent.getWindow(),
             self.xml_elem,
@@ -317,15 +317,15 @@ class NetIPGroup(Adw.PreferencesGroup):
         self.xml_tree = None
         self.show_apply_cb = show_apply_cb
 
-        self.build()
+        self.__build__()
 
-    def build(self):
+    def __build__(self):
         self.set_title(title="IP addresses")
 
         self.add_button = iconButton(
             "",
             "list-add-symbolic",
-            self.onAddButtonClicked,
+            self.__onAddButtonClicked__,
             css_classes=["flat"],
             tooltip_text="Add network IP address",
         )
@@ -345,7 +345,7 @@ class NetIPGroup(Adw.PreferencesGroup):
             self.add(row)
             self.ip_rows.append(row)
 
-    def onAddButtonClicked(self, btn):
+    def __onAddButtonClicked__(self, btn):
         ip_tree = ET.SubElement(
             self.xml_tree, "ip", attrib={"address": "0.0.0.0", "prefix": "32"}
         )
@@ -373,9 +373,9 @@ class NetIPPage(BaseNetSettingsPage):
         self.xml_tree = None
         self.show_apply_cb = show_apply_cb
 
-        self.build()
+        self.__build__()
 
-    def build(self):
+    def __build__(self):
         self.prefs_group = NetIPGroup(self.parent, self.show_apply_cb)
         self.prefs_page.add(self.prefs_group)
 

@@ -67,9 +67,9 @@ class NetGeneralGroup(Adw.PreferencesGroup):
         self.forward_device_row = None
         self.domain_row = None
 
-        self.build()
+        self.__build__()
 
-    def build(self):
+    def __build__(self):
         if not self.allow_name_edit:
             self.name_row = propertyRow("Name")
             self.add(self.name_row)
@@ -142,13 +142,13 @@ class NetGeneralGroup(Adw.PreferencesGroup):
         forward = self.xml_tree.find("forward")
         if forward is None:
             forward = ET.SubElement(self.xml_tree, "forward", attrib={"mode": "none"})
-        self.forward_mode_row.bindAttr(forward, "mode", self.onForwardModeChanged)
+        self.forward_mode_row.bindAttr(forward, "mode", self.__onForwardModeChanged__)
         self.forward_device_row.bindAttr(forward, "dev", self.show_apply_cb)
 
         bridge = self.xml_tree.find("bridge")
         if bridge is None:
             bridge = ET.Element("bridge")
-        self.bridge_row.bindAttr(bridge, "name", self.onBridgeChanged)
+        self.bridge_row.bindAttr(bridge, "name", self.__onBridgeChanged__)
 
         domain = self.xml_tree.find("domain")
         if domain is None:
@@ -156,9 +156,9 @@ class NetGeneralGroup(Adw.PreferencesGroup):
 
         self.domain_row.bindAttr(domain, "name", self.show_apply_cb)
 
-        self.onForwardModeChanged()
+        self.__onForwardModeChanged__()
 
-    def onForwardModeChanged(self, *args):
+    def __onForwardModeChanged__(self, *args):
         """Change visible rows depending on the newly selected forwarding mode."""
         selected = self.forward_mode_row.getSelectedString()
         forward = self.xml_tree.find("forward")
@@ -196,7 +196,7 @@ class NetGeneralGroup(Adw.PreferencesGroup):
 
         self.show_apply_cb()
 
-    def onBridgeChanged(self):
+    def __onBridgeChanged__(self):
         bridge = self.xml_tree.find("bridge")
         if self.bridge_row.get_text() == "":
             if bridge is not None:
