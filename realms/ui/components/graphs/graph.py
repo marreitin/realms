@@ -24,7 +24,7 @@ class InnerGraph(Gtk.Box):
     """A Gtk Frame that draws the actual graph. It is only the
     inner widget and not to be used directly."""
 
-    def __init__(self, data_series: list[DataSeries]):
+    def __init__(self, parent, data_series: list[DataSeries], value_text: callable):
         """Initialize InnerGraph with a data series
 
         Args:
@@ -33,7 +33,9 @@ class InnerGraph(Gtk.Box):
         super().__init__(height_request=200)
 
         self.__vpadding__ = 0
+        self.parent = parent
         self.__data_series__ = data_series
+        self.value_text = value_text
 
         colors = [
             Adw.AccentColor.BLUE,
@@ -81,6 +83,8 @@ class InnerGraph(Gtk.Box):
         for ds in self.__data_series__:
             self.__drawDataSeries__(snapshot, ds)
 
+        self.parent.setValueLabel(self.value_text(self.__data_series__))
+
     def __drawDataSeries__(self, snapshot, ds: DataSeries):
         if len(ds) < 2:
             return  # A line needs at least two points
@@ -117,16 +121,22 @@ class InnerGraph(Gtk.Box):
 class Graph(Gtk.Box):
     """Simple and minimalist graph drawing a list of DataSeries."""
 
-    def __init__(self, data_series: list[DataSeries], title: str):
+    def __init__(
+        self, data_series: list[DataSeries], title: str, value_text: callable = None
+    ):
         """Create Graph
 
         Args:
             data_series (DataSeries): Data series to draw
             title (str): Title for graph
+            value_text (callable): Function to create the value text for this graph
         """
         super().__init__(
             hexpand=True, vexpand=True, orientation=Gtk.Orientation.VERTICAL
         )
+
+        if value_text is None:
+            value_text = lambda *_: ""
 
         title_box = Gtk.Box(spacing=12, margin_top=3, margin_bottom=3)
         self.append(title_box)
@@ -134,5 +144,12 @@ class Graph(Gtk.Box):
             Gtk.Label(label=title, halign=Gtk.Align.START, css_classes=["heading"])
         )
 
-        self.__frame__ = InnerGraph(data_series)
+        self.value_label = Gtk.Label(css_classes=["numeric", "dimmed"])
+        title_box.append(self.value_label)
+
+        self.__frame__ = InnerGraph(self, data_series, value_text)
         self.append(self.__frame__)
+
+    def setValueLabel(self, label: str):
+        """Set the text of the value label."""
+        self.value_label.set_label(label)

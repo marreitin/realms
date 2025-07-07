@@ -151,3 +151,13 @@ class DataSeries:
             val = max([dp.value for dp in self.values])
             return val if val != 0 else 1
         return self.max_value
+
+    def getLastAvg(self, n: int) -> float:
+        """Get average over last n values."""
+        n = min(n, len(self.values))
+        avg = 0
+        for i in range(n):
+            avg += self.values[-i].value
+
+        avg /= n
+        return avg

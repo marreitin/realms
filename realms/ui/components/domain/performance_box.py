@@ -62,7 +62,11 @@ class PerformanceBox(Gtk.Box):
         self.__cpu_data_series__.setWatchCallback(
             1000 * self.REFRESH_SECONDS, getCPUData
         )
-        self.__cpu_graph__ = Graph([self.__cpu_data_series__], "CPU")
+        self.__cpu_graph__ = Graph(
+            [self.__cpu_data_series__],
+            "CPU",
+            lambda series: f"{ int(series[0].getLastAvg(5) * 100) }%",
+        )
         row.addChild(self.__cpu_graph__)
 
         # Memory graph
@@ -131,7 +135,11 @@ class PerformanceBox(Gtk.Box):
                     lambda ds, nic=nic: getTXNICStats(ds, nic),
                 )
 
-                graph = Graph([rx_ds, tx_ds], nic.upper())
+                graph = Graph(
+                    [rx_ds, tx_ds],
+                    nic.upper(),
+                    lambda series: f"↓{ series[0].getLastAvg(5) } ↑{ series[1].getLastAvg(5) }",
+                )
 
                 row = GenericPreferencesRow()
                 row.set_activatable(False)
