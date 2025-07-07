@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from traceback import print_exc
+
 from .common import *
 
 
@@ -69,4 +71,7 @@ class EventManager:
         """Send out event to all subscribed callbacks"""
         # printEvent(conn, obj, type_id, event_id, detail_id)
         for cb in self.event_callbacks.copy():
-            cb(conn, obj, type_id, event_id, detail_id)
+            try:
+                cb(conn, obj, type_id, event_id, detail_id)
+            except Exception:
+                print_exc()
