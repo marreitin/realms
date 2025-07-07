@@ -76,7 +76,7 @@ class DataSeries:
         def onTimeout(*_):
             if self.watch_cb is None:
                 return False  # Cancel timeout
-            asyncJob(self.watch_cb, [], self.pushValue)
+            asyncJob(self.watch_cb, [self], self.pushValue)
             return True
 
         GLib.timeout_add(watch_timeout, onTimeout)
@@ -148,5 +148,6 @@ class DataSeries:
     def getMaxValue(self) -> any:
         """Get the (current) maximum value of this data series."""
         if self.max_value is None:
-            return max(self.values)
+            val = max([dp.value for dp in self.values])
+            return val if val != 0 else 1
         return self.max_value

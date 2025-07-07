@@ -75,7 +75,7 @@ class ConnectionPerformancePage(Gtk.Box):
             [RelativeDataPoint(0, self.parent.connection.getHostCPUTime())]
         )
 
-        def getCPUData():
+        def getCPUData(*_):
             cpu_time_reading = self.parent.connection.getHostCPUTime()
             display_val = 0
             if len(self.__cpu_data_series__) > 1:
@@ -98,7 +98,7 @@ class ConnectionPerformancePage(Gtk.Box):
             [RelativeDataPoint(0, self.parent.connection.getHostIOWait())]
         )
 
-        def getIOwaitData():
+        def getIOwaitData(*_):
             iowait_time_reading = self.parent.connection.getHostIOWait()
             display_val = 0
             if len(self.__iowait_data_series__) > 1:
@@ -121,7 +121,7 @@ class ConnectionPerformancePage(Gtk.Box):
         self.__mem_data_series__.setValues([DataPoint(0)])
         self.__mem_data_series__.max_value = self.parent.connection.maxMemory()
 
-        def getMemData():
+        def getMemData(*_):
             return DataPoint(self.parent.connection.getHostMemoryUsage() * 1024)
 
         self.__mem_data_series__.setWatchCallback(

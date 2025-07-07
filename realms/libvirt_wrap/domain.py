@@ -324,6 +324,7 @@ class Domain(EventManager):
             return 0
 
     def getAttachedStorageVolumes(self) -> list[Volume]:
+        self.connection.isAlive()
         xml = self.getETree()
 
         volumes = []
@@ -344,6 +345,42 @@ class Domain(EventManager):
                 volume = getVolumeFromName(pool, vol_name)
                 volumes.append(volume)
         return volumes
+
+    def getNICs(self) -> list[str]:
+        """Find all network interfaces names attached to this domain.
+        Will return none when shut off.
+        """
+        nics = []
+
+        if self.isActive():
+            xml = self.getETree()
+
+            volumes = []
+
+            for device_xml in xml.find("devices"):
+                if device_xml.tag == "interface":
+                    target = device_xml.find("target")
+                    if target is None:
+                        continue
+
+                    dev = target.get("dev")
+
+                    if not dev:
+                        continue
+
+                    nics.append(dev)
+
+        return nics
+
+    def getNICStats(self, nic: str) -> tuple[int, int]:
+        """Get network interface usage on the given interface
+        for (rx, tx).
+        """
+        if self.isActive():
+            stats = self.domain.interfaceStats(nic)
+            return (stats[0], stats[4])
+
+        return (0, 0)
 
     ############################################
     # Small setters

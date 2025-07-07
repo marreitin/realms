@@ -37,8 +37,8 @@ class InnerGraph(Gtk.Box):
 
         colors = [
             Adw.AccentColor.BLUE,
-            Adw.AccentColor.GREEN,
             Adw.AccentColor.ORANGE,
+            Adw.AccentColor.GREEN,
             Adw.AccentColor.PINK,
             Adw.AccentColor.PURPLE,
             Adw.AccentColor.RED,
@@ -63,7 +63,7 @@ class InnerGraph(Gtk.Box):
         value = (
             self.__vpadding__
             + (self.get_height() - 2 * self.__vpadding__)
-            - (self.get_height() - self.__vpadding__) * (p.value / ds.max_value)
+            - (self.get_height() - self.__vpadding__) * (p.value / ds.getMaxValue())
         )
         value = max(self.__vpadding__, value)
         value = min(self.get_height() - self.__vpadding__, value)
