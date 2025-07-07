@@ -15,6 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from gi.repository import Adw, Gtk
 
+from realms.helpers import bytesToString
 from realms.libvirt_wrap.constants import *
 from realms.libvirt_wrap.domain import Domain
 from realms.ui.components.generic_preferences_row import GenericPreferencesRow
@@ -84,7 +85,11 @@ class PerformanceBox(Gtk.Box):
         self.__mem_data_series__.setWatchCallback(
             1000 * self.REFRESH_SECONDS, getMemData
         )
-        self.__mem_graph__ = Graph([self.__mem_data_series__], "Memory")
+        self.__mem_graph__ = Graph(
+            [self.__mem_data_series__],
+            "Memory",
+            lambda series: bytesToString(series[0].getLastAvg(5)),
+        )
         row.addChild(self.__mem_graph__)
 
         # Network Graphs
@@ -138,7 +143,7 @@ class PerformanceBox(Gtk.Box):
                 graph = Graph(
                     [rx_ds, tx_ds],
                     nic.upper(),
-                    lambda series: f"↓{ series[0].getLastAvg(5) } ↑{ series[1].getLastAvg(5) }",
+                    lambda series: f"↓{ bytesToString(int(series[0].getLastAvg(5))) } ↑{ bytesToString(int(series[1].getLastAvg(5))) }",
                 )
 
                 row = GenericPreferencesRow()

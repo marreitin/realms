@@ -15,6 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from gi.repository import Adw, Gtk
 
+from realms.helpers import bytesToString
 from realms.ui.components.generic_preferences_row import GenericPreferencesRow
 from realms.ui.components.graphs import DataPoint, DataSeries, Graph, RelativeDataPoint
 from realms.ui.components.preference_widgets import RealmsPreferencesPage
@@ -43,7 +44,11 @@ class ConnectionPerformancePage(Gtk.Box):
         group.add(row)
 
         self.__cpu_data_series__ = DataSeries([], 1, 600)
-        self.__cpu_graph__ = Graph([self.__cpu_data_series__], "CPU")
+        self.__cpu_graph__ = Graph(
+            [self.__cpu_data_series__],
+            "CPU",
+            lambda series: f"{ int(series[0].getLastAvg(5) * 100) }%",
+        )
         row.addChild(self.__cpu_graph__)
 
         # Memory graph
@@ -52,7 +57,11 @@ class ConnectionPerformancePage(Gtk.Box):
         group.add(row)
 
         self.__mem_data_series__ = DataSeries([], 1, 600)
-        self.__mem_graph__ = Graph([self.__mem_data_series__], "Memory")
+        self.__mem_graph__ = Graph(
+            [self.__mem_data_series__],
+            "Memory",
+            lambda series: bytesToString(series[0].getLastAvg(5)),
+        )
         row.addChild(self.__mem_graph__)
 
         # IOWait graph
@@ -61,7 +70,11 @@ class ConnectionPerformancePage(Gtk.Box):
         group.add(row)
 
         self.__iowait_data_series__ = DataSeries([], 1, 600)
-        self.__iowait_graph__ = Graph([self.__iowait_data_series__], "IO-Wait")
+        self.__iowait_graph__ = Graph(
+            [self.__iowait_data_series__],
+            "IO-Wait",
+            lambda series: f"{ int(series[0].getLastAvg(5) * 100) }%",
+        )
         row.addChild(self.__iowait_graph__)
 
     def start(self):
