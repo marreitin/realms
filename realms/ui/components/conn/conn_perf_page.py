@@ -60,7 +60,7 @@ class ConnectionPerformancePage(Gtk.Box):
         self.__mem_graph__ = Graph(
             [self.__mem_data_series__],
             "Memory",
-            lambda series: bytesToString(series[0].getLastAvg(5)),
+            lambda series: bytesToString(series[0].getLastAvg(5), "KiB"),
         )
         row.addChild(self.__mem_graph__)
 
