@@ -108,9 +108,10 @@ class InnerGraph(Gtk.Box):
         builder.line_to(start_x, self.get_height())
         builder.line_to(start_x, self.__fitValue__(ds, ds.getFirst()))
 
-        snapshot.push_opacity(0.3)
-        snapshot.append_fill(builder.to_path(), Gsk.FillRule.WINDING, color)
-        snapshot.pop()
+        if ds.fill:
+            snapshot.push_opacity(0.3)
+            snapshot.append_fill(builder.to_path(), Gsk.FillRule.WINDING, color)
+            snapshot.pop()
 
 
 class Graph(Gtk.Box):

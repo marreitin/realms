@@ -50,14 +50,14 @@ class DataSeries:
         max_value: any,
         max_size: int,
         color: Adw.AccentColor = None,
+        fill: bool = True,
     ):
         self.redraw_cb = None
         self.values = initial_values
         self.max_value = max_value
         self.max_size = max_size
-        self.color = None
-        if self.values is None:
-            self.values = []
+        self.color = color
+        self.fill = fill
 
         self.watch_cb = None
 

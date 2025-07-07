@@ -75,18 +75,14 @@ class ConnectionPerformancePage(Gtk.Box):
             [RelativeDataPoint(0, self.parent.connection.getHostCPUTime())]
         )
 
-        def getCPUData(*_):
+        def getCPUData(ds):
             cpu_time_reading = self.parent.connection.getHostCPUTime()
             display_val = 0
             if len(self.__cpu_data_series__) > 1:
-                display_val = abs(
-                    self.__cpu_data_series__.values[-2].last_reading - cpu_time_reading
-                )
+                display_val = abs(ds.values[-2].last_reading - cpu_time_reading)
                 display_val /= 2
             else:
-                display_val = abs(
-                    self.__cpu_data_series__.getLast().last_reading - cpu_time_reading
-                )
+                display_val = abs(ds.getLast().last_reading - cpu_time_reading)
             display_val /= 1000000000 * self.REFRESH_SECONDS
             return RelativeDataPoint(display_val, cpu_time_reading)
 
@@ -98,20 +94,14 @@ class ConnectionPerformancePage(Gtk.Box):
             [RelativeDataPoint(0, self.parent.connection.getHostIOWait())]
         )
 
-        def getIOwaitData(*_):
+        def getIOwaitData(ds):
             iowait_time_reading = self.parent.connection.getHostIOWait()
             display_val = 0
             if len(self.__iowait_data_series__) > 1:
-                display_val = abs(
-                    self.__iowait_data_series__.values[-2].last_reading
-                    - iowait_time_reading
-                )
+                display_val = abs(ds.values[-2].last_reading - iowait_time_reading)
                 display_val /= 2
             else:
-                display_val = abs(
-                    self.__iowait_data_series__.getLast().last_reading
-                    - iowait_time_reading
-                )
+                display_val = abs(ds.getLast().last_reading - iowait_time_reading)
             display_val /= 1000000000 * self.REFRESH_SECONDS
             return RelativeDataPoint(display_val, iowait_time_reading)
 

@@ -114,6 +114,7 @@ class PerformanceBox(Gtk.Box):
                     [RelativeDataPoint(0, self.domain.getNICStats(nic)[0])],
                     None,
                     600,
+                    fill=False,
                 )
                 rx_ds.setWatchCallback(
                     1000 * self.REFRESH_SECONDS,
@@ -123,6 +124,7 @@ class PerformanceBox(Gtk.Box):
                     [RelativeDataPoint(0, self.domain.getNICStats(nic)[1])],
                     None,
                     600,
+                    fill=False,
                 )
                 tx_ds.setWatchCallback(
                     1000 * self.REFRESH_SECONDS,
