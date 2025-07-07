@@ -298,10 +298,7 @@ class ConnectionRow(Gtk.ListBoxRow):
                 self.addDomain(obj, open_tab=True)
 
     def onConnectionEvent(self, conn, obj, type_id, event_id, detail_id):
-        """Top level event handler."""
-        print(
-            "Connection Row registered connection event: ", type_id, event_id, detail_id
-        )
+        """Handle connections events."""
         self.handleConnectionEvents(conn, obj, type_id, event_id, detail_id)
         # Networks
         self.handleNetworkEvents(conn, obj, type_id, event_id, detail_id)
