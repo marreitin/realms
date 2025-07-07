@@ -13,14 +13,19 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from gi.repository import Adw, Gtk, Pango
+from gi.repository import Adw, Gio, Gtk, Pango
 
 from realms.helpers import RepeatJob
 from realms.libvirt_wrap import Pool
 from realms.libvirt_wrap.constants import *
+from realms.ui.dialogs.add_volume_dialog import AddVolumeDialog
 from realms.ui.tabs import PoolDetailsTab
 
 from .base_row import BaseRow
+
+
+def __onContextNewVolClicked__(poolRow: any, *_):
+    AddVolumeDialog(poolRow.window, poolRow.pool)
 
 
 class PoolRow(BaseRow):
@@ -67,7 +72,27 @@ class PoolRow(BaseRow):
         self.status_label = Gtk.Label(label="50%", justify=Gtk.Justification.RIGHT)
         hbox.append(self.status_label)
 
+        self.__buildContextMenu__()
+
         self.__setStatus__()
+
+    def __buildContextMenu__(self):
+        def openPopover(*_):
+            menu = Gio.Menu()
+            if self.pool.isActive():
+                menu.append("New Volume", "pool.volume.new")
+
+                self.popover.set_menu_model(menu)
+                self.popover.popup()
+
+        self.install_action("pool.volume.new", None, __onContextNewVolClicked__)
+
+        self.popover = Gtk.PopoverMenu(has_arrow=False)
+        self.popover.set_parent(self)
+
+        gesture = Gtk.GestureClick(button=3)
+        gesture.connect("pressed", openPopover)
+        self.add_controller(gesture)
 
     def __setStatus__(self):
         self.status_label.set_css_classes([])
