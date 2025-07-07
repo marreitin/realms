@@ -141,13 +141,13 @@ class DiskPage(BaseDevicePage):
         )
         self.group.add(self.driver_row)
 
-        self.target_device_row = BindableEntryRow(title="Target device name")
-        self.group.add(self.target_device_row)
-
         self.target_bus_name_row = BindableComboRow(
             self.domain_caps.devices["disk"]["bus"], "", title="Target bus"
         )
         self.group.add(self.target_bus_name_row)
+
+        self.target_device_row = BindableEntryRow(title="Target device name")
+        self.group.add(self.target_device_row)
 
         self.boot_order_row = BootOrderRow(self.xml_tree, self.showApply)
         self.group.add(self.boot_order_row)
