@@ -15,7 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """DataSeries provide a way of storing a set number of data-points, and
 updating them regularly."""
-from gi.repository import GLib
+from gi.repository import Adw, GLib
 
 from realms.helpers import asyncJob
 
@@ -44,11 +44,18 @@ class DataSeries:
     graphs that a redraw is needed.
     """
 
-    def __init__(self, initial_values: list[DataPoint], max_value: any, max_size: int):
+    def __init__(
+        self,
+        initial_values: list[DataPoint],
+        max_value: any,
+        max_size: int,
+        color: Adw.AccentColor = None,
+    ):
         self.redraw_cb = None
         self.values = initial_values
         self.max_value = max_value
         self.max_size = max_size
+        self.color = None
         if self.values is None:
             self.values = []
 
@@ -137,3 +144,9 @@ class DataSeries:
     def getFirst(self) -> DataPoint:
         """Get the first data point."""
         return self.values[0]
+
+    def getMaxValue(self) -> any:
+        """Get the (current) maximum value of this data series."""
+        if self.max_value is None:
+            return max(self.values)
+        return self.max_value

@@ -20,11 +20,11 @@ from gi.repository import Adw, Gsk, Gtk
 from .data_series import DataPoint, DataSeries
 
 
-class InnerGraph(Gtk.Frame):
+class InnerGraph(Gtk.Box):
     """A Gtk Frame that draws the actual graph. It is only the
     inner widget and not to be used directly."""
 
-    def __init__(self, data_series: DataSeries):
+    def __init__(self, data_series: list[DataSeries]):
         """Initialize InnerGraph with a data series
 
         Args:
@@ -32,25 +32,38 @@ class InnerGraph(Gtk.Frame):
         """
         super().__init__(height_request=200)
 
-        self.__vpadding__ = 1
+        self.__vpadding__ = 0
         self.__data_series__ = data_series
-        self.__data_series__.registerRedrawCallback(self.__onRedraw__)
 
-        style_manager = Adw.StyleManager.get_default()
-        self.__line_color__ = style_manager.get_accent_color_rgba()
+        colors = [
+            Adw.AccentColor.BLUE,
+            Adw.AccentColor.GREEN,
+            Adw.AccentColor.ORANGE,
+            Adw.AccentColor.PINK,
+            Adw.AccentColor.PURPLE,
+            Adw.AccentColor.RED,
+            Adw.AccentColor.SLATE,
+            Adw.AccentColor.TEAL,
+            Adw.AccentColor.YELLOW,
+        ]
+        index = 0
+        for ds in self.__data_series__:
+            if ds.color is None:
+                ds.color = colors[index]
+                index += 1
+            ds.registerRedrawCallback(self.__onRedraw__)
 
     def __onRedraw__(self):
         # Only redraw if the widget is visible
         if self.is_drawable():
             self.queue_draw()
 
-    def __fitValue__(self, p: DataPoint) -> float:
+    def __fitValue__(self, ds: DataSeries, p: DataPoint) -> float:
         """Calculate the y-coordinate of a given point"""
         value = (
             self.__vpadding__
             + (self.get_height() - 2 * self.__vpadding__)
-            - (self.get_height() - self.__vpadding__)
-            * (p.value / self.__data_series__.max_value)
+            - (self.get_height() - self.__vpadding__) * (p.value / ds.max_value)
         )
         value = max(self.__vpadding__, value)
         value = min(self.get_height() - self.__vpadding__, value)
@@ -65,44 +78,45 @@ class InnerGraph(Gtk.Frame):
         """
 
         # Build path
-        if len(self.__data_series__) < 2:
+        for ds in self.__data_series__:
+            self.__drawDataSeries__(snapshot, ds)
+
+    def __drawDataSeries__(self, snapshot, ds: DataSeries):
+        if len(ds) < 2:
             return  # A line needs at least two points
 
+        color = ds.color.to_rgba()
         builder = Gsk.PathBuilder()
-        move_width = self.get_width() / (self.__data_series__.max_size - 1)
-        start_x = (
-            self.__data_series__.max_size - len(self.__data_series__)
-        ) * move_width
+        move_width = self.get_width() / (ds.max_size - 1)
+        start_x = (ds.max_size - len(ds)) * move_width
         builder.move_to(
             start_x,
-            self.__fitValue__(self.__data_series__.getFirst()),
+            self.__fitValue__(ds, ds.getFirst()),
         )
-        for i, v in enumerate(self.__data_series__.values):
+        for i, v in enumerate(ds.values):
             builder.line_to(
                 start_x + i * move_width,
-                self.__fitValue__(v),
+                self.__fitValue__(ds, v),
             )
 
         path = builder.to_path()
 
-        snapshot.append_stroke(path, Gsk.Stroke(3), self.__line_color__)
+        snapshot.append_stroke(path, Gsk.Stroke(2), color)
 
         builder.add_path(path)
         builder.line_to(self.get_width(), self.get_height())
         builder.line_to(start_x, self.get_height())
-        builder.line_to(start_x, self.__fitValue__(self.__data_series__.getFirst()))
+        builder.line_to(start_x, self.__fitValue__(ds, ds.getFirst()))
 
-        snapshot.push_opacity(0.2)
-        snapshot.append_fill(
-            builder.to_path(), Gsk.FillRule.WINDING, self.__line_color__
-        )
+        snapshot.push_opacity(0.3)
+        snapshot.append_fill(builder.to_path(), Gsk.FillRule.WINDING, color)
         snapshot.pop()
 
 
 class Graph(Gtk.Box):
-    """Simple and minimalist graph drawing a DataSeries."""
+    """Simple and minimalist graph drawing a list of DataSeries."""
 
-    def __init__(self, data_series: DataSeries, title: str):
+    def __init__(self, data_series: list[DataSeries], title: str):
         """Create Graph
 
         Args:

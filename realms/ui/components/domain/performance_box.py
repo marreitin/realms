@@ -25,7 +25,7 @@ class PerformanceBox(Gtk.Box):
     """Box containing the performance graphs of a domain."""
 
     def __init__(self, domain: Domain):
-        REFRESH_SECONDS = 1
+        REFRESH_SECONDS = 0.2
         super().__init__(orientation=Gtk.Orientation.VERTICAL)
 
         page = RealmsPreferencesPage()
@@ -36,10 +36,11 @@ class PerformanceBox(Gtk.Box):
 
         # CPU graph
         row = GenericPreferencesRow()
+        row.set_activatable(False)
         group.add(row)
 
         self.__cpu_data_series__ = DataSeries(
-            [RelativeDataPoint(0, domain.getCPUTime())], 1, 120
+            [RelativeDataPoint(0, domain.getCPUTime())], 1, 600
         )
 
         def getCPUData():
@@ -59,22 +60,23 @@ class PerformanceBox(Gtk.Box):
             return RelativeDataPoint(display_val, cpu_time_reading)
 
         self.__cpu_data_series__.setWatchCallback(1000 * REFRESH_SECONDS, getCPUData)
-        self.__cpu_graph__ = Graph(self.__cpu_data_series__, "CPU")
+        self.__cpu_graph__ = Graph([self.__cpu_data_series__], "CPU")
         row.addChild(self.__cpu_graph__)
 
         # Memory graph
         row = GenericPreferencesRow()
+        row.set_activatable(False)
         group.add(row)
 
         self.__mem_data_series__ = DataSeries(
-            [DataPoint(0)], domain.getMaxMemory(), 120
+            [DataPoint(0)], domain.getMaxMemory(), 600
         )
 
         def getMemData():
             return DataPoint(domain.getMemoryUsage())
 
         self.__mem_data_series__.setWatchCallback(1000 * REFRESH_SECONDS, getMemData)
-        self.__mem_graph__ = Graph(self.__mem_data_series__, "Memory")
+        self.__mem_graph__ = Graph([self.__mem_data_series__], "Memory")
         row.addChild(self.__mem_graph__)
 
     def end(self):

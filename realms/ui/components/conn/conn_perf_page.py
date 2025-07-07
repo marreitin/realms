@@ -23,7 +23,7 @@ from realms.ui.components.preference_widgets import RealmsPreferencesPage
 class ConnectionPerformancePage(Gtk.Box):
     """Graphs showing some performance info for a hypervisor."""
 
-    REFRESH_SECONDS = 1
+    REFRESH_SECONDS = 0.2
 
     def __init__(self, parent):
         super().__init__(orientation=Gtk.Orientation.VERTICAL)
@@ -39,26 +39,29 @@ class ConnectionPerformancePage(Gtk.Box):
 
         # CPU graph
         row = GenericPreferencesRow()
+        row.set_activatable(False)
         group.add(row)
 
-        self.__cpu_data_series__ = DataSeries([], 1, 120)
-        self.__cpu_graph__ = Graph(self.__cpu_data_series__, "CPU")
+        self.__cpu_data_series__ = DataSeries([], 1, 600)
+        self.__cpu_graph__ = Graph([self.__cpu_data_series__], "CPU")
         row.addChild(self.__cpu_graph__)
 
         # Memory graph
         row = GenericPreferencesRow()
+        row.set_activatable(False)
         group.add(row)
 
-        self.__mem_data_series__ = DataSeries([], 1, 120)
-        self.__mem_graph__ = Graph(self.__mem_data_series__, "Memory")
+        self.__mem_data_series__ = DataSeries([], 1, 600)
+        self.__mem_graph__ = Graph([self.__mem_data_series__], "Memory")
         row.addChild(self.__mem_graph__)
 
         # IOWait graph
         row = GenericPreferencesRow()
+        row.set_activatable(False)
         group.add(row)
 
-        self.__iowait_data_series__ = DataSeries([], 1, 120)
-        self.__iowait_graph__ = Graph(self.__iowait_data_series__, "IO-Wait")
+        self.__iowait_data_series__ = DataSeries([], 1, 600)
+        self.__iowait_graph__ = Graph([self.__iowait_data_series__], "IO-Wait")
         row.addChild(self.__iowait_graph__)
 
     def start(self):
