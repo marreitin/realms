@@ -34,7 +34,6 @@ class InnerGraph(Gtk.Box):
         """
         super().__init__(height_request=200)
 
-        self.__vpadding__ = 0
         self.parent = parent
         self.__data_series__ = data_series
         self.value_text = value_text
@@ -62,15 +61,11 @@ class InnerGraph(Gtk.Box):
         if self.is_drawable():
             self.queue_draw()
 
-    def __fitValue__(self, ds: DataSeries, p: DataPoint) -> float:
+    def __fitValue__(self, ds: DataSeries, p: DataPoint, width, height) -> float:
         """Calculate the y-coordinate of a given point"""
-        value = (
-            self.__vpadding__
-            + (self.get_height() - 2 * self.__vpadding__)
-            - (self.get_height() - self.__vpadding__) * (p.value / ds.getMaxValue())
-        )
-        value = max(self.__vpadding__, value)
-        value = min(self.get_height() - self.__vpadding__, value)
+        value = height - height * (p.value / ds.getMaxValue())
+        value = max(0, value)
+        value = min(height, value)
         return value
 
     # pylint: disable-next=invalid-name
@@ -91,18 +86,22 @@ class InnerGraph(Gtk.Box):
         if len(ds) < 2:
             return  # A line needs at least two points
 
+        width = self.get_width()
+        height = self.get_height()
+
         color = ds.color.to_rgba()
         builder = Gsk.PathBuilder()
-        move_width = self.get_width() / (ds.max_size - 1)
+        move_width = width / (ds.max_size - 1)
         start_x = (ds.max_size - len(ds)) * move_width
+        start_y = self.__fitValue__(ds, ds.getFirst(), width, height)
         builder.move_to(
             start_x,
-            self.__fitValue__(ds, ds.getFirst()),
+            start_y,
         )
         for i, v in enumerate(ds.values):
             builder.line_to(
                 start_x + i * move_width,
-                self.__fitValue__(ds, v),
+                self.__fitValue__(ds, v, width, height),
             )
 
         path = builder.to_path()
@@ -110,9 +109,9 @@ class InnerGraph(Gtk.Box):
         snapshot.append_stroke(path, Gsk.Stroke(2), color)
 
         builder.add_path(path)
-        builder.line_to(self.get_width(), self.get_height())
-        builder.line_to(start_x, self.get_height())
-        builder.line_to(start_x, self.__fitValue__(ds, ds.getFirst()))
+        builder.line_to(width, height)
+        builder.line_to(start_x, height)
+        builder.line_to(start_x, start_y)
 
         if ds.fill:
             snapshot.push_opacity(0.3)
