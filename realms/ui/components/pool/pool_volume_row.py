@@ -59,6 +59,10 @@ class PoolVolumeRow(Adw.ExpanderRow):
         )
         self.add_suffix(self.usage_progress)
 
+        name_row = propertyRow("Name")
+        name_row.set_subtitle(self.volume.getName())
+        self.add_row(name_row)
+
         self.capacity_row = Adw.EntryRow(title="Capacity", show_apply_button=False)
         self.capacity_row.connect(
             "changed", lambda *_: self.capacity_row.set_show_apply_button(True)
