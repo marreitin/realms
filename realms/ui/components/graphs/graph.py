@@ -17,6 +17,8 @@
 with a given DataSeries."""
 from gi.repository import Adw, Gsk, Gtk
 
+from realms.ui.components.common import hspacer
+
 from .data_series import DataPoint, DataSeries
 
 
@@ -138,13 +140,17 @@ class Graph(Gtk.Box):
         if value_text is None:
             value_text = lambda *_: ""
 
-        title_box = Gtk.Box(spacing=12, margin_top=3, margin_bottom=3)
+        title_box = Gtk.Box(spacing=12, margin_top=2, margin_bottom=2)
         self.append(title_box)
         title_box.append(
             Gtk.Label(label=title, halign=Gtk.Align.START, css_classes=["heading"])
         )
 
-        self.value_label = Gtk.Label(css_classes=["numeric", "dimmed"])
+        title_box.append(hspacer())
+
+        self.value_label = Gtk.Label(
+            css_classes=["numeric", "dimmed"], halign=Gtk.Align.END
+        )
         title_box.append(self.value_label)
 
         self.__frame__ = InnerGraph(self, data_series, value_text)
