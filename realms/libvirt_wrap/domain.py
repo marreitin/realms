@@ -377,8 +377,11 @@ class Domain(EventManager):
         for (rx, tx).
         """
         if self.isActive():
-            stats = self.domain.interfaceStats(nic)
-            return (stats[0], stats[4])
+            try:
+                stats = self.domain.interfaceStats(nic)
+                return (stats[0], stats[4])
+            except libvirt.libvirtError:
+                pass
 
         return (0, 0)
 

@@ -63,7 +63,7 @@ class InnerGraph(Gtk.Box):
 
     def __fitValue__(self, ds: DataSeries, p: DataPoint, width, height) -> float:
         """Calculate the y-coordinate of a given point"""
-        value = height - height * (p.value / ds.getMaxValue())
+        value = height * (1 - p.value / ds.getMaxValue())
         value = max(0, value)
         value = min(height, value)
         return value
